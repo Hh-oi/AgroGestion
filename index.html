@@ -19,7 +19,6 @@
         .btn-success { background: var(--mid-green); border: none; border-radius: 12px; padding: 12px 25px; font-weight: bold; }
         .input-agro { border: none; background: #f8f9fa; border-radius: 12px; padding: 12px; }
         .modal-content { border: none; border-radius: 25px; }
-        /* Estilo Historial Boutique */
         .table-historial { border-collapse: separate; border-spacing: 0 10px; }
         .table-historial tr { background: white; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
@@ -70,7 +69,7 @@
                         <i class="bi bi-file-earmark-pdf me-1"></i> PDF
                     </button>
                     <button class="btn btn-outline-success btn-sm rounded-pill" onclick="descargarExcel()">
-                        <i class="bi bi-download me-1"></i> Excel
+                        <i class="bi bi-file-earmark-excel me-1"></i> Excel
                     </button>
                 </div>
             </div>
@@ -79,8 +78,7 @@
                     <thead class="text-muted small uppercase">
                         <tr><th>FECHA</th><th>CONCEPTO</th><th class="text-end">MONTO</th><th>ACCION</th></tr>
                     </thead>
-                    <tbody id="tablaCuerpoHistorial">
-                        </tbody>
+                    <tbody id="tablaCuerpoHistorial"></tbody>
                 </table>
             </div>
         </div>
@@ -131,7 +129,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let datosParaExcel = [];
+    let datosTabla = []; // Variable global para descargas
     let tituloReporte = "";
 
     // CARGAR GASTO
@@ -141,15 +139,13 @@
         const monto = Number(document.getElementById('montoGasto').value);
         const desc = document.getElementById('descGasto').value;
         const fecha = document.getElementById('fechaGasto').value;
-
         await addDoc(collection(db, "gastos_detalle"), { loteId: id, monto, desc, fecha });
         await updateDoc(doc(db, "lotes", id), { gastos: increment(monto) });
-
         bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
         document.getElementById('formGasto').reset();
     });
 
-    // VER HISTORIAL (Estilo Boutique)
+    // VER HISTORIAL
     window.verHistorialLote = async (id, nombre) => {
         tituloReporte = nombre;
         document.getElementById('historialTitulo').innerText = "Extracto: " + nombre;
@@ -157,26 +153,28 @@
         const querySnapshot = await getDocs(q);
         const cuerpo = document.getElementById('tablaCuerpoHistorial');
         cuerpo.innerHTML = '';
-        datosParaExcel = [];
+        datosTabla = []; 
 
         querySnapshot.forEach((gDoc) => {
             const g = gDoc.data();
-            datosParaExcel.push({ Fecha: g.fecha, Concepto: g.desc, Monto: g.monto });
+            // Guardamos los datos para las descargas
+            datosTabla.push({ FECHA: g.fecha, CONCEPTO: g.desc, MONTO: g.monto });
+            
             cuerpo.innerHTML += `
                 <tr>
                     <td class="text-muted small">${g.fecha}</td>
                     <td class="fw-bold">${g.desc}</td>
                     <td class="text-end fw-bold text-danger">- $ ${g.monto.toLocaleString()}</td>
                     <td><button class="btn btn-sm text-danger border-0" onclick="borrarGasto('${gDoc.id}', '${id}', ${g.monto})"><i class="bi bi-trash"></i></button></td>
-                </tr>
-            `;
+                </tr>`;
         });
         new bootstrap.Modal(document.getElementById('modalHistorial')).show();
     };
 
-    // DESCARGAR EXCEL
+    // CORRECCIÓN DESCARGAR EXCEL
     window.descargarExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(datosParaExcel);
+        if(datosTabla.length === 0) return alert("No hay datos para exportar");
+        const ws = XLSX.utils.json_to_sheet(datosTabla);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Gastos");
         XLSX.utils.writeFile(wb, `Extracto_${tituloReporte}.xlsx`);
@@ -186,29 +184,18 @@
     window.descargarPDF = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
-        // Título del PDF
-        doc.setFontSize(18);
-        doc.text("AGROGESTION - EXTRACTO DE GASTOS", 14, 20);
-        doc.setFontSize(12);
-        doc.text("Lote: " + tituloReporte, 14, 30);
-        
-        // Crear tabla en el PDF
-        const columnas = ["Fecha", "Concepto", "Monto"];
-        const filas = datosParaExcel.map(g => [g.Fecha, g.Concepto, `$ ${g.Monto.toLocaleString()}`]);
-        
+        doc.text("EXTRACTO DE GASTOS: " + tituloReporte, 14, 20);
+        const filas = datosTabla.map(g => [g.FECHA, g.CONCEPTO, `$ ${g.MONTO.toLocaleString()}`]);
         doc.autoTable({
-            startY: 35,
-            head: [columnas],
+            startY: 30,
+            head: [['FECHA', 'CONCEPTO', 'MONTO']],
             body: filas,
-            theme: 'striped',
-            headStyles: { fillColor: [27, 67, 50] } // Color verde oscuro de tu sidebar
+            headStyles: { fillColor: [27, 67, 50] }
         });
-        
         doc.save(`Extracto_${tituloReporte}.pdf`);
     };
 
-    // DASHBOARD EN TIEMPO REAL
+    // DASHBOARD
     onSnapshot(collection(db, "lotes"), (snapshot) => {
         const contenedor = document.getElementById('listaLotesDetallada');
         let totalMec = 0, totalInv = 0;
@@ -218,7 +205,6 @@
             const inv = l.gastos || 0;
             totalMec += Number(l.haMecanizadas);
             totalInv += inv;
-
             contenedor.innerHTML += `
                 <div class="card card-agro p-4">
                     <div class="d-flex justify-content-between mb-3">

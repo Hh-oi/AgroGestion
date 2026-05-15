@@ -3,81 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroGestión Pro + Analytics</title>
+    <title>AgroGestión Pro Elite - Leidyd</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --pastel-blue: #deecff;
             --pastel-pink: #ffdee9;
+            --pastel-yellow: #fdfd96;
             --butterfly-accent: #b5ead7;
+            --urgent-red: #ffb7b2;
             --dark-text: #2d4059;
         }
         body { background-color: #f4f7f6; color: var(--dark-text); font-family: 'Segoe UI', sans-serif; }
-        
-        .header-app { 
-            background: linear-gradient(135deg, #a8dadc, #f1faee); 
-            padding: 40px 20px; 
-            border-radius: 0 0 30px 30px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            border: none;
-            border-radius: 15px;
-            padding: 15px;
-            background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-
-        .card-main { border: none; border-radius: 20px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
-        
-        .btn-butterfly { 
-            background-color: var(--butterfly-accent); 
-            border: none; 
-            font-weight: bold; 
-            color: #4b645a; 
-            padding: 15px;
-            border-radius: 12px;
-        }
-        
-        .chart-container { position: relative; height: 250px; width: 100%; }
+        .header-app { background: linear-gradient(135deg, #a8dadc, #f1faee); padding: 25px; border-radius: 0 0 30px 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .card-main { border: none; border-radius: 20px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 20px; }
+        .btn-butterfly { background-color: var(--butterfly-accent); border: none; font-weight: bold; color: #4b645a; padding: 12px; border-radius: 12px; transition: 0.3s; }
+        .btn-butterfly:hover { background-color: #9edcc4; transform: scale(1.02); }
+        .lote-card { transition: 0.3s; border-left: 5px solid #a8dadc; }
+        .cosecha-urgente { background-color: var(--urgent-red) !important; border-left: 5px solid #ff6961 !important; }
+        .weather-widget { background: white; border-radius: 15px; padding: 10px; display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
 <div class="header-app text-center">
-    <h1 class="fw-bold"><i class="bi bi-graph-up-arrow"></i> AgroGestión Pro</h1>
-    <p class="lead">Dashboard Analítico de Inversión</p>
+    <div class="weather-widget mb-2">
+        <span id="clima">☀️ 28°C - Soleado</span>
+    </div>
+    <h1 class="fw-bold"><i class="bi bi-shield-check text-success"></i> AgroGestión Pro</h1>
+    <p class="lead">Panel de Control de Producción y Ciclos</p>
 </div>
 
-<div class="container pb-5">
-    <div class="row g-4 mb-4">
-        <div class="col-lg-8">
+<div class="container pb-5 mt-4">
+    
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card card-main p-4">
-                <h5 class="mb-3 text-muted">Distribución de Gastos</h5>
-                <div class="chart-container">
-                    <canvas id="graficoGastos"></canvas>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-muted"><i class="bi bi-map"></i> Monitoreo de Lotes</h5>
+                    <span class="badge bg-white text-dark border small">Rojo = Cosecha Próxima</span>
                 </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card card-main p-4 h-100">
-                <h5 class="mb-4 text-muted">Total Acumulado</h5>
-                <div class="stat-card mb-3 border-start border-4 border-info">
-                    <small class="text-muted">TOTAL GENERAL</small>
-                    <h3 class="fw-bold" id="totalGeneral">0</h3>
-                </div>
-                <div class="stat-card mb-3 border-start border-4 border-success">
-                    <small class="text-muted">INSUMOS/FERTILIZANTE</small>
-                    <h4 id="totalInsumos">0</h4>
-                </div>
-                <div class="stat-card border-start border-4 border-warning">
-                    <small class="text-muted">MANO DE OBRA</small>
-                    <h4 id="totalLabor">0</h4>
-                </div>
+                <div class="row g-3" id="contenedorLotes">
+                    </div>
             </div>
         </div>
     </div>
@@ -85,47 +53,66 @@
     <div class="row g-4">
         <div class="col-lg-4">
             <div class="card card-main p-4">
-                <h5><i class="bi bi-pencil-square"></i> Cargar Datos</h5>
+                <h5><i class="bi bi-plus-circle-dotted"></i> Nueva Entrada</h5>
                 <hr>
                 <form id="agroForm">
                     <div class="mb-3">
-                        <label class="form-label text-secondary small">Lote / Inmueble</label>
-                        <select class="form-select" id="loteSelect" required>
+                        <label class="form-label small fw-bold text-uppercase">Acción</label>
+                        <select class="form-select border-0 bg-light" id="tipoRegistro" onchange="cambiarFormulario()">
+                            <option value="gasto">💰 Registrar Gasto / Insumo</option>
+                            <option value="siembra">🌱 Iniciar Nueva Siembra</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Lote Destino</label>
+                        <select class="form-select border-0 bg-light" id="loteSelect" required>
                             <option value="Rolon Kue">Rolon Kue (40ha)</option>
                             <option value="Lote Central">Lote Central</option>
                             <option value="Potrero Norte">Potrero Norte</option>
                         </select>
                     </div>
+
+                    <div id="camposSiembra" style="display: none;">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Fecha Siembra</label>
+                                <input type="date" class="form-control border-0 bg-light" id="fechaSiembra">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Est. Cosecha</label>
+                                <input type="date" class="form-control border-0 bg-light" id="fechaCosecha">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
-                        <label class="form-label text-secondary small">Categoría</label>
-                        <select class="form-select" id="gastoTipo">
-                            <option value="Combustible">Combustible</option>
-                            <option value="Fertilizante">Fertilizante</option>
-                            <option value="Mano de Obra">Mano de Obra</option>
-                            <option value="Otros">Otros</option>
-                        </select>
+                        <label class="form-label small fw-bold">Detalle / Ítem</label>
+                        <input type="text" class="form-control border-0 bg-light" id="detalle" placeholder="Ej: Urea, Limpieza, Semilla" required>
                     </div>
+
                     <div class="mb-4">
-                        <label class="form-label text-secondary small">Monto</label>
-                        <input type="number" class="form-control form-control-lg" id="monto" required>
+                        <label class="form-label small fw-bold">Costo Total</label>
+                        <input type="number" class="form-control border-0 bg-light" id="monto" value="0">
                     </div>
-                    <button type="submit" id="btnGuardar" class="btn btn-butterfly w-100">
-                        GUARDAR EN LA NUBE
+
+                    <button type="submit" id="btnGuardar" class="btn btn-butterfly w-100 shadow-sm">
+                        CONFIRMAR REGISTRO
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div class="card card-main p-4 h-100">
-                <h5 class="mb-4"><i class="bi bi-list-check"></i> Últimos Registros</h5>
+            <div class="card card-main p-4 shadow-sm h-100">
+                <h5 class="mb-4"><i class="bi bi-card-list"></i> Bitácora de Campo</h5>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
                                 <th>Fecha</th>
                                 <th>Lote</th>
-                                <th>Categoría</th>
+                                <th>Detalle</th>
                                 <th class="text-end">Monto</th>
                             </tr>
                         </thead>
@@ -139,7 +126,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, query, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, query, onSnapshot, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
@@ -153,68 +140,90 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Inicializar Gráfico
-  const ctx = document.getElementById('graficoGastos').getContext('2d');
-  let chart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Combustible', 'Fertilizante', 'Mano de Obra', 'Otros'],
-        datasets: [{
-            data: [0, 0, 0, 0],
-            backgroundColor: ['#a8dadc', '#b5ead7', '#ffdee9', '#deecff'],
-            borderWidth: 2
-        }]
-    },
-    options: { maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
-  });
+  window.cambiarFormulario = function() {
+    const tipo = document.getElementById('tipoRegistro').value;
+    document.getElementById('camposSiembra').style.display = tipo === 'siembra' ? 'block' : 'none';
+  }
 
-  // Guardado
   const form = document.getElementById('agroForm');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btnGuardar');
     btn.disabled = true;
+    
+    const tipo = document.getElementById('tipoRegistro').value;
+    const lote = document.getElementById('loteSelect').value;
+    const detalle = document.getElementById('detalle').value;
+    const monto = Number(document.getElementById('monto').value);
+
     try {
-      await addDoc(collection(db, "registros_campo"), {
-        lote: document.getElementById('loteSelect').value,
-        categoria: document.getElementById('gastoTipo').value,
-        monto: Number(document.getElementById('monto').value),
-        fecha: new Date().toISOString()
-      });
-      form.reset();
+        await addDoc(collection(db, "historial_agro"), {
+            lote, tipo, detalle, monto,
+            fechaRegistro: new Date().toISOString()
+        });
+
+        if(tipo === 'siembra') {
+            await setDoc(doc(db, "estado_lotes", lote), {
+                cultivo: detalle,
+                fechaSiembra: document.getElementById('fechaSiembra').value,
+                fechaCosecha: document.getElementById('fechaCosecha').value
+            });
+        }
+        
+        alert("✅ Datos guardados en la nube");
+        form.reset();
+        cambiarFormulario();
     } catch (e) { alert("Error"); }
     btn.disabled = false;
   });
 
-  // Escucha de datos
-  const q = query(collection(db, "registros_campo"), orderBy("fecha", "desc"));
-  onSnapshot(q, (snapshot) => {
-    const tabla = document.getElementById('tablaCuerpo');
-    tabla.innerHTML = '';
-    let totales = { 'Combustible': 0, 'Fertilizante': 0, 'Mano de Obra': 0, 'Otros': 0, 'General': 0 };
-
+  // ESCUCHA LOTES CON ALERTA DE COSECHA
+  onSnapshot(collection(db, "estado_lotes"), (snapshot) => {
+    const contenedor = document.getElementById('contenedorLotes');
+    contenedor.innerHTML = '';
     snapshot.forEach((doc) => {
       const d = doc.data();
-      totales.General += d.monto;
-      if (totales.hasOwnProperty(d.categoria)) totales[d.categoria] += d.monto;
+      const hoy = new Date();
+      const fCosecha = new Date(d.fechaCosecha);
+      const diffTime = fCosecha - hoy;
+      const diasParaCosecha = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      // Alerta si faltan menos de 15 días
+      const claseUrgente = diasParaCosecha <= 15 ? 'cosecha-urgente' : '';
 
+      contenedor.innerHTML += `
+        <div class="col-md-4">
+            <div class="p-3 card lote-card ${claseUrgente} h-100">
+                <h6 class="fw-bold mb-1">${doc.id}</h6>
+                <div class="small">
+                    <div><strong>Cultivo:</strong> ${d.cultivo}</div>
+                    <div><strong>Siembra:</strong> ${new Date(d.fechaSiembra).toLocaleDateString()}</div>
+                    <div class="mt-2 text-danger fw-bold">
+                        <i class="bi bi-alarm"></i> Cosecha en: ${diasParaCosecha} días
+                    </div>
+                </div>
+            </div>
+        </div>
+      `;
+    });
+  });
+
+  // ESCUCHA HISTORIAL
+  const qH = query(collection(db, "historial_agro"), orderBy("fechaRegistro", "desc"));
+  onSnapshot(qH, (snapshot) => {
+    const tabla = document.getElementById('tablaCuerpo');
+    tabla.innerHTML = '';
+    snapshot.forEach((doc) => {
+      const d = doc.data();
       tabla.innerHTML += `
         <tr>
-            <td><small>${new Date(d.fecha).toLocaleDateString()}</small></td>
+            <td><small>${new Date(d.fechaRegistro).toLocaleDateString()}</small></td>
             <td><strong>${d.lote}</strong></td>
-            <td><span class="badge bg-light text-dark">${d.categoria}</span></td>
+            <td>${d.detalle}</td>
             <td class="text-end">${d.monto.toLocaleString()}</td>
         </tr>
       `;
     });
-
-    // Actualizar Dash y Gráfico
-    document.getElementById('totalGeneral').innerText = totales.General.toLocaleString();
-    document.getElementById('totalInsumos').innerText = totales.Fertilizante.toLocaleString();
-    document.getElementById('totalLabor').innerText = totales['Mano de Obra'].toLocaleString();
-    
-    chart.data.datasets[0].data = [totales.Combustible, totales.Fertilizante, totales['Mano de Obra'], totales.Otros];
-    chart.update();
   });
 </script>
 </body>

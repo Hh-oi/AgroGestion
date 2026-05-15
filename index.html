@@ -7,18 +7,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         :root { --dark-green: #1b4332; --mid-green: #2d6a4f; --accent: #74c69d; --gold: #d4af37; --bg: #f0f2f5; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; margin: 0; }
-        .sidebar { width: 260px; background: var(--dark-green); min-height: 100vh; position: fixed; color: white; padding: 25px; z-index: 100; }
+        .sidebar { width: 260px; background: var(--dark-green); min-height: 100vh; position: fixed; color: white; padding: 25px; }
         .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
         .card-agro { border: none; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.03); background: white; margin-bottom: 25px; }
         .btn-success { background: var(--mid-green); border: none; border-radius: 12px; padding: 12px 25px; font-weight: bold; }
-        .input-agro { border: none; background: #f8f9fa; border-radius: 12px; padding: 12px; }
         .modal-content { border: none; border-radius: 25px; }
-        /* Estilo Historial Boutique */
-        .table-historial { border-collapse: separate; border-spacing: 0 10px; }
-        .table-historial tr { background: white; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* Tabla estilo Boutique */
+        .table-historial tr { background: #f8f9fa; margin-bottom: 10px; display: table-row; }
+        .table-historial td { padding: 15px; border-bottom: 5px solid white; }
     </style>
 </head>
 <body>
@@ -28,30 +30,12 @@
         <i class="bi bi-alpha" style="font-size: 3.5rem; color: var(--gold);"></i>
         <h4 class="fw-bold">AGROGESTION</h4>
     </div>
-    <nav class="nav flex-column gap-2">
-        <a class="nav-link text-white" href="#"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-    </nav>
 </div>
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-5">
-        <h2 class="fw-bold">Producción y Gastos</h2>
+        <h2 class="fw-bold m-0">Dashboard de Producción</h2>
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLote">+ Nuevo Lote</button>
-    </div>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-6">
-            <div class="card card-agro p-4 border-start border-success border-5">
-                <p class="text-muted small fw-bold mb-1">MECANIZADO TOTAL</p>
-                <h2 class="fw-bold text-success" id="resumenMecanizadas">0 Ha</h2>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card card-agro p-4 border-start border-danger border-5">
-                <p class="text-muted small fw-bold mb-1">INVERSIÓN TOTAL</p>
-                <h2 class="fw-bold text-danger" id="resumenGastos">$ 0</h2>
-            </div>
-        </div>
     </div>
 
     <div id="listaLotesDetallada"></div>
@@ -62,162 +46,93 @@
         <div class="modal-content p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="fw-bold m-0" id="historialTitulo">Extracto de Gastos</h5>
-                <button class="btn btn-outline-success btn-sm rounded-pill" onclick="descargarExcel()">
-                    <i class="bi bi-download me-2"></i>Descargar Excel
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="descargarPDF()">
+                        <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+                    </button>
+                    <button class="btn btn-outline-success btn-sm rounded-pill" onclick="descargarExcel()">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Excel
+                    </button>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-borderless table-historial">
-                    <thead class="text-muted small uppercase">
-                        <tr><th>FECHA</th><th>CONCEPTO</th><th class="text-end">MONTO</th><th>ACCION</th></tr>
-                    </thead>
-                    <tbody id="tablaCuerpoHistorial">
-                        </tbody>
+                    <thead><tr class="text-muted small"><th>FECHA</th><th>CONCEPTO</th><th class="text-end">MONTO</th></tr></thead>
+                    <tbody id="tablaCuerpoHistorial"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalGasto" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4">
-            <h5 class="fw-bold mb-4">Cargar Gasto Diario</h5>
-            <form id="formGasto">
-                <input type="hidden" id="gastoLoteId">
-                <input type="number" id="montoGasto" class="form-control input-agro mb-3" placeholder="Monto $" required>
-                <input type="text" id="descGasto" class="form-control input-agro mb-3" placeholder="Descripción" required>
-                <input type="date" id="fechaGasto" class="form-control input-agro mb-4" required>
-                <button type="submit" class="btn btn-success w-100 py-3">GUARDAR GASTO</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalLote" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4">
-            <h5 class="fw-bold mb-4">Nuevo Lote</h5>
-            <form id="formLote">
-                <input type="text" id="nombreLote" class="form-control input-agro mb-3" placeholder="Nombre" required>
-                <input type="number" id="haTotales" class="form-control input-agro mb-3" placeholder="Ha Totales" required>
-                <input type="number" id="haMecanizadas" class="form-control input-agro mb-4" placeholder="Ha Mecanizadas" required>
-                <button type="submit" class="btn btn-success w-100 py-3">CREAR</button>
-            </form>
-        </div>
-    </div>
-</div>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
-        authDomain: "agrogestion-163d2.firebaseapp.com",
-        projectId: "agrogestion-163d2",
-        storageBucket: "agrogestion-163d2.firebasestorage.app",
-        messagingSenderId: "83410520563",
-        appId: "1:83410520563:web:0de6a6b74d8adbc1206a86"
-    };
-
+    const firebaseConfig = { /* Tu config de Firebase */ };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let datosParaExcel = [];
+    
+    let datosActuales = [];
+    let nombreLoteActual = "";
 
-    // CARGAR GASTO
-    document.getElementById('formGasto').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('gastoLoteId').value;
-        const monto = Number(document.getElementById('montoGasto').value);
-        const desc = document.getElementById('descGasto').value;
-        const fecha = document.getElementById('fechaGasto').value;
-
-        await addDoc(collection(db, "gastos_detalle"), { loteId: id, monto, desc, fecha });
-        await updateDoc(doc(db, "lotes", id), { gastos: increment(monto) });
-
-        bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
-        document.getElementById('formGasto').reset();
-    });
-
-    // VER HISTORIAL (Estilo Boutique)
+    // VER HISTORIAL
     window.verHistorialLote = async (id, nombre) => {
-        document.getElementById('historialTitulo').innerText = "Extracto: " + nombre;
+        nombreLoteActual = nombre;
         const q = query(collection(db, "gastos_detalle"), where("loteId", "==", id));
         const querySnapshot = await getDocs(q);
         const cuerpo = document.getElementById('tablaCuerpoHistorial');
         cuerpo.innerHTML = '';
-        datosParaExcel = [];
+        datosActuales = [];
 
         querySnapshot.forEach((gDoc) => {
             const g = gDoc.data();
-            datosParaExcel.push({ Fecha: g.fecha, Concepto: g.desc, Monto: g.monto });
+            datosActuales.push([g.fecha, g.desc, `$ ${g.monto.toLocaleString()}`]);
             cuerpo.innerHTML += `
                 <tr>
-                    <td class="text-muted small">${g.fecha}</td>
+                    <td>${g.fecha}</td>
                     <td class="fw-bold">${g.desc}</td>
-                    <td class="text-end fw-bold text-danger">- $ ${g.monto.toLocaleString()}</td>
-                    <td><button class="btn btn-sm text-danger border-0" onclick="borrarGasto('${gDoc.id}', '${id}', ${g.monto})"><i class="bi bi-trash"></i></button></td>
-                </tr>
-            `;
+                    <td class="text-end text-danger fw-bold">- $ ${g.monto.toLocaleString()}</td>
+                </tr>`;
         });
         new bootstrap.Modal(document.getElementById('modalHistorial')).show();
     };
 
-    // DESCARGAR EXCEL
+    // EXPORTAR A EXCEL
     window.descargarExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(datosParaExcel);
+        const ws = XLSX.utils.aoa_to_sheet([["Fecha", "Concepto", "Monto"], ...datosActuales]);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Gastos");
-        XLSX.utils.writeFile(wb, "Extracto_AgroGestion.xlsx");
+        XLSX.utils.writeFile(wb, `Extracto_${nombreLoteActual}.xlsx`);
     };
 
-    // DASHBOARD EN TIEMPO REAL
-    onSnapshot(collection(db, "lotes"), (snapshot) => {
-        const contenedor = document.getElementById('listaLotesDetallada');
-        let totalMec = 0, totalInv = 0;
-        contenedor.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-            const l = docSnap.data();
-            const inv = l.gastos || 0;
-            totalMec += Number(l.haMecanizadas);
-            totalInv += inv;
+    // EXPORTAR A PDF (Diseño AgroGestion)
+    window.descargarPDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Encabezado Verde Agro
+        doc.setFillColor(27, 67, 50);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text("AGROGESTION PRO", 15, 25);
+        doc.setFontSize(10);
+        doc.text(`REPORTE DE GASTOS: ${nombreLoteActual.toUpperCase()}`, 15, 33);
 
-            contenedor.innerHTML += `
-                <div class="card card-agro p-4">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h4 class="fw-bold m-0">${l.nombre}</h4>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-dark btn-sm" onclick="verHistorialLote('${docSnap.id}', '${l.nombre}')">Ver Historial</button>
-                            <button class="btn btn-success btn-sm" onclick="abrirGasto('${docSnap.id}')">+ Gasto</button>
-                        </div>
-                    </div>
-                    <div class="row text-center bg-light rounded-4 p-3">
-                        <div class="col-6 border-end"><p class="small text-muted mb-0">INVERSIÓN</p><h5 class="fw-bold text-danger">$ ${inv.toLocaleString()}</h5></div>
-                        <div class="col-6"><p class="small text-muted mb-0">HA</p><h5 class="fw-bold">${l.haMecanizadas} Ha</h5></div>
-                    </div>
-                </div>`;
+        // Tabla de datos
+        doc.autoTable({
+            startY: 50,
+            head: [['FECHA', 'CONCEPTO', 'MONTO']],
+            body: datosActuales,
+            headStyles: { fillColor: [45, 106, 79] },
+            alternateRowStyles: { fillColor: [240, 242, 245] }
         });
-        document.getElementById('resumenMecanizadas').innerText = totalMec + " Ha";
-        document.getElementById('resumenGastos').innerText = "$ " + totalInv.toLocaleString();
-    });
 
-    window.abrirGasto = (id) => {
-        document.getElementById('gastoLoteId').value = id;
-        document.getElementById('fechaGasto').valueAsDate = new Date();
-        new bootstrap.Modal(document.getElementById('modalGasto')).show();
+        doc.save(`Extracto_${nombreLoteActual}.pdf`);
     };
 
-    document.getElementById('formLote').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await addDoc(collection(db, "lotes"), {
-            nombre: document.getElementById('nombreLote').value,
-            haTotales: Number(document.getElementById('haTotales').value),
-            haMecanizadas: Number(document.getElementById('haMecanizadas').value),
-            gastos: 0
-        });
-        bootstrap.Modal.getInstance(document.getElementById('modalLote')).hide();
-    });
+    // [Resto de lógica de Snapshot para mostrar los lotes]
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

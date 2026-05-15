@@ -3,214 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGROGESTION Elite</title>
+    <title>AGROGESTION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
     <style>
-        :root {
-            --primary: #1b4332; /* Verde profundo del logo */
-            --accent: #74c69d;
-            --bg: #f8f9fa;
-            --white: #ffffff;
-            --text: #2d4059;
-        }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        :root { --dark-green: #1b4332; --mid-green: #2d6a4f; --accent: #b5ead7; --bg: #f0f2f5; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; color: #333; margin: 0; display: flex; }
         
-        /* Header Premium */
-        .header-elite { 
-            background-color: var(--primary); 
-            color: var(--white); 
-            padding: 30px; 
-            border-radius: 0 0 30px 30px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+        /* Menu Lateral Estilo Harvest */
+        .sidebar { width: 260px; background: var(--dark-green); min-height: 100vh; position: fixed; color: white; padding: 25px; }
+        .main { margin-left: 260px; width: 100%; padding: 40px; }
+        
+        .logo-box { text-align: center; margin-bottom: 40px; }
+        .logo-icon { font-size: 3rem; color: var(--accent); line-height: 1; }
+        .logo-text { font-weight: 700; letter-spacing: 2px; font-size: 1.2rem; margin-top: 10px; }
 
         /* Tarjetas de Lotes */
         .lote-card { 
-            border: none; 
-            border-radius: 20px; 
-            background: var(--white); 
-            transition: 0.3s; 
-            cursor: pointer;
-            border-left: 6px solid var(--accent);
+            background: white; border: none; border-radius: 20px; 
+            padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+            transition: 0.3s; border-left: 8px solid var(--mid-green);
         }
-        .lote-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .lote-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
 
-        /* Estilos de botones y badges */
-        .btn-elite { background-color: var(--primary); color: white; border-radius: 12px; font-weight: 600; padding: 10px 20px; }
-        .btn-elite:hover { background-color: #2d6a4f; color: white; }
-        .badge-hectarea { background-color: #e9f5ee; color: #1b4332; font-weight: bold; }
-
-        /* Secciones ocultas para navegación */
-        .view-section { display: none; }
-        .view-section.active { display: block; }
+        .btn-add { background: var(--dark-green); color: white; border-radius: 12px; padding: 10px 20px; font-weight: 600; border: none; }
+        .btn-add:hover { background: var(--mid-green); color: white; }
+        
+        .status-pill { background: #e9f5ee; color: var(--dark-green); padding: 5px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; }
+        .action-btn { cursor: pointer; padding: 5px; border-radius: 5px; transition: 0.2s; }
+        .action-btn:hover { background: #f0f0f0; }
     </style>
 </head>
 <body>
 
-<div class="header-elite text-center mb-4">
-    <h1 class="fw-bold" style="letter-spacing: 3px;">AGROGESTION</h1>
-    <p class="mb-0 opacity-75">Panel de Control de Producción</p>
+<div class="sidebar">
+    <div class="logo-box">
+        <div class="logo-icon"><i class="bi bi-alpha"></i></div>
+        <div class="logo-text">AGROGESTION</div>
+    </div>
+    <div class="mt-4">
+        <p class="small opacity-50 text-uppercase fw-bold">Menú</p>
+        <div class="nav flex-column">
+            <a href="#" class="nav-link text-white px-0"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard</a>
+            <a href="#" class="nav-link text-white opacity-50 px-0"><i class="bi bi-calendar-check me-2"></i> Reportes</a>
+        </div>
+    </div>
 </div>
 
-<div class="container pb-5">
-    
-    <section id="dashboard" class="view-section active">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold">Mis Lotes</h4>
-            <button class="btn btn-elite" onclick="abrirModalLote()">+ Nuevo Lote</button>
+<div class="main">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold m-0">Producción por Lote</h2>
+            <p class="text-muted">Control de hectáreas y ciclos de siembra</p>
         </div>
-        
-        <div class="row g-4" id="listaLotes">
-            </div>
-    </section>
+        <button class="btn btn-add" onclick="modalLote.show()">+ Nuevo Lote</button>
+    </div>
 
-    <section id="detalleLote" class="view-section">
-        <button class="btn btn-sm btn-outline-secondary mb-3" onclick="irADashboard()"><i class="bi bi-arrow-left"></i> Volver</button>
-        
-        <div class="card lote-card p-4 mb-4">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <h2 class="fw-bold" id="detNombreLote">Nombre Lote</h2>
-                    <span class="badge badge-hectarea" id="detHectareas">0 ha totales</span>
-                </div>
-                <div class="text-end">
-                    <button class="btn btn-sm btn-light text-primary" onclick="editarLote()"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-sm btn-light text-danger" onclick="borrarLote()"><i class="bi bi-trash"></i></button>
-                </div>
-            </div>
+    <div class="row g-4" id="contenedorLotes">
         </div>
+</div>
 
-        <div class="row g-4">
-            <div class="col-lg-5">
-                <div class="card card-premium p-4 border-0 rounded-4 shadow-sm bg-white mb-4">
-                    <h5 class="fw-bold"><i class="bi bi-moisture text-success"></i> Ciclo Actual</h5>
-                    <hr>
-                    <div id="infoCiclo">
-                        <p class="mb-1 text-muted small">Cultivo Sembrado:</p>
-                        <h6 class="fw-bold" id="detCultivo">Ninguno</h6>
-                        <p class="mb-1 text-muted small mt-3">Progreso de Cosecha:</p>
-                        <div class="progress mb-2" style="height: 10px;">
-                            <div id="progresoCosecha" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+<div class="modal fade" id="modalLote" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 25px;">
+            <div class="modal-body p-4">
+                <h5 class="fw-bold mb-4">Configurar Lote</h5>
+                <form id="formLote">
+                    <input type="hidden" id="editId">
+                    <div class="mb-3">
+                        <label class="small fw-bold">Nombre del Lote</label>
+                        <input type="text" id="nombreLote" class="form-control border-0 bg-light" placeholder="Ej: Rolon Kue" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="small fw-bold">Hectáreas Totales</label>
+                            <input type="number" id="haTotales" class="form-control border-0 bg-light" required>
                         </div>
-                        <p class="small text-danger fw-bold" id="diasFaltantes">Días para cosecha: --</p>
-                        <button class="btn btn-sm btn-outline-success w-100" onclick="nuevoCiclo()">Nueva Siembra / Editar Ciclo</button>
+                        <div class="col-6 mb-3">
+                            <label class="small fw-bold">Hectáreas Sembradas</label>
+                            <input type="number" id="haSembradas" class="form-control border-0 bg-light" required>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-lg-7">
-                <div class="card card-premium p-4 border-0 rounded-4 shadow-sm bg-white">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="fw-bold"><i class="bi bi-cash-coin text-primary"></i> Finanzas del Lote</h5>
-                        <button class="btn btn-sm btn-primary" onclick="nuevoRegistroFinanciero()">+ Agregar</button>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Cultivo Actual</label>
+                        <select id="cultivo" class="form-select border-0 bg-light">
+                            <option value="Soja">Soja (120 días)</option>
+                            <option value="Maiz">Maíz (150 días)</option>
+                            <option value="Yerba Mate">Yerba Mate</option>
+                        </select>
                     </div>
-                    <hr>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr class="small text-muted">
-                                    <th>Fecha</th>
-                                    <th>Concepto</th>
-                                    <th>Monto</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaFinanzas" class="small">
-                                </tbody>
-                        </table>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Fecha de Siembra</label>
+                        <input type="date" id="fechaS" class="form-control border-0 bg-light">
                     </div>
-                    <div class="d-flex justify-content-between mt-3 p-2 bg-light rounded">
-                        <span class="fw-bold">BALANCE NETO:</span>
-                        <span class="fw-bold text-success" id="balanceNeto">$ 0</span>
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-add w-100 mt-3">GUARDAR LOTE</button>
+                </form>
             </div>
         </div>
-    </section>
-
+    </div>
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, query, onSnapshot, orderBy, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
-    authDomain: "agrogestion-163d2.firebaseapp.com",
-    projectId: "agrogestion-163d2",
-    storageBucket: "agrogestion-163d2.firebasestorage.app",
-    messagingSenderId: "83410520563",
-    appId: "1:83410520563:web:0de6a6b74d8adbc1206a86"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
+        authDomain: "agrogestion-163d2.firebaseapp.com",
+        projectId: "agrogestion-163d2",
+        storageBucket: "agrogestion-163d2.firebasestorage.app",
+        messagingSenderId: "83410520563",
+        appId: "1:83410520563:web:0de6a6b74d8adbc1206a86"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const modalLote = new bootstrap.Modal(document.getElementById('modalLote'));
+    window.modalLote = modalLote;
 
-  // --- NAVEGACIÓN ---
-  window.irADashboard = () => {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-    document.getElementById('dashboard').classList.add('active');
-  };
+    // --- CARGAR DATOS EN TIEMPO REAL ---
+    onSnapshot(query(collection(db, "lotes"), orderBy("nombre")), (snapshot) => {
+        const contenedor = document.getElementById('contenedorLotes');
+        contenedor.innerHTML = '';
+        snapshot.forEach((doc) => {
+            const l = doc.data();
+            const id = doc.id;
+            
+            // Cálculo de cosecha rápida
+            const diasCosecha = l.cultivo === "Soja" ? 120 : (l.cultivo === "Maiz" ? 150 : 365);
+            let fechaCosecha = "Sin fecha";
+            if(l.fechaS) {
+                let f = new Date(l.fechaS);
+                f.setDate(f.getDate() + diasCosecha);
+                fechaCosecha = f.toLocaleDateString();
+            }
 
-  window.verLote = (id) => {
-    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-    document.getElementById('detalleLote').classList.add('active');
-    // Aquí cargarías la info específica de ese ID desde Firebase
-  };
-
-  // --- LÓGICA DE FIREBASE (Escucha en tiempo real de lotes) ---
-  onSnapshot(collection(db, "lotes"), (snapshot) => {
-    const contenedor = document.getElementById('listaLotes');
-    contenedor.innerHTML = '';
-    snapshot.forEach((doc) => {
-      const d = doc.data();
-      contenedor.innerHTML += `
-        <div class="col-md-4" onclick="verLote('${doc.id}')">
-            <div class="card lote-card p-4">
-                <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="fw-bold mb-1">${d.nombre}</h5>
-                    <i class="bi bi-chevron-right text-muted"></i>
+            contenedor.innerHTML += `
+                <div class="col-md-6 col-xl-4">
+                    <div class="lote-card">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="status-pill">${l.haTotales} HA TOTALES</span>
+                            <div>
+                                <i class="bi bi-pencil-square text-primary me-2 action-btn" onclick="prepararEdicion('${id}', '${l.nombre}', ${l.haTotales}, ${l.haSembradas}, '${l.cultivo}', '${l.fechaS}')"></i>
+                                <i class="bi bi-trash text-danger action-btn" onclick="eliminarLote('${id}')"></i>
+                            </div>
+                        </div>
+                        <h4 class="fw-bold mb-1">${l.nombre}</h4>
+                        <p class="text-muted small">Sembrado: <strong>${l.haSembradas} ha</strong> de <strong>${l.cultivo}</strong></p>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="small">
+                                <div class="text-muted">Est. Cosecha:</div>
+                                <div class="fw-bold text-success">${fechaCosecha}</div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-sm btn-light fw-bold" style="border-radius:10px">Ver Historial</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-muted small mb-3">${d.hectareas} Hectáreas totales</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-success">Activo</span>
-                    <span class="small text-muted">H. Plantadas: ${d.hectareasPlantadas || 0}</span>
-                </div>
-            </div>
-        </div>
-      `;
+            `;
+        });
     });
-  });
 
-  // --- FUNCIONES PARA AGILIZAR (EDITAR Y BORRAR) ---
-  window.borrarLote = async (id) => {
-      if(confirm("¿Estás seguro de borrar este lote? Se perderá todo el historial.")) {
-          await deleteDoc(doc(db, "lotes", id));
-          irADashboard();
-      }
-  };
+    // --- GUARDAR / ACTUALIZAR ---
+    document.getElementById('formLote').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editId').value;
+        const datos = {
+            nombre: document.getElementById('nombreLote').value,
+            haTotales: Number(document.getElementById('haTotales').value),
+            haSembradas: Number(document.getElementById('haSembradas').value),
+            cultivo: document.getElementById('cultivo').value,
+            fechaS: document.getElementById('fechaS').value
+        };
 
-  // Base de datos de días de cosecha (para agilizar)
-  const ciclosCultivo = {
-      "soja": 120,
-      "maiz": 150,
-      "yerba": 365,
-      "pasto": 60
-  };
+        if(id) {
+            await updateDoc(doc(db, "lotes", id), datos);
+        } else {
+            await addDoc(collection(db, "lotes"), datos);
+        }
+        
+        modalLote.hide();
+        document.getElementById('formLote').reset();
+        document.getElementById('editId').value = '';
+    });
 
-  // Cálculo automático de fecha de cosecha
-  window.calcularCosecha = (cultivo, fechaSiembra) => {
-      const dias = ciclosCultivo[cultivo.toLowerCase()] || 100;
-      const fecha = new Date(fechaSiembra);
-      fecha.setDate(fecha.getDate() + dias);
-      return fecha.toLocaleDateString();
-  };
+    // --- EDITAR ---
+    window.prepararEdicion = (id, nombre, haT, haS, cult, fecha) => {
+        document.getElementById('editId').value = id;
+        document.getElementById('nombreLote').value = nombre;
+        document.getElementById('haTotales').value = haT;
+        document.getElementById('haSembradas').value = haS;
+        document.getElementById('cultivo').value = cult;
+        document.getElementById('fechaS').value = fecha;
+        modalLote.show();
+    };
 
+    // --- ELIMINAR ---
+    window.eliminarLote = async (id) => {
+        if(confirm("¿Borrar este lote y todo su historial?")) {
+            await deleteDoc(doc(db, "lotes", id));
+        }
+    };
 </script>
 
-<div class="modal fade" id="modalLote" tabindex="-1">
-    </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

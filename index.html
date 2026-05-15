@@ -2,92 +2,68 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGROGESTION - Control Financiero</title>
+    <title>AGROGESTION Elite - Control de Producción</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        :root { --dark-green: #1b4332; --accent: #74c69d; --bg: #f4f7f6; }
+        :root { --dark-green: #1b4332; --light-green: #74c69d; --bg: #f8f9fa; }
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; }
-        .sidebar { width: 260px; background: var(--dark-green); min-height: 100vh; position: fixed; color: white; padding: 20px; }
-        .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
-        .card-agro { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); background: white; transition: 0.3s; }
-        .mecanizada-badge { background: #e9f5ee; color: #1b4332; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 8px; }
+        .sidebar { width: 260px; background: var(--dark-green); min-height: 100vh; position: fixed; color: white; padding: 25px; }
+        .main { margin-left: 260px; padding: 40px; }
+        .logo-a { font-size: 3.5rem; color: var(--light-green); line-height: 1; }
+        .card-lote { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: white; border-left: 8px solid var(--light-green); }
+        .btn-edit { color: #0d6efd; cursor: pointer; }
+        .btn-delete { color: #dc3545; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h3 class="fw-bold mb-5">AGROGESTION</h3>
+    <div class="text-center mb-4">
+        <div class="logo-a"><i class="bi bi-alpha"></i></div>
+        <h4 class="fw-bold mt-2">AGROGESTION</h4>
+    </div>
+    <hr class="opacity-25">
     <nav class="nav flex-column">
-        <a class="nav-link text-white active" href="#"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-        <a class="nav-link text-white-50" href="#"><i class="bi bi-file-earmark-spreadsheet me-2"></i> Extractos</a>
-        <a class="nav-link text-white-50" href="#"><i class="bi bi-calculator me-2"></i> Estudio de Rendimiento</a>
+        <a class="nav-link text-white py-3" href="#"><i class="bi bi-pie-chart-fill me-2"></i> Dashboard</a>
+        <a class="nav-link text-white-50 py-3" href="#"><i class="bi bi-download me-2"></i> Descargar Extracto</a>
     </nav>
 </div>
 
-<div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Control de Lotes y Plantaciones</h2>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLote">+ Configurar Nuevo Lote</button>
+<div class="main">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-0">Control de Hectáreas y Gastos</h2>
+            <p class="text-muted small">Análisis de rendimiento y punto de equilibrio</p>
+        </div>
+        <button class="btn btn-dark px-4 py-2" style="border-radius:12px" onclick="nuevoLote()">+ Configurar Lote</button>
     </div>
 
     <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card card-agro p-3 text-center">
-                <p class="text-muted small mb-1">Total Hectáreas</p>
-                <h3 class="fw-bold" id="totalHa">0</h3>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 rounded-4 shadow-sm">
+                <p class="text-muted small fw-bold mb-1">TOTAL MECANIZADO</p>
+                <h2 class="fw-bold text-success" id="totalMec">0 Ha</h2>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card card-agro p-3 text-center border-start border-success border-4">
-                <p class="text-muted small mb-1">Hectáreas Mecanizadas</p>
-                <h3 class="fw-bold text-success" id="haMecanizadas">0</h3>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card card-agro p-3 text-center">
-                <p class="text-muted small mb-1">Gasto Total del Día</p>
-                <h3 class="fw-bold text-danger" id="gastoDia">$ 0</h3>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 rounded-4 shadow-sm">
+                <p class="text-muted small fw-bold mb-1">INVERSIÓN TOTAL HOY</p>
+                <h2 class="fw-bold text-danger" id="totalGasto">$ 0</h2>
             </div>
         </div>
     </div>
 
-    <div class="row g-4" id="listaLotesDetallada">
-        <div class="col-md-12">
-            <div class="card card-agro p-4">
-                <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
-                    <div>
-                        <h4 class="fw-bold mb-0">Rolon Kue <span class="mecanizada-badge ms-2">40 Ha Totales</span></h4>
-                        <p class="text-muted small">Estado: 30 Ha Mecanizadas / 10 Ha Natural</p>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="abrirCargaGasto('IDLOTE')">+ Cargar Gasto Diario</button>
-                </div>
-                
-                <div class="row text-center">
-                    <div class="col-md-4 border-end">
-                        <p class="small text-muted mb-0">Plantación Maíz (10 Ha)</p>
-                        <h6 class="fw-bold text-primary">Inversión: $ 1.250.000</h6>
-                        <span class="badge bg-light text-dark">Meta: 6.000 kg/Ha</span>
-                    </div>
-                    <div class="col-md-4 border-end">
-                        <p class="small text-muted mb-0">Plantación Soja (20 Ha)</p>
-                        <h6 class="fw-bold text-primary">Inversión: $ 3.400.000</h6>
-                        <span class="badge bg-light text-dark">Meta: 3.200 kg/Ha</span>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="small text-muted mb-0">Disponible (10 Ha)</p>
-                        <h6 class="fw-bold text-secondary">Sin cultivar</h6>
-                    </div>
-                </div>
-            </div>
+    <div class="row g-4" id="listaLotes">
         </div>
-    </div>
 </div>
 
 <script type="module">
-    // Aquí iría la lógica de Firebase para separar gastos por "Lote > Cultivo"
-    // y la función para calcular el rendimiento sugerido.
+    // Aquí conectamos con tu FirebaseConfig del archivo image_edacda.png
+    // Implementaremos la lógica de: 
+    // 1. Clasificación de hectáreas (Mecanizada vs Natural)
+    // 2. Historial de egresos por día con descripción
+    // 3. Función de Editar/Borrar en cada línea
 </script>
 
 </body>

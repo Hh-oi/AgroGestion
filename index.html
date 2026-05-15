@@ -7,109 +7,115 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        :root { --dark-green: #1b4332; --mid-green: #2d6a4f; --accent: #74c69d; --bg: #f0f2f5; }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; }
+        :root { --dark-green: #1b4332; --mid-green: #2d6a4f; --accent: #74c69d; --gold: #d4af37; --bg: #f0f2f5; }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; display: flex; margin: 0; }
         
         .sidebar { width: 260px; background: var(--dark-green); min-height: 100vh; position: fixed; color: white; padding: 25px; z-index: 100; }
         .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
         
         .logo-box { text-align: center; margin-bottom: 40px; }
-        .logo-icon { font-size: 3rem; color: var(--accent); line-height: 1; }
+        .logo-a { font-size: 3.5rem; color: var(--gold); line-height: 1; margin-bottom: 5px; }
         
-        .card-agro { border: none; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.03); background: white; margin-bottom: 25px; transition: 0.3s; }
-        .card-agro:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-        
+        .card-agro { border: none; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.03); background: white; margin-bottom: 25px; }
         .mecanizada-badge { background: #e9f5ee; color: var(--dark-green); padding: 5px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; }
+        
+        .btn-success { background: var(--mid-green); border: none; border-radius: 12px; padding: 12px 25px; font-weight: bold; }
         .input-agro { border: none; background: #f8f9fa; border-radius: 12px; padding: 12px; }
-        .btn-success { background: var(--mid-green); border: none; border-radius: 12px; padding: 10px 20px; }
+        
+        .modal-content { border: none; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .bg-resumen { background: linear-gradient(135deg, #ffffff 0%, #f8fcf9 100%); border-left: 5px solid var(--mid-green); }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
     <div class="logo-box">
-        <div class="logo-icon"><i class="bi bi-alpha"></i></div>
-        <div class="logo-text fw-bold">AGROGESTION</div>
+        <div class="logo-a"><i class="bi bi-alpha"></i></div>
+        <div class="fw-bold tracking-widest" style="letter-spacing: 2px;">AGROGESTION</div>
     </div>
     <nav class="nav flex-column gap-2">
-        <a class="nav-link text-white active" href="#"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-        <a class="nav-link text-white-50" href="#"><i class="bi bi-file-earmark-spreadsheet me-2"></i> Extractos</a>
+        <a class="nav-link text-white active" href="#"><i class="bi bi-grid-fill me-2"></i> Panel Control</a>
+        <a class="nav-link text-white-50" href="#"><i class="bi bi-file-earmark-bar-graph me-2"></i> Reportes</a>
     </nav>
 </div>
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h2 class="fw-bold m-0">Producción y Finanzas</h2>
-            <p class="text-muted">Control de lotes y rentabilidad por hectárea</p>
+            <h2 class="fw-bold m-0 text-dark">Gestión de Producción</h2>
+            <p class="text-muted m-0">Análisis financiero por hectárea mecanizada</p>
         </div>
-        <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#modalLote">+ Nuevo Lote</button>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLote">+ Configurar Lote</button>
     </div>
 
     <div class="row g-4 mb-5">
         <div class="col-md-6">
-            <div class="card card-agro p-4 text-center border-start border-success border-5">
-                <p class="text-muted small fw-bold mb-1">TOTAL MECANIZADO</p>
+            <div class="card card-agro p-4 bg-resumen">
+                <p class="text-muted small fw-bold mb-1">CAPACIDAD MECANIZADA</p>
                 <h2 class="fw-bold text-success" id="resumenMecanizadas">0 Ha</h2>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card card-agro p-4 text-center border-start border-danger border-5">
+            <div class="card card-agro p-4 bg-resumen" style="border-left-color: #dc3545;">
                 <p class="text-muted small fw-bold mb-1">INVERSIÓN ACUMULADA</p>
                 <h2 class="fw-bold text-danger" id="resumenGastos">$ 0</h2>
             </div>
         </div>
     </div>
 
-    <div class="row g-4" id="listaLotesDetallada">
-        </div>
+    <div id="listaLotesDetallada"></div>
 </div>
 
 <div class="modal fade" id="modalGasto" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4">
-            <div class="modal-body p-4">
-                <h5 class="fw-bold mb-4">Registrar Egreso Diario</h5>
-                <form id="formGasto">
-                    <input type="hidden" id="gastoLoteId">
-                    <div class="mb-3">
-                        <label class="small fw-bold">Monto ($)</label>
-                        <input type="number" id="montoGasto" class="form-control input-agro" placeholder="0.00" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small fw-bold">Descripción / Concepto</label>
-                        <input type="text" id="descGasto" class="form-control input-agro" placeholder="Ej: Compra de Semillas o Diesel" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="small fw-bold">Fecha</label>
-                        <input type="date" id="fechaGasto" class="form-control input-agro" required>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100 fw-bold py-3">GUARDAR EN EXTRACTO</button>
-                </form>
-            </div>
+        <div class="modal-content p-4">
+            <h5 class="fw-bold mb-4">Registrar Egreso Diario</h5>
+            <form id="formGasto">
+                <input type="hidden" id="gastoLoteId">
+                <div class="mb-3">
+                    <label class="small fw-bold text-muted">MONTO ($)</label>
+                    <input type="number" id="montoGasto" class="form-control input-agro" placeholder="0.00" required>
+                </div>
+                <div class="mb-3">
+                    <label class="small fw-bold text-muted">DESCRIPCIÓN</label>
+                    <input type="text" id="descGasto" class="form-control input-agro" placeholder="Ej: Fertilizantes, Gasoil..." required>
+                </div>
+                <div class="mb-4">
+                    <label class="small fw-bold text-muted">FECHA</label>
+                    <input type="date" id="fechaGasto" class="form-control input-agro" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-3">ACTUALIZAR BALANCES</button>
+            </form>
         </div>
     </div>
 </div>
 
 <div class="modal fade" id="modalLote" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4">
-            <div class="modal-body p-4">
-                <h5 class="fw-bold mb-4">Configurar Lote</h5>
-                <form id="formLote">
-                    <div class="mb-3">
-                        <input type="text" id="nombreLote" class="form-control input-agro" placeholder="Nombre (ej: Rolon Kue)" required>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <input type="number" id="haTotales" class="form-control input-agro" placeholder="Ha Totales" required>
-                        </div>
-                        <div class="col-6">
-                            <input type="number" id="haMecanizadas" class="form-control input-agro" placeholder="Ha Mecanizadas" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100 fw-bold py-3">CREAR LOTE</button>
-                </form>
+        <div class="modal-content p-4">
+            <h5 class="fw-bold mb-4">Nuevo Lote de Producción</h5>
+            <form id="formLote">
+                <input type="text" id="nombreLote" class="form-control input-agro mb-3" placeholder="Nombre (ej: Rolon Kue)" required>
+                <div class="row g-2 mb-4">
+                    <div class="col-6"><input type="number" id="haTotales" class="form-control input-agro" placeholder="Ha Totales" required></div>
+                    <div class="col-6"><input type="number" id="haMecanizadas" class="form-control input-agro" placeholder="Ha Mecanizadas" required></div>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-3">CREAR REGISTRO</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirmDelete" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content p-4 text-center">
+            <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+            <h5 class="fw-bold mt-2">¿Eliminar Lote?</h5>
+            <p class="text-muted small">Se perderán todos los datos y gastos asociados.</p>
+            <input type="hidden" id="idParaBorrar">
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-light w-100 rounded-3" data-bs-dismiss="modal">No</button>
+                <button class="btn btn-danger w-100 rounded-3" id="btnConfirmDelete">Borrar</button>
             </div>
         </div>
     </div>
@@ -117,7 +123,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
@@ -131,81 +137,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const modalG = new bootstrap.Modal(document.getElementById('modalGasto'));
+    const modalD = new bootstrap.Modal(document.getElementById('modalConfirmDelete'));
 
-    // CARGAR GASTO
-    window.abrirModalGasto = (id) => {
-        document.getElementById('gastoLoteId').value = id;
-        document.getElementById('fechaGasto').valueAsDate = new Date();
-        modalG.show();
-    };
-
-    document.getElementById('formGasto').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('gastoLoteId').value;
-        const monto = Number(document.getElementById('montoGasto').value);
-        const desc = document.getElementById('descGasto').value;
-        const fecha = document.getElementById('fechaGasto').value;
-
-        // 1. Guardar en historial de gastos
-        await addDoc(collection(db, "gastos_detalle"), { loteId: id, monto, desc, fecha });
-        
-        // 2. Actualizar acumulado en el lote (simulación para dashboard rápido)
-        // Aquí deberías tener una lógica para sumar, pero por ahora lo guardamos directo
-        modalG.hide();
-        document.getElementById('formGasto').reset();
-    });
-
-    // LISTAR LOTES
-    onSnapshot(collection(db, "lotes"), (snapshot) => {
-        const contenedor = document.getElementById('listaLotesDetallada');
-        let totalMec = 0;
-        let totalInv = 0;
-        contenedor.innerHTML = '';
-
-        snapshot.forEach((docSnap) => {
-            const l = docSnap.data();
-            const id = docSnap.id;
-            
-            // Corrección de valores NaN
-            const haT = Number(l.haTotales) || 0;
-            const haM = Number(l.haMecanizadas) || 0;
-            const inv = Number(l.gastos) || 0;
-
-            totalMec += haM;
-            totalInv += inv;
-
-            contenedor.innerHTML += `
-                <div class="col-12">
-                    <div class="card card-agro p-4">
-                        <div class="d-flex justify-content-between mb-3">
-                            <div>
-                                <h4 class="fw-bold mb-1">${l.nombre} <span class="mecanizada-badge ms-2">${haT} Ha Totales</span></h4>
-                                <span class="text-muted small">Mecanizado: ${haM} Ha | Natural: ${haT - haM} Ha</span>
-                            </div>
-                            <div>
-                                <button class="btn btn-sm btn-outline-danger me-2 border-0" onclick="eliminarLote('${id}')"><i class="bi bi-trash"></i></button>
-                                <button class="btn btn-success btn-sm" onclick="abrirModalGasto('${id}')">+ Gasto Diario</button>
-                            </div>
-                        </div>
-                        <div class="row g-3 text-center bg-light rounded-4 p-3">
-                            <div class="col-md-6 border-end">
-                                <p class="small text-muted mb-1 text-uppercase">Inversión Acumulada</p>
-                                <h4 class="fw-bold text-danger mb-0">$ ${inv.toLocaleString()}</h4>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="small text-muted mb-1 text-uppercase">Rendimiento Sugerido</p>
-                                <h4 class="fw-bold text-primary mb-0">${haM > 0 ? (inv / haM / 0.5).toFixed(0) : 0} Kg/Ha</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        document.getElementById('resumenMecanizadas').innerText = totalMec + " Ha";
-        document.getElementById('resumenGastos').innerText = "$ " + totalInv.toLocaleString();
-    });
-
-    // GUARDAR LOTE
+    // GESTIÓN DE LOTES
     document.getElementById('formLote').addEventListener('submit', async (e) => {
         e.preventDefault();
         await addDoc(collection(db, "lotes"), {
@@ -218,9 +152,98 @@
         document.getElementById('formLote').reset();
     });
 
-    window.eliminarLote = async (id) => { if(confirm("¿Borrar lote permanentemente?")) await deleteDoc(doc(db, "lotes", id)); };
-</script>
+    // CARGA DE GASTOS CORREGIDA (Actualiza el acumulado del lote)
+    document.getElementById('formGasto').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('gastoLoteId').value;
+        const monto = Number(document.getElementById('montoGasto').value);
 
+        // 1. Guardamos el detalle para el extracto
+        await addDoc(collection(db, "gastos_detalle"), {
+            loteId: id,
+            monto: monto,
+            desc: document.getElementById('descGasto').value,
+            fecha: document.getElementById('fechaGasto').value
+        });
+
+        // 2. CORRECCIÓN: Actualizamos el total en el lote para que se vea en el Dashboard
+        const loteRef = doc(db, "lotes", id);
+        await updateDoc(loteRef, {
+            gastos: increment(monto)
+        });
+
+        modalG.hide();
+        document.getElementById('formGasto').reset();
+    });
+
+    // ACTUALIZACIÓN EN TIEMPO REAL
+    onSnapshot(collection(db, "lotes"), (snapshot) => {
+        const contenedor = document.getElementById('listaLotesDetallada');
+        let totalMec = 0;
+        let totalInv = 0;
+        contenedor.innerHTML = '';
+
+        snapshot.forEach((docSnap) => {
+            const l = docSnap.data();
+            const id = docSnap.id;
+            const inv = Number(l.gastos) || 0;
+            const haM = Number(l.haMecanizadas) || 0;
+
+            totalMec += haM;
+            totalInv += inv;
+
+            contenedor.innerHTML += `
+                <div class="card card-agro p-4 mb-3 border-0">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="fw-bold mb-1">${l.nombre} <span class="mecanizada-badge ms-2">${l.haTotales} Ha</span></h4>
+                            <p class="text-muted small m-0">Mecanizadas: ${haM} Ha | Natural: ${l.haTotales - haM} Ha</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light text-danger btn-sm border-0" onclick="prepararBorrado('${id}')"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-success btn-sm" onclick="abrirGasto('${id}')">+ Gasto Diario</button>
+                        </div>
+                    </div>
+                    <div class="row text-center g-3">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-4">
+                                <p class="small text-muted mb-1">INVERSIÓN TOTAL</p>
+                                <h5 class="fw-bold text-danger m-0">$ ${inv.toLocaleString()}</h5>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-4">
+                                <p class="small text-muted mb-1">KG/HA NECESARIOS</p>
+                                <h5 class="fw-bold text-primary m-0">${haM > 0 ? (inv / haM / 0.5).toFixed(0) : 0} Kg</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('resumenMecanizadas').innerText = totalMec + " Ha";
+        document.getElementById('resumenGastos').innerText = "$ " + totalInv.toLocaleString();
+    });
+
+    // FUNCIONES AUXILIARES
+    window.abrirGasto = (id) => {
+        document.getElementById('gastoLoteId').value = id;
+        document.getElementById('fechaGasto').valueAsDate = new Date();
+        modalG.show();
+    };
+
+    window.prepararBorrado = (id) => {
+        document.getElementById('idParaBorrar').value = id;
+        modalD.show();
+    };
+
+    document.getElementById('btnConfirmDelete').addEventListener('click', async () => {
+        const id = document.getElementById('idParaBorrar').value;
+        await deleteDoc(doc(db, "lotes", id));
+        modalD.hide();
+    });
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroGestión Pro - Leidyd</title>
+    <title>AgroGestión Pro + Analytics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --pastel-green: #e1eedd;
             --pastel-blue: #deecff;
             --pastel-pink: #ffdee9;
-            --dark-text: #2d4059;
             --butterfly-accent: #b5ead7;
+            --dark-text: #2d4059;
         }
-        body { background-color: #f0f2f5; color: var(--dark-text); font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f7f6; color: var(--dark-text); font-family: 'Segoe UI', sans-serif; }
         
-        /* Header Estilo Pro */
         .header-app { 
             background: linear-gradient(135deg, #a8dadc, #f1faee); 
             padding: 40px 20px; 
@@ -25,27 +24,16 @@
             margin-bottom: 30px;
         }
 
-        /* Tarjetas de Resumen */
         .stat-card {
             border: none;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             background: white;
-            transition: 0.3s;
-        }
-        .stat-card:hover { transform: translateY(-5px); }
-        .icon-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
 
-        /* Formulario y Tabla */
         .card-main { border: none; border-radius: 20px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        
         .btn-butterfly { 
             background-color: var(--butterfly-accent); 
             border: none; 
@@ -54,55 +42,54 @@
             padding: 15px;
             border-radius: 12px;
         }
-        .table thead { background-color: var(--pastel-blue); }
+        
+        .chart-container { position: relative; height: 250px; width: 100%; }
     </style>
 </head>
 <body>
 
 <div class="header-app text-center">
-    <h1 class="fw-bold"><i class="bi bi-leaf"></i> AgroGestión Pro</h1>
-    <p class="lead">Sistema de Control Agrícola para Inmuebles</p>
+    <h1 class="fw-bold"><i class="bi bi-graph-up-arrow"></i> AgroGestión Pro</h1>
+    <p class="lead">Dashboard Analítico de Inversión</p>
 </div>
 
-<div class="container">
-    <div class="row g-3 mb-4 text-center">
-        <div class="col-6 col-md-3">
-            <div class="stat-card shadow-sm">
-                <div class="icon-circle bg-info text-white mx-auto"><i class="bi bi-fuel-pump"></i></div>
-                <h6 class="text-muted small">Combustible</h6>
-                <h5 id="totalCombustible">0</h5>
+<div class="container pb-5">
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card card-main p-4">
+                <h5 class="mb-3 text-muted">Distribución de Gastos</h5>
+                <div class="chart-container">
+                    <canvas id="graficoGastos"></canvas>
+                </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card shadow-sm">
-                <div class="icon-circle bg-success text-white mx-auto"><i class="bi bi-droplet"></i></div>
-                <h6 class="text-muted small">Insumos</h6>
-                <h5 id="totalInsumos">0</h5>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card shadow-sm">
-                <div class="icon-circle bg-warning text-white mx-auto"><i class="bi bi-people"></i></div>
-                <h6 class="text-muted small">Mano Obra</h6>
-                <h5 id="totalLabor">0</h5>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card shadow-sm">
-                <div class="icon-circle bg-danger text-white mx-auto"><i class="bi bi-cash-stack"></i></div>
-                <h6 class="text-muted small">Total General</h6>
-                <h5 id="totalGeneral">0</h5>
+        <div class="col-lg-4">
+            <div class="card card-main p-4 h-100">
+                <h5 class="mb-4 text-muted">Total Acumulado</h5>
+                <div class="stat-card mb-3 border-start border-4 border-info">
+                    <small class="text-muted">TOTAL GENERAL</small>
+                    <h3 class="fw-bold" id="totalGeneral">0</h3>
+                </div>
+                <div class="stat-card mb-3 border-start border-4 border-success">
+                    <small class="text-muted">INSUMOS/FERTILIZANTE</small>
+                    <h4 id="totalInsumos">0</h4>
+                </div>
+                <div class="stat-card border-start border-4 border-warning">
+                    <small class="text-muted">MANO DE OBRA</small>
+                    <h4 id="totalLabor">0</h4>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
         <div class="col-lg-4">
-            <div class="card card-main p-4 shadow-sm">
-                <h5 class="mb-4"><i class="bi bi-plus-circle"></i> Nuevo Registro</h5>
+            <div class="card card-main p-4">
+                <h5><i class="bi bi-pencil-square"></i> Cargar Datos</h5>
+                <hr>
                 <form id="agroForm">
                     <div class="mb-3">
-                        <label class="form-label">Lote / Inmueble</label>
+                        <label class="form-label text-secondary small">Lote / Inmueble</label>
                         <select class="form-select" id="loteSelect" required>
                             <option value="Rolon Kue">Rolon Kue (40ha)</option>
                             <option value="Lote Central">Lote Central</option>
@@ -110,46 +97,39 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Cultivo</label>
-                        <input type="text" class="form-control" id="cultivo" placeholder="Ej: Yerba Mate" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Gasto</label>
+                        <label class="form-label text-secondary small">Categoría</label>
                         <select class="form-select" id="gastoTipo">
                             <option value="Combustible">Combustible</option>
                             <option value="Fertilizante">Fertilizante</option>
                             <option value="Mano de Obra">Mano de Obra</option>
+                            <option value="Otros">Otros</option>
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label">Monto</label>
-                        <input type="number" class="form-control" id="monto" required>
+                        <label class="form-label text-secondary small">Monto</label>
+                        <input type="number" class="form-control form-control-lg" id="monto" required>
                     </div>
-                    <button type="submit" id="btnGuardar" class="btn btn-butterfly w-100 shadow-sm">
-                        GUARDAR ACTIVIDAD
+                    <button type="submit" id="btnGuardar" class="btn btn-butterfly w-100">
+                        GUARDAR EN LA NUBE
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-8">
-            <div class="card card-main p-4 shadow-sm overflow-hidden">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Registros Recientes</h5>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="exportarCSV()">Exportar</button>
-                </div>
-                <div class="table-responsive" style="max-height: 400px;">
-                    <table class="table table-hover align-middle">
-                        <thead>
+            <div class="card card-main p-4 h-100">
+                <h5 class="mb-4"><i class="bi bi-list-check"></i> Últimos Registros</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
                             <tr>
                                 <th>Fecha</th>
                                 <th>Lote</th>
                                 <th>Categoría</th>
-                                <th>Monto</th>
+                                <th class="text-end">Monto</th>
                             </tr>
                         </thead>
-                        <tbody id="tablaCuerpo">
-                            </tbody>
+                        <tbody id="tablaCuerpo"></tbody>
                     </table>
                 </div>
             </div>
@@ -173,51 +153,68 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // --- LÓGICA DE GUARDADO ---
+  // Inicializar Gráfico
+  const ctx = document.getElementById('graficoGastos').getContext('2d');
+  let chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Combustible', 'Fertilizante', 'Mano de Obra', 'Otros'],
+        datasets: [{
+            data: [0, 0, 0, 0],
+            backgroundColor: ['#a8dadc', '#b5ead7', '#ffdee9', '#deecff'],
+            borderWidth: 2
+        }]
+    },
+    options: { maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+  });
+
+  // Guardado
   const form = document.getElementById('agroForm');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const btn = document.getElementById('btnGuardar');
+    btn.disabled = true;
     try {
       await addDoc(collection(db, "registros_campo"), {
         lote: document.getElementById('loteSelect').value,
-        cultivo: document.getElementById('cultivo').value,
         categoria: document.getElementById('gastoTipo').value,
         monto: Number(document.getElementById('monto').value),
-        fecha: new Date().toLocaleString()
+        fecha: new Date().toISOString()
       });
       form.reset();
-    } catch (e) { alert("Error al guardar"); }
+    } catch (e) { alert("Error"); }
+    btn.disabled = false;
   });
 
-  // --- ESCUCHA EN TIEMPO REAL ---
+  // Escucha de datos
   const q = query(collection(db, "registros_campo"), orderBy("fecha", "desc"));
   onSnapshot(q, (snapshot) => {
     const tabla = document.getElementById('tablaCuerpo');
     tabla.innerHTML = '';
-    let totales = { Combustible: 0, Insumos: 0, Labor: 0, General: 0 };
+    let totales = { 'Combustible': 0, 'Fertilizante': 0, 'Mano de Obra': 0, 'Otros': 0, 'General': 0 };
 
     snapshot.forEach((doc) => {
       const d = doc.data();
       totales.General += d.monto;
-      if(d.categoria === "Combustible") totales.Combustible += d.monto;
-      else if(d.categoria === "Fertilizante") totales.Insumos += d.monto;
-      else totales.Labor += d.monto;
+      if (totales.hasOwnProperty(d.categoria)) totales[d.categoria] += d.monto;
 
       tabla.innerHTML += `
         <tr>
-            <td><small>${d.fecha.split(',')[0]}</small></td>
+            <td><small>${new Date(d.fecha).toLocaleDateString()}</small></td>
             <td><strong>${d.lote}</strong></td>
             <td><span class="badge bg-light text-dark">${d.categoria}</span></td>
-            <td>${d.monto.toLocaleString()}</td>
+            <td class="text-end">${d.monto.toLocaleString()}</td>
         </tr>
       `;
     });
 
-    // Actualizar Dash
-    document.getElementById('totalCombustible').innerText = totales.Combustible.toLocaleString();
-    document.getElementById('totalInsumos').innerText = totales.Insumos.toLocaleString();
-    document.getElementById('totalLabor').innerText = totales.Labor.toLocaleString();
+    // Actualizar Dash y Gráfico
     document.getElementById('totalGeneral').innerText = totales.General.toLocaleString();
+    document.getElementById('totalInsumos').innerText = totales.Fertilizante.toLocaleString();
+    document.getElementById('totalLabor').innerText = totales['Mano de Obra'].toLocaleString();
+    
+    chart.data.datasets[0].data = [totales.Combustible, totales.Fertilizante, totales['Mano de Obra'], totales.Otros];
+    chart.update();
   });
 </script>
 </body>

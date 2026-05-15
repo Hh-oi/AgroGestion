@@ -6,6 +6,7 @@
     <title>AGROGESTION - Control de Precisión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -129,10 +130,11 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let datosTabla = []; // Variable global para descargas
+    
+    let datosTabla = []; 
     let tituloReporte = "";
 
-    // CARGAR GASTO
+    // GESTIÓN DE GASTOS
     document.getElementById('formGasto').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('gastoLoteId').value;
@@ -157,9 +159,7 @@
 
         querySnapshot.forEach((gDoc) => {
             const g = gDoc.data();
-            // Guardamos los datos para las descargas
             datosTabla.push({ FECHA: g.fecha, CONCEPTO: g.desc, MONTO: g.monto });
-            
             cuerpo.innerHTML += `
                 <tr>
                     <td class="text-muted small">${g.fecha}</td>
@@ -171,31 +171,39 @@
         new bootstrap.Modal(document.getElementById('modalHistorial')).show();
     };
 
-    // CORRECCIÓN DESCARGAR EXCEL
+    // FUNCIÓN EXCEL CORREGIDA
     window.descargarExcel = () => {
-        if(datosTabla.length === 0) return alert("No hay datos para exportar");
+        if(datosTabla.length === 0) {
+            alert("No hay datos para exportar. Abre el historial primero.");
+            return;
+        }
         const ws = XLSX.utils.json_to_sheet(datosTabla);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Gastos");
-        XLSX.utils.writeFile(wb, `Extracto_${tituloReporte}.xlsx`);
+        XLSX.utils.writeFile(wb, `Extracto_${tituloReporte.replace(/\s+/g, '_')}.xlsx`);
     };
 
-    // DESCARGAR PDF
+    // FUNCIÓN PDF
     window.descargarPDF = () => {
+        if(datosTabla.length === 0) return;
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        doc.text("EXTRACTO DE GASTOS: " + tituloReporte, 14, 20);
+        doc.setFontSize(16);
+        doc.text("AGROGESTION - EXTRACTO", 14, 20);
+        doc.setFontSize(12);
+        doc.text("Lote: " + tituloReporte, 14, 28);
+        
         const filas = datosTabla.map(g => [g.FECHA, g.CONCEPTO, `$ ${g.MONTO.toLocaleString()}`]);
         doc.autoTable({
-            startY: 30,
+            startY: 35,
             head: [['FECHA', 'CONCEPTO', 'MONTO']],
             body: filas,
             headStyles: { fillColor: [27, 67, 50] }
         });
-        doc.save(`Extracto_${tituloReporte}.pdf`);
+        doc.save(`Extracto_${tituloReporte.replace(/\s+/g, '_')}.pdf`);
     };
 
-    // DASHBOARD
+    // DASHBOARD TIEMPO REAL
     onSnapshot(collection(db, "lotes"), (snapshot) => {
         const contenedor = document.getElementById('listaLotesDetallada');
         let totalMec = 0, totalInv = 0;

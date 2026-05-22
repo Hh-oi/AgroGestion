@@ -69,7 +69,6 @@
         .btn-outline-custom { background-color: transparent; color: var(--text-main); border: 1px solid var(--text-main); padding: 10px 24px; border-radius: 50px; font-size: 14px; font-weight: 600; }
         .action-btn { background: none; border: none; font-size: 16px; cursor: pointer; padding: 0 5px; }
         
-        /* Ocultar secciones por defecto */
         .view-section { display: none; }
         .view-section.active-view { display: block; }
     </style>
@@ -215,7 +214,7 @@
                     </div>
                 </div>
                 <hr>
-                <small class="text-muted">AGROGESTION Enterprise v2.0 - Desarrollado bajo especificaciones gerenciales.</small>
+                <small class="text-muted">AGROGESTION Enterprise v2.0</small>
             </div>
         </div>
 
@@ -258,6 +257,20 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalConfirmarBorrado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content text-center p-4" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div class="text-danger mb-3" style="font-size: 40px;"><i class="bi bi-exclamation-circle-fill"></i></div>
+            <h5 class="fw-bold mb-2" id="borrado-titulo" style="color: var(--primary-dark);">¿Confirmar acción?</h5>
+            <p class="text-muted small px-2" id="borrado-mensaje">Esta operación no se puede deshacer de ninguna manera en Firebase.</p>
+            <div class="d-flex gap-2 mt-4">
+                <button type="button" class="btn btn-light w-100 rounded-pill fw-bold text-muted py-2" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btn-confirmar-eliminar-ejecutar" class="btn btn-danger w-100 rounded-pill fw-bold py-2">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -276,6 +289,7 @@
 
     let cacheLotes = {};
     let cacheGastos = [];
+    let accionBorrarPendiente = null;
 
     // ENRUTADOR / SISTEMA DE VISTAS NATIVO
     window.cambiarVista = (nombreVista) => {
@@ -307,7 +321,7 @@
             cacheLotes[id] = l;
 
             const haTotales = Number(l.haTotales) || 0;
-            const maiz = Number(l.haMecanizadas) || 0;
+            const maiz = Number(l.haMecanizadas) || Number(l.haMaiz) || 0;
             const soja = haTotales - maiz;
             const inversion = Number(l.gastos) || 0;
 
@@ -317,10 +331,8 @@
             totalSoja += soja;
             contadorLotes++;
 
-            // Selectores de filtros
             filtroSelect.innerHTML += `<option value="${id}">${l.nombre}</option>`;
 
-            // Renderizar en Dashboard
             dashBody.innerHTML += `
                 <tr>
                     <td><div class="fw-bold text-dark">${l.nombre}</div></td>
@@ -329,7 +341,6 @@
                     <td><span class="status-badge">Sembrado</span></td>
                 </tr>`;
 
-            // Renderizar en Módulo Lotes
             lotesBody.innerHTML += `
                 <tr>
                     <td><div class="fw-bold">${l.nombre}</div></td>
@@ -337,17 +348,15 @@
                     <td>${maiz} ha</td>
                     <td>${soja} ha</td>
                     <td>
-                        <button class="action-btn text-danger" onclick="eliminarLoteCompleto('${id}')"><i class="bi bi-trash"></i></button>
+                        <button class="action-btn text-danger" onclick="solicitarBorradoLote('${id}', '${l.nombre}')"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>`;
         });
 
-        // Actualizar KPIs globales
         document.getElementById('dash-ha').innerText = totalHa + " ha";
         document.getElementById('dash-lotes').innerText = contadorLotes;
         document.getElementById('dash-inv').innerText = "G. " + totalInversion.toLocaleString('es-PY');
 
-        // Actualizar Módulo Producción
         document.getElementById('prod-maiz').innerText = (totalMaiz * 7000).toLocaleString('es-PY') + " kg";
         document.getElementById('prod-soja').innerText = (totalSoja * 3000).toLocaleString('es-PY') + " kg";
     });
@@ -375,13 +384,12 @@
                     <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
                     <td class="text-center">
                         <button class="action-btn text-primary" onclick="abrirEditarGasto('${g.id}','${g.loteId}',${g.monto},'${g.desc}')"><i class="bi bi-pencil-square"></i></button>
-                        <button class="action-btn text-danger" onclick="eliminarGastoRegistro('${g.id}','${g.loteId}',${g.monto})"><i class="bi bi-trash"></i></button>
+                        <button class="action-btn text-danger" onclick="solicitarBorradoGasto('${g.id}','${g.loteId}',${g.monto},'${g.desc}')"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>`;
         });
     }
 
-    // FILTRAR GASTOS POR LOTE
     window.filtrarGastos = (idLote) => {
         if(idLote === 'todos') {
             renderizarTablaGastos(cacheGastos);
@@ -390,6 +398,39 @@
             renderizarTablaGastos(filtrados);
         }
     };
+
+    // SOLICITUDES DE BORRADO ELEGANTE (SIN LOS DIALOGOS DEL NAVEGADOR)
+    window.solicitarBorradoLote = (id, nombre) => {
+        document.getElementById('borrado-titulo').innerText = "¿Borrar lote permanentemente?";
+        document.getElementById('borrado-mensaje').innerText = `¿Estás seguro de que quieres eliminar el lote "${nombre}"? Se borrará de forma definitiva.`;
+        
+        accionBorrarPendiente = async () => {
+            await deleteDoc(doc(db, "lotes", id));
+        };
+        
+        new bootstrap.Modal(document.getElementById('modalConfirmarBorrado')).show();
+    };
+
+    window.solicitarBorradoGasto = (idGasto, idLote, monto, desc) => {
+        document.getElementById('borrado-titulo').innerText = "¿Eliminar este gasto del extracto?";
+        document.getElementById('borrado-mensaje').innerText = `¿Deseas remover el gasto "${desc}" por valor de G. ${monto.toLocaleString('es-PY')}?`;
+        
+        accionBorrarPendiente = async () => {
+            await deleteDoc(doc(db, "gastos_detalle", idGasto));
+            await updateDoc(doc(db, "lotes", idLote), { gastos: increment(-monto) });
+        };
+        
+        new bootstrap.Modal(document.getElementById('modalConfirmarBorrado')).show();
+    };
+
+    // EJECUTOR DE ELIMINACIÓN DEL NUEVO MODAL INTERNO
+    document.getElementById('btn-confirmar-eliminar-ejecutar').addEventListener('click', async () => {
+        if (accionBorrarPendiente) {
+            await accionBorrarPendiente();
+            accionBorrarPendiente = null;
+        }
+        bootstrap.Modal.getInstance(document.getElementById('modalConfirmarBorrado')).hide();
+    });
 
     // AGREGAR NUEVO LOTE
     document.getElementById('form-lote-nuevo').addEventListener('submit', async (e) => {
@@ -403,21 +444,6 @@
         bootstrap.Modal.getInstance(document.getElementById('modalLote')).hide();
         document.getElementById('form-lote-nuevo').reset();
     });
-
-    // ELIMINAR LOTE COMPLETAMENTE
-    window.eliminarLoteCompleto = async (id) => {
-        if(confirm("¿Estás seguro de eliminar este lote permanentemente?")) {
-            await deleteDoc(doc(db, "lotes", id));
-        }
-    };
-
-    // ELIMINAR UN GASTO INDIVIDUAL
-    window.eliminarGastoRegistro = async (idGasto, idLote, monto) => {
-        if(confirm("¿Eliminar este gasto del extracto?")) {
-            await deleteDoc(doc(db, "gastos_detalle", idGasto));
-            await updateDoc(doc(db, "lotes", idLote), { gastos: increment(-monto) });
-        }
-    };
 
     // EDITAR GASTO
     window.abrirEditarGasto = (id, loteId, monto, desc) => {
@@ -437,10 +463,7 @@
         const nuevoMonto = Number(document.getElementById('edit-monto').value);
         const nuevaDesc = document.getElementById('edit-desc').value;
 
-        // Modificar documento del gasto
         await updateDoc(doc(db, "gastos_detalle", id), { desc: nuevaDesc, monto: nuevoMonto });
-        
-        // Ajustar el balance del lote restando el anterior y sumando el nuevo
         const diferencia = nuevoMonto - montoAnterior;
         await updateDoc(doc(db, "lotes", loteId), { gastos: increment(diferencia) });
 
@@ -449,7 +472,7 @@
 
     // DESCARGAR EXCEL DE GASTOS
     window.descargarExcelGastos = () => {
-        if(cacheGastos.length === 0) return alert("No hay datos cargados para exportar.");
+        if(cacheGastos.length === 0) return;
         
         const datosFormateados = cacheGastos.map(g => ({
             Fecha: g.fecha,

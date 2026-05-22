@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGROGESTION - Panel de Producción</title>
+    <title>AGROGESTION - Panel de Control</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
@@ -15,257 +15,401 @@
     <style>
         :root {
             --primary-dark: #0b3022;
-            --primary-light: #1b4332;
             --accent-green: #2d6a4f;
-            --bg-body: #f4f7f6;
+            --gold: #d4af37;
+            --bg-light: #f8fafc;
             --white: #ffffff;
-            --text-muted: #6c757d;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: #333;
-            margin: 0;
-            display: flex;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            min-height: 100vh;
         }
 
-        /* Sidebar Profesional */
-        .sidebar {
-            width: 250px;
-            background-color: var(--white);
+        /* DISEÑO DE CONTENEDOR SEGURO: Evita encimamientos */
+        .app-container {
+            display: table;
+            width: 100%;
             height: 100vh;
-            position: fixed;
-            border-right: 1px solid #e0e0e0;
-            padding: 20px;
-            display: flex;
-            flex-column: column;
+            border-collapse: collapse;
         }
 
-        .brand-section {
-            padding: 10px 15px 30px;
+        .sidebar-cell {
+            display: table-cell;
+            width: 260px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            vertical-align: top;
+            padding: 24px 16px;
+        }
+
+        .main-cell {
+            display: table-cell;
+            vertical-align: top;
+            padding: 32px 40px;
+        }
+
+        /* Estilos de Marca y Logo */
+        .brand-wrapper {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
         }
 
-        .brand-logo {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-dark);
+        .brand-box {
+            width: 36px;
+            height: 36px;
+            background-color: var(--primary-dark);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #d4af37; /* Color oro del logo */
-            font-weight: bold;
-            font-size: 24px;
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 20px;
         }
 
-        .nav-link {
+        .brand-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: 0.5px;
+        }
+
+        /* Menú de Navegación */
+        .menu-section-title {
+            font-size: 11px;
+            font-weight: 700;
             color: var(--text-muted);
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: 0.3s;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 14px;
             text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            transition: all 0.2s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-item:hover {
+            background-color: #f1f5f9;
+            color: var(--primary-dark);
+        }
+
+        .nav-item.active {
             background-color: var(--primary-dark);
-            color: var(--white) !important;
+            color: var(--white);
         }
 
-        /* Contenido Principal */
-        .main-wrapper {
-            margin-left: 250px;
-            width: 100%;
-            padding: 30px 40px;
-        }
-
-        .header-top {
+        /* Encabezado Principal */
+        .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
 
-        /* Tarjetas de Indicadores (Kpis) */
+        .panel-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        /* Tarjetas de Indicadores (KPIs) */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
         .kpi-card {
-            background: var(--white);
+            background-color: var(--white);
             border-radius: 16px;
-            padding: 20px;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            transition: transform 0.2s;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
 
-        .kpi-card:hover { transform: translateY(-5px); }
-        
-        .icon-box {
-            width: 45px;
-            height: 45px;
+        .kpi-card-dark {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            border: none;
+        }
+
+        .kpi-icon-container {
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: 16px;
         }
 
-        .bg-green-soft { background: #e8f5e9; color: #2e7d32; }
-        .bg-blue-soft { background: #e3f2fd; color: #1565c0; }
-        .bg-gold-soft { background: #fff8e1; color: #f9a825; }
+        .icon-green { background-color: #e6f4ea; color: #137333; }
+        .icon-blue { background-color: #e8f0fe; color: #1a73e8; }
+        .icon-gold { background-color: #fef7e0; color: #b06000; }
+        .icon-trans { background-color: rgba(255, 255, 255, 0.1); color: var(--gold); }
 
-        /* Estilos de Tabla e Historial */
-        .table-custom {
-            background: var(--white);
+        .kpi-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .kpi-card-dark .kpi-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .kpi-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        /* Contenedores de Tablas y Datos */
+        .content-card {
+            background-color: var(--white);
             border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
-        .table-custom thead {
-            background-color: #f8f9fa;
+        .card-header-custom {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .status-pill {
-            padding: 4px 12px;
-            border-radius: 20px;
+        .card-title-custom {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        /* Tablas */
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-custom th {
+            background-color: #f8fafc;
+            padding: 14px 24px;
             font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-custom td {
+            padding: 16px 24px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            color: #334155;
+        }
+
+        .table-custom tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges de Estado */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+
+        /* Botones */
+        .btn-primary-custom {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--accent-green);
+        }
+
+        .btn-outline-custom {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--text-main);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
             font-weight: 600;
         }
 
-        .status-active { background: #e8f5e9; color: #2e7d32; }
+        .btn-outline-custom:hover {
+            background-color: #f1f5f9;
+        }
 
-        .btn-action {
-            background: var(--primary-dark);
-            color: white;
-            border-radius: 10px;
-            padding: 8px 20px;
+        .action-btn {
+            background: none;
             border: none;
-            font-size: 14px;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            color: var(--primary-dark);
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="brand-section">
-        <div class="brand-logo">A</div>
-        <h5 class="m-0 fw-bold" style="color: var(--primary-dark)">AGROGESTION</h5>
-    </div>
+<div class="app-container">
     
-    <div class="flex-grow-1">
-        <small class="text-uppercase fw-bold text-muted mb-3 d-block" style="font-size: 10px; padding-left: 15px;">Menú</small>
-        <a href="#" class="nav-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="#" class="nav-link"><i class="bi bi-flower1"></i> Producción</a>
-        <a href="#" class="nav-link"><i class="bi bi-geo-alt"></i> Lotes</a>
-        <a href="#" class="nav-link"><i class="bi bi-cash-stack"></i> Gastos</a>
-        <a href="#" class="nav-link"><i class="bi bi-file-earmark-bar-graph"></i> Reportes</a>
-    </div>
-
-    <div class="mt-auto">
-        <a href="#" class="nav-link text-danger"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
-    </div>
-</div>
-
-<div class="main-wrapper">
-    <div class="header-top">
-        <div>
-            <h3 class="fw-bold m-0">Panel de Producción</h3>
-            <p class="text-muted small">Viernes, 15 de Mayo de 2026</p>
+    <div class="sidebar-cell">
+        <div class="brand-wrapper">
+            <div class="brand-box">A</div>
+            <div class="brand-title">AGROGESTION</div>
         </div>
-        <div class="d-flex gap-3">
-            <button class="btn btn-outline-dark rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#modalLote">+ Agregar Lote</button>
-            <button class="btn btn-action rounded-pill" onclick="generarExcelGlobal()">Generar Reporte</button>
-        </div>
+        
+        <div class="menu-section-title">Menú</div>
+        <a href="#" class="nav-item active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="#" class="nav-item"><i class="bi bi-flower1"></i> Producción</a>
+        <a href="#" class="nav-item"><i class="bi bi-geo-alt"></i> Lotes</a>
+        <a href="#" class="nav-item"><i class="bi bi-cash-stack"></i> Gastos</a>
+        <a href="#" class="nav-item"><i class="bi bi-file-earmark-bar-graph"></i> Reportes</a>
+        
+        <div class="menu-section-title" style="margin-top: 32px;">Configuración</div>
+        <a href="#" class="nav-item"><i class="bi bi-gear"></i> Ajustes</a>
+        <a href="#" class="nav-item text-danger" style="margin-top: 40px;"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
+    <div class="main-cell">
+        
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">Panel de Production</div>
+                <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Viernes, Mayo de 2026</div>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalLote">+ Agregar Lote</button>
+                <button class="btn-primary-custom" onclick="exportarExcelGlobal()">Generar Reporte</button>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
             <div class="kpi-card">
-                <div class="icon-box bg-green-soft"><i class="bi bi-layers"></i></div>
-                <small class="text-muted d-block">Superficie Total</small>
-                <h3 class="fw-bold" id="totalHa">0 ha</h3>
+                <div class="kpi-icon-container icon-green"><i class="bi bi-layers"></i></div>
+                <div class="kpi-label">Superficie Total</div>
+                <div class="kpi-value" id="kpi-total-ha">0 ha</div>
             </div>
-        </div>
-        <div class="col-md-3">
             <div class="kpi-card">
-                <div class="icon-box bg-blue-soft"><i class="bi bi-droplet"></i></div>
-                <small class="text-muted d-block">Lotes Activos</small>
-                <h3 class="fw-bold" id="totalLotes">0</h3>
+                <div class="kpi-icon-container icon-blue"><i class="bi bi-droplet"></i></div>
+                <div class="kpi-label">Lotes Activos</div>
+                <div class="kpi-value" id="kpi-lotes-activos">0</div>
             </div>
-        </div>
-        <div class="col-md-3">
             <div class="kpi-card">
-                <div class="icon-box bg-gold-soft"><i class="bi bi-currency-dollar"></i></div>
-                <small class="text-muted d-block">Inversión Total</small>
-                <h3 class="fw-bold" id="totalInversion">G. 0</h3>
+                <div class="kpi-icon-container icon-gold"><i class="bi bi-cash-stack"></i></div>
+                <div class="kpi-label">Inversión Total</div>
+                <div class="kpi-value" id="kpi-total-inversion" style="color: #dc2626;">G. 0</div>
+            </div>
+            <div class="kpi-card kpi-card-dark">
+                <div class="kpi-icon-container icon-trans"><i class="bi bi-graph-up-arrow"></i></div>
+                <div class="kpi-label">Rendimiento Est.</div>
+                <div class="kpi-value">312.500 kg</div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="kpi-card" style="background: var(--primary-dark); color: white;">
-                <div class="icon-box" style="background: rgba(255,255,255,0.1);"><i class="bi bi-graph-up-arrow"></i></div>
-                <small class="text-light d-block opacity-75">Rendimiento Est.</small>
-                <h3 class="fw-bold" id="totalRendimiento">312.500 kg</h3>
-            </div>
-        </div>
-    </div>
 
-    <div class="card kpi-card p-0 overflow-hidden">
-        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold m-0">Resumen de Lotes y Cultivos</h5>
-            <div class="dropdown">
-                <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">Este Mes</button>
+        <div class="content-card">
+            <div class="card-header-custom">
+                <div class="card-title-custom">Resumen de Lotes y Cultivos</div>
+                <select class="form-select form-select-sm" style="width: auto; border-radius: 20px; padding-right: 32px;">
+                    <option>Este Mes</option>
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Lote</th>
+                            <th>Sup. Total</th>
+                            <th>Maíz (ha)</th>
+                            <th>Soja (ha)</th>
+                            <th>Inversión</th>
+                            <th>Estado</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-lotes-body">
+                        </tbody>
+                </table>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle m-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-4">Lote</th>
-                        <th>Sup. Total</th>
-                        <th>Maíz (ha)</th>
-                        <th>Soja (ha)</th>
-                        <th>Inversión</th>
-                        <th>Estado</th>
-                        <th class="text-end pe-4">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaLotesBody">
-                    </tbody>
-            </table>
-        </div>
+
     </div>
 </div>
 
 <div class="modal fade" id="modalGasto" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4" style="border-radius: 20px;">
+        <div class="modal-content p-4" style="border-radius: 16px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold">Registrar Gasto</h5>
+                <h5 class="fw-bold m-0" style="color: var(--primary-dark);">Registrar Gasto Diario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="formGasto">
-                <input type="hidden" id="gastoLoteId">
+            <form id="form-gasto">
+                <input type="hidden" id="gasto-lote-id">
                 <div class="mb-3">
-                    <label class="small fw-bold text-muted">Concepto</label>
-                    <input type="text" id="descGasto" class="form-control" placeholder="Ej. Combustible, Semillas..." required>
+                    <label class="form-label small fw-bold text-muted">Concepto del Gasto</label>
+                    <input type="text" id="gasto-desc" class="form-control p-2" placeholder="Ej. Combustible, Semillas, Fertilizantes..." required>
                 </div>
                 <div class="row mb-4">
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">Monto (G.)</label>
-                        <input type="number" id="montoGasto" class="form-control" required>
+                        <label class="form-label small fw-bold text-muted">Monto (Guaraníes)</label>
+                        <input type="number" id="gasto-monto" class="form-control p-2" placeholder="0" required>
                     </div>
                     <div class="col-6">
-                        <label class="small fw-bold text-muted">Fecha</label>
-                        <input type="date" id="fechaGasto" class="form-control" required>
+                        <label class="form-label small fw-bold text-muted">Fecha</label>
+                        <input type="date" id="gasto-fecha" class="form-control p-2" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-action w-100 py-3">Guardar Registro</button>
+                <button type="submit" class="btn-primary-custom w-100 py-2" style="border-radius: 10px;">Guardar Registro</button>
             </form>
         </div>
     </div>
@@ -273,9 +417,9 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, increment, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Tu configuración de Firebase actual
+    // Configuración oficial de tu Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
         authDomain: "agrogestion-163d2.firebaseapp.com",
@@ -288,66 +432,79 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Escuchar Lotes y Actualizar Dashboard
+    // Escuchar la base de datos en tiempo real
     onSnapshot(collection(db, "lotes"), (snapshot) => {
-        const body = document.getElementById('tablaLotesBody');
-        let totalHa = 0;
-        let totalInv = 0;
-        let lotesCount = 0;
+        const tbody = document.getElementById('tabla-lotes-body');
+        let acumHa = 0;
+        let acumInversion = 0;
+        let totalLotes = 0;
 
-        body.innerHTML = '';
+        tbody.innerHTML = '';
+
         snapshot.forEach((docSnap) => {
-            const l = docSnap.data();
+            const lote = docSnap.data();
             const id = docSnap.id;
-            const inv = l.gastos || 0;
             
-            totalHa += Number(l.haTotales);
-            totalInv += inv;
-            lotesCount++;
+            const haTotales = Number(lote.haTotales) || 0;
+            const maiz = Number(lote.haMecanizadas) || Number(lote.haMaiz) || 0;
+            const soja = haTotales - maiz;
+            const inversion = Number(lote.gastos) || 0;
 
-            body.innerHTML += `
+            acumHa += haTotales;
+            acumInversion += inversion;
+            totalLotes++;
+
+            tbody.innerHTML += `
                 <tr>
-                    <td class="ps-4">
-                        <div class="fw-bold text-dark">${l.nombre}</div>
-                        <div class="text-muted small">ID: ${id.substring(0,5)}</div>
+                    <td>
+                        <div class="fw-bold text-dark">${lote.nombre}</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">ID: ${id.substring(0,6)}</div>
                     </td>
-                    <td>${l.haTotales} ha</td>
-                    <td>${l.haMecanizadas}</td>
-                    <td>${l.haTotales - l.haMecanizadas}</td>
-                    <td class="fw-bold text-danger">G. ${inv.toLocaleString()}</td>
-                    <td><span class="status-pill status-active">Sembrado</span></td>
-                    <td class="text-end pe-4">
-                        <button class="btn btn-light btn-sm" onclick="verHistorialLote('${id}', '${l.nombre}')"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-light btn-sm text-success" onclick="abrirGasto('${id}')"><i class="bi bi-plus-circle"></i></button>
+                    <td>${haTotales} ha</td>
+                    <td>${maiz}</td>
+                    <td>${soja}</td>
+                    <td class="fw-bold text-danger">G. ${inversion.toLocaleString('es-PY')}</td>
+                    <td><span class="status-badge">Sembrado</span></td>
+                    <td style="text-align: right;">
+                        <button class="action-btn text-success" onclick="abrirModalGasto('${id}')" title="Añadir Gasto"><i class="bi bi-plus-circle"></i></button>
                     </td>
                 </tr>
             `;
         });
 
-        document.getElementById('totalHa').innerText = totalHa + " ha";
-        document.getElementById('totalLotes').innerText = lotesCount;
-        document.getElementById('totalInversion').innerText = "G. " + totalInv.toLocaleString();
+        // Actualizar tarjetas de KPI superiores
+        document.getElementById('kpi-total-ha').innerText = acumHa + " ha";
+        document.getElementById('kpi-lotes-activos').innerText = totalLotes;
+        document.getElementById('kpi-total-inversion').innerText = "G. " + acumInversion.toLocaleString('es-PY');
     });
 
-    // Mantén tus funciones de agregar gasto y historial aquí (funcionarán igual)
-    window.abrirGasto = (id) => {
-        document.getElementById('gastoLoteId').value = id;
-        document.getElementById('fechaGasto').valueAsDate = new Date();
+    // Control del Modal de Gastos
+    window.abrirModalGasto = (id) => {
+        document.getElementById('gasto-lote-id').value = id;
+        document.getElementById('gasto-fecha').valueAsDate = new Date();
         new bootstrap.Modal(document.getElementById('modalGasto')).show();
     };
 
-    // Agregar gasto (Firebase)
-    document.getElementById('formGasto').addEventListener('submit', async (e) => {
+    // Envío del Gasto a Firebase
+    document.getElementById('form-gasto').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const id = document.getElementById('gastoLoteId').value;
-        const monto = Number(document.getElementById('montoGasto').value);
-        const desc = document.getElementById('descGasto').value;
-        const fecha = document.getElementById('fechaGasto').value;
-        await addDoc(collection(db, "gastos_detalle"), { loteId: id, monto, desc, fecha });
-        await updateDoc(doc(db, "lotes", id), { gastos: increment(monto) });
-        bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
-    });
+        const id = document.getElementById('gasto-lote-id').value;
+        const monto = Number(document.getElementById('gasto-monto').value);
+        const desc = document.getElementById('gasto-desc').value;
+        const fecha = document.getElementById('gasto-fecha').value;
 
+        try {
+            // Registrar detalle en subcolección o tabla general
+            await addDoc(collection(db, "gastos_detalle"), { loteId: id, monto, desc, fecha });
+            // Incrementar la inversión acumulada en el lote correspondiente
+            await updateDoc(doc(db, "lotes", id), { gastos: increment(monto) });
+            
+            bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
+            document.getElementById('form-gasto').reset();
+        </div> catch (error) {
+            console.error("Error al registrar gasto:", error);
+        }
+    });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

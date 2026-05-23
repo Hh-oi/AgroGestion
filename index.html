@@ -3,692 +3,733 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGROGESTION - Panel Profesional</title>
-    
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#0b3022">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+    <title>Agrogestión</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #0b3022;
-            --accent-green: #2d6a4f;
-            --gold: #d4af37;
-            --bg-light: #f8fafc;
-            --white: #ffffff;
-            --text-main: #1e293b;
+            --primary: #062f1e;
+            --primary-light: #0b462e;
+            --accent: #eab308;
+            --bg-main: #f8fafc;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --border: #e2e8f0;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); min-height: 100vh; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-        .app-container { display: table; width: 100%; height: 100vh; border-collapse: collapse; }
-        .sidebar-cell { display: table-cell; width: 260px; background-color: var(--white); border-right: 1px solid var(--border-color); vertical-align: top; padding: 24px 16px; }
-        .main-cell { display: table-cell; vertical-align: top; padding: 32px 40px; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
 
-        /* Estilo adaptado para el nuevo logo profesional */
-        .brand-wrapper { display: flex; align-items: center; gap: 12px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 24px; }
-        .brand-logo-img { width: 38px; height: 38px; object-fit: cover; border-radius: 50%; border: 1px solid var(--border-color); }
-        .brand-title { font-size: 16px; font-weight: 700; color: var(--primary-dark); letter-spacing: 0.5px; }
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+        }
 
-        .menu-section-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 12px; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-muted); font-weight: 500; font-size: 14px; text-decoration: none; border-radius: 10px; margin-bottom: 4px; transition: all 0.2s ease; cursor: pointer; }
-        .nav-item:hover { background-color: #f1f5f9; color: var(--primary-dark); }
-        .nav-item.active { background-color: var(--primary-dark); color: var(--white); }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary);
+            margin-bottom: 32px;
+            padding-left: 8px;
+        }
 
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-        .panel-title { font-size: 24px; font-weight: 700; color: var(--primary-dark); }
+        /* Ajuste exacto para tu nuevo logo cargado */
+        .brand img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
-        .kpi-card { background-color: var(--white); border-radius: 16px; padding: 24px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .kpi-card-dark { background-color: var(--primary-dark); color: var(--white); border: none; }
-        .kpi-icon-container { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
-        .icon-green { background-color: #e6f4ea; color: #137333; }
-        .icon-blue { background-color: #e8f0fe; color: #1a73e8; }
-        .icon-gold { background-color: #fef7e0; color: #b06000; }
-        .icon-trans { background-color: rgba(255, 255, 255, 0.1); color: var(--gold); }
-        .kpi-label { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
-        .kpi-card-dark .kpi-label { color: rgba(255, 255, 255, 0.7); }
-        .kpi-value { font-size: 22px; font-weight: 700; }
+        .menu-section {
+            margin-bottom: 24px;
+        }
 
-        .content-card { background-color: var(--white); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.02); overflow: hidden; margin-bottom: 25px; }
-        .card-header-custom { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .card-title-custom { font-size: 16px; font-weight: 700; color: var(--primary-dark); }
+        .menu-label {
+            font-size: 0.725rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 0 12px 8px;
+        }
 
-        .table-custom { width: 100%; border-collapse: collapse; }
-        .table-custom th { background-color: #f8fafc; padding: 14px 24px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
-        .table-custom td { padding: 16px 24px; font-size: 14px; border-bottom: 1px solid var(--border-color); color: #334155; vertical-align: middle; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-        .btn-primary-custom { background-color: var(--primary-dark); color: var(--white); border: none; padding: 10px 24px; border-radius: 50px; font-size: 14px; font-weight: 600; transition: background-color 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-primary-custom:hover { background-color: var(--accent-green); color: white; }
-        
-        .view-section { display: none; }
-        .view-section.active-view { display: block; }
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: var(--text-dark);
+        }
 
-        .badge-suelo { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 30px; }
-        .back-link { cursor: pointer; color: var(--accent-green); font-weight: 600; margin-bottom: 15px; display: inline-block; text-decoration: none; }
-        .action-btn { border: none; background: none; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .nav-item.active {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .nav-item.logout {
+            margin-top: auto;
+            color: #ef4444;
+        }
+
+        .nav-item.logout:hover {
+            background: #fef2f2;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            padding: 40px;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .view-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .view-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #f8fafc;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .icon-surface { background: #f0fdf4; color: #166534; }
+        .icon-active { background: #f0f9ff; color: #075985; }
+        .icon-investment { background: #fef9c3; color: #854d0e; }
+
+        .card.featured {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+        }
+
+        .card.featured .card-icon {
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+        }
+
+        .card-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .card.featured .card-label {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .card-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        /* Tables & Content Blocks */
+        .content-block {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .block-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .select-custom {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 500;
+            outline: none;
+            background: #ffffff;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .text-id {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .monto-red {
+            color: #b91c1c;
+            font-weight: 600;
+        }
+
+        .badge-sembrado {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            color: var(--text-muted);
+            border-radius: 6px;
+            margin-right: 4px;
+        }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+        /* Modulo Producción Proyecciones */
+        .prod-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .prod-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            background: #ffffff;
+        }
+
+        .prod-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prod-title.maiz { color: #166534; }
+        .prod-title.soja { color: #b45309; }
+
+        .prod-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .prod-calc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Modal Alerta Original (hh-oi.github.io dice) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #1e293b;
+            color: #ffffff;
+            border-radius: 12px;
+            width: 360px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+        }
+
+        .modal-header-text {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .modal-body-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-confirm {
+            background: #7dd3fc;
+            color: #0369a1;
+        }
+
+        .btn-cancel {
+            background: #0c4a6e;
+            color: #7dd3fc;
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <div class="sidebar-cell">
-        <div class="brand-wrapper">
-            <img src="logo.png" alt="Logo" class="brand-logo-img">
-            <div class="brand-title">AGROGESTION</div>
+    <aside class="sidebar">
+        <div class="brand">
+            <img src="logo.png" alt="Logo">
+            <span>AGROGESTION</span>
         </div>
         
-        <div class="menu-section-title">Menú Operativo</div>
-        <div class="nav-item active" onclick="cambiarVista('dashboard')"><i class="bi bi-speedometer2"></i> Dashboard</div>
-        <div class="nav-item" onclick="cambiarVista('lotes')"><i class="bi bi-geo-alt"></i> Lotes de Tierra</div>
-        <div class="nav-item" onclick="cambiarVista('produccion')"><i class="bi bi-flower1"></i> Producción / Cosecha</div>
-        <div class="nav-item" onclick="cambiarVista('gastos')"><i class="bi bi-cash-stack"></i> Auditoría de Gastos</div>
-        <div class="nav-item" onclick="cambiarVista('ingresos')"><i class="bi bi-graph-up-arrow"></i> Control de Ingresos</div>
-        
-        <div class="menu-section-title" style="margin-top: 32px;">Configuración</div>
-        <div class="nav-item" onclick="cambiarVista('ajustes')"><i class="bi bi-gear"></i> Ajustes Nube</div>
-    </div>
+        <div class="menu-section">
+            <div class="menu-label">Menú</div>
+            <div class="nav-item active" onclick="switchView('dashboard', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="switchView('produccion', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                Producción
+            </div>
+            <div class="nav-item" onclick="switchView('lotes', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Lotes
+            </div>
+            <div class="nav-item" onclick="switchView('gastos', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="12" y1="10" x2="12" y2="10"></line></svg>
+                Gastos / Extractos
+            </div>
+            <div class="nav-item" onclick="switchView('reportes', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Reportes
+            </div>
+        </div>
 
-    <div class="main-cell">
-        
-        <div id="view-dashboard" class="view-section active-view">
-            <div class="panel-header">
-                <div>
-                    <div class="panel-title">Resumen Gerencial del Campo</div>
-                    <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Monitoreo en Tiempo Real</div>
+        <div class="menu-section" style="margin-top: auto;">
+            <div class="menu-label">Configuración</div>
+            <div class="nav-item" onclick="switchView('ajustes', this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Ajustes
+            </div>
+            <div class="nav-item logout" onclick="alert('Cerrando sesión...')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Cerrar Sesión
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <section id="dashboard" class="view active">
+            <div class="view-header">
+                <div class="view-title">
+                    <h1>Panel de Producción</h1>
+                    <p>Mayo de 2026</p>
                 </div>
-                <button class="btn-primary-custom" onclick="cambiarVista('lotes')">Administrar Campo</button>
+                <div class="header-actions">
+                    <button class="btn" onclick="alert('Agregar Lote clicked')">+ Agregar Lote</button>
+                    <button class="btn btn-primary" onclick="alert('Generando Reporte...')">Generar Reporte</button>
+                </div>
             </div>
 
             <div class="kpi-grid">
-                <div class="kpi-card"><div class="kpi-icon-container icon-green"><i class="bi bi-layers"></i></div><div class="kpi-label">Superficie Total</div><div class="kpi-value" id="dash-ha">0 ha</div></div>
-                <div class="kpi-card"><div class="kpi-icon-container icon-blue"><i class="bi bi-cash-stack"></i></div><div class="kpi-label">Egresos / Gastos Totales</div><div class="kpi-value text-danger" id="dash-inv">G. 0</div></div>
-                <div class="kpi-card"><div class="kpi-icon-container icon-gold"><i class="bi bi-graph-up-arrow"></i></div><div class="kpi-label">Ingresos por Ventas</div><div class="kpi-value text-success" id="dash-ingresos-total">G. 0</div></div>
-                <div class="kpi-card kpi-card-dark"><div class="kpi-icon-container icon-trans"><i class="bi bi-wallet2"></i></div><div class="kpi-label">Ganancia Líquida (Margen)</div><div class="kpi-value" id="dash-ganancia-estimada" style="color: var(--gold);">G. 0</div></div>
+                <div class="card">
+                    <div class="card-icon icon-surface">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                    </div>
+                    <div>
+                        <div class="card-label">Superficie Total</div>
+                        <div class="card-value">58 ha</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon icon-active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="card-label">Lotes Activos</div>
+                        <div class="card-value">2</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon icon-investment">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                    <div>
+                        <div class="card-label">Inversión Total</div>
+                        <div class="card-value" style="color: #b91c1c;">G. 800.000</div>
+                    </div>
+                </div>
+                <div class="card featured">
+                    <div class="card-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                    </div>
+                    <div>
+                        <div class="card-label">Rendimiento Est.</div>
+                        <div class="card-value">312.500 kg</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Estado Financiero por Lote</div></div>
-                <table class="table-custom">
-                    <thead><tr><th>Identificador de Terreno</th><th>Superficie Total</th><th>Egresos (Gastos)</th><th>Ingresos (Ventas)</th><th>Acción</th></tr></thead>
-                    <tbody id="dash-tabla-body"></tbody>
-                </table>
+            <div class="content-block">
+                <div class="block-header">
+                    <h2>Resumen de Lotes y Cultivos</h2>
+                    <select class="select-custom"><option>Este Mes</option></select>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Lote</th>
+                                <th>Sup. Total</th>
+                                <th>Maíz (ha)</th>
+                                <th>Soja (ha)</th>
+                                <th>Inversión</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Rolon Kue</strong><div class="text-id">ID: 0OjhF</div></td>
+                                <td>18 ha</td><td>10</td><td>8</td>
+                                <td class="monto-red">G. 800.000</td>
+                                <td><span class="badge-sembrado">Sembrado</span></td>
+                                <td>
+                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Salame kue</strong><div class="text-id">ID: da1yN</div></td>
+                                <td>40 ha</td><td>20</td><td>20</td>
+                                <td class="monto-red">G. 0</td>
+                                <td><span class="badge-sembrado">Sembrado</span></td>
+                                <td>
+                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="produccion" class="view">
+            <div class="view-header">
+                <div class="view-title">
+                    <h1>Módulo de Producción Agrícola</h1>
+                </div>
+            </div>
+            <div class="content-block">
+                <div class="block-header">
+                    <div>
+                        <h2 style="font-size: 1.2rem;">Estimación de Cosecha Sembrada</h2>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Proyecciones automáticas basadas en la superficie declarada de cada cultivo de la temporada.</p>
+                    </div>
+                </div>
+                <div class="prod-grid">
+                    <div class="prod-card">
+                        <div class="prod-title maiz">⚛ Maíz (Mecanizado)</div>
+                        <div class="prod-value">210.000 kg</div>
+                        <div class="prod-calc">Cálculo estimado a 7.000 Kg/Ha</div>
+                    </div>
+                    <div class="prod-card">
+                        <div class="prod-title soja">☖ Soja (Natural / Restante)</div>
+                        <div class="prod-value">84.000 kg</div>
+                        <div class="prod-calc">Cálculo estimado a 3.000 Kg/Ha</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gastos" class="view">
+            <div class="view-header">
+                <div class="view-title">
+                    <h1>Extractos de Gastos Operativos</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn" style="background:#022c1b; color:#ffffff; border:none;" onclick="alert('Exportando excel...')">☒ Descargar Excel</button>
+                </div>
+            </div>
+            <div class="content-block">
+                <div class="block-header">
+                    <h2>Historial de Transacciones Registradas</h2>
+                    <select class="select-custom"><option>Todos los lotes</option></select>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Lote</th>
+                                <th>Concepto / Descripción</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="exp-1">
+                                <td>2026-05-06</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 200.000</td>
+                                <td>
+                                    <button class="action-btn">✏</button>
+                                    <button class="action-btn" onclick="openConfirmModal('exp-1')" style="color:#ef4444;">🗑</button>
+                                </td>
+                            </tr>
+                            <tr id="exp-2">
+                                <td>2026-05-15</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 300.000</td>
+                                <td>
+                                    <button class="action-btn">✏</button>
+                                    <button class="action-btn" onclick="openConfirmModal('exp-2')" style="color:#ef4444;">🗑</button>
+                                </td>
+                            </tr>
+                            <tr id="exp-3">
+                                <td>2026-05-06</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 200.000</td>
+                                <td>
+                                    <button class="action-btn">✏</button>
+                                    <button class="action-btn" onclick="openConfirmModal('exp-3')" style="color:#ef4444;">🗑</button>
+                                </td>
+                            </tr>
+                            <tr id="exp-4">
+                                <td>2026-03-03</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 20.000</td>
+                                <td>
+                                    <button class="action-btn">✏</button>
+                                    <button class="action-btn" onclick="openConfirmModal('exp-4')" style="color:#ef4444;">🗑</button>
+                                </td>
+                            </tr>
+                            <tr id="exp-5">
+                                <td>2026-03-12</td><td><strong>Rolon Kue</strong></td><td>Fertilizantes</td><td class="monto-red">G. 400.000</td>
+                                <td>
+                                    <button class="action-btn">✏</button>
+                                    <button class="action-btn" onclick="openConfirmModal('exp-5')" style="color:#ef4444;">🗑</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="lotes" class="view"><div class="content-block"><h2>Gestión de Terrenos</h2></div></section>
+        <section id="reportes" class="view"><div class="content-block"><h2>Reportes Generales</h2></div></section>
+        <section id="ajustes" class="view"><div class="content-block"><h2>Configuración del Sistema</h2></div></section>
+
+    </main>
+
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <div class="modal-header-text">hh-oi.github.io dice</div>
+            <div class="modal-body-text">¿Eliminar este gasto del extracto?</div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-confirm" id="confirmOk">Aceptar</button>
+                <button class="modal-btn btn-cancel" id="confirmCancel">Cancelar</button>
             </div>
         </div>
+    </div>
 
-        <div id="view-lotes" class="view-section">
-            <div class="panel-header">
-                <div class="panel-title">Gestión y Apertura de Lotes</div>
-                <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalLote"><i class="bi bi-plus-circle"></i> Registrar Lote Nuevo</button>
-            </div>
-            <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Listado del Establecimiento</div></div>
-                <table class="table-custom">
-                    <thead><tr><th>Lote</th><th>Hectáreas Declaradas</th><th class="text-center">Operaciones</th></tr></thead>
-                    <tbody id="lotes-tabla-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="view-detalle-lote" class="view-section">
-            <a class="back-link" onclick="cambiarVista('lotes')"><i class="bi bi-arrow-left"></i> Volver a Lotes</a>
+    <script>
+        // Cambiar entre pantallas manteniendo el estilo original
+        function switchView(viewId, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             
-            <div class="panel-header mt-2">
-                <div>
-                    <h2 class="panel-title" id="det-lote-nombre">Cargando...</h2>
-                    <div class="text-muted mt-1" id="det-lote-subtitulo">Superficie Total: 0 ha</div>
-                </div>
-                <div id="det-lote-estado-suelo"></div>
-            </div>
-
-            <div class="content-card mb-4">
-                <div class="card-header-custom">
-                    <div class="card-title-custom"><i class="bi bi-flower1"></i> Cultivos Sembrados en el Terreno</div>
-                    <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalCultivo()"><i class="bi bi-plus"></i> Sembrar Cultivo</button>
-                </div>
-                <table class="table-custom">
-                    <thead><tr><th>Cultivo</th><th>Área</th><th>Tipo</th><th>Producción / Cosecha</th><th>Eliminar</th></tr></thead>
-                    <tbody id="det-tabla-cultivos"></tbody>
-                </table>
-            </div>
-
-            <div class="row g-4 mb-4">
-                <div class="col-md-6">
-                    <div class="content-card h-100">
-                        <div class="card-header-custom">
-                            <div class="card-title-custom"><i class="bi bi-cash-coin"></i> Extracto de Gastos (Egresos)</div>
-                            <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalGasto()"><i class="bi bi-plus"></i> Añadir Gasto</button>
-                        </div>
-                        <table class="table-custom">
-                            <thead><tr><th>Fecha</th><th>Detalle/Categoría</th><th class="text-end">Monto</th><th>Eliminar</th></tr></thead>
-                            <tbody id="det-tabla-gastos"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="content-card h-100">
-                        <div class="card-header-custom">
-                            <div class="card-title-custom"><i class="bi bi-graph-up-arrow"></i> Registro de Ventas (Ingresos)</div>
-                            <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalIngreso()"><i class="bi bi-plus"></i> Añadir Ingreso</button>
-                        </div>
-                        <table class="table-custom">
-                            <thead><tr><th>Fecha</th><th>Detalle/Producto</th><th class="text-end">Monto</th><th>Eliminar</th></tr></thead>
-                            <tbody id="det-tabla-ingresos"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-produccion" class="view-section">
-            <div class="panel-header"><div class="panel-title">Proyecciones de Rendimiento Estimado</div></div>
-            <div class="row g-4" id="produccion-tarjetas-container"></div>
-        </div>
-
-        <div id="view-gastos" class="view-section">
-            <div class="panel-header">
-                <div class="panel-title">Auditoría Financiera de Gastos (Egresos)</div>
-                <button class="btn-primary-custom" onclick="descargarExcelGastos()"><i class="bi bi-file-earmark-excel"></i> Descargar Excel Gastos</button>
-            </div>
-            <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Todas las Transacciones de Salida</div></div>
-                <table class="table-custom">
-                    <thead><tr><th>Fecha</th><th>Lote</th><th>Categoría</th><th>Descripción</th><th class="text-end">Monto</th></tr></thead>
-                    <tbody id="gastos-tabla-global-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="view-ingresos" class="view-section">
-            <div class="panel-header">
-                <div class="panel-title">Auditoría Financiera de Ingresos (Ventas)</div>
-                <button class="btn-primary-custom" onclick="descargarExcelIngresos()"><i class="bi bi-file-earmark-excel"></i> Descargar Excel Ingresos</button>
-            </div>
-            <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Todas las Transacciones de Entrada</div></div>
-                <table class="table-custom">
-                    <thead><tr><th>Fecha</th><th>Lote</th><th>Concepto/Producto</th><th>Descripción</th><th class="text-end">Monto</th></tr></thead>
-                    <tbody id="ingresos-tabla-global-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="view-ajustes" class="view-section">
-            <div class="panel-header"><div class="panel-title">Ajustes del Sistema</div></div>
-            <div class="content-card p-4">
-                <h6 class="fw-bold text-success"><i class="bi bi-cloud-check"></i> Firebase Conectado Sincrónicamente</h6>
-                <p class="text-muted small mt-2 mb-0">Modo PWA Activo con manifiesto e icono sincronizado.</p>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<div class="modal fade" id="modalLote" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Registrar Nuevo Terreno</h5>
-            <form id="form-lote-nuevo">
-                <div class="mb-3"><label class="small fw-bold text-muted">Nombre Identificador</label><input type="text" id="lote-nombre" class="form-control" placeholder="Ej: Rolon Kue" required></div>
-                <div class="mb-4"><label class="small fw-bold text-muted">Hectáreas Totales</label><input type="number" id="lote-totales" class="form-control" placeholder="Ej: 20" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Crear Lote</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalCultivo" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-2" style="color: var(--primary-dark);">Sembrar en Lote</h5>
-            <p class="text-danger small fw-bold d-none" id="error-limite-ha">¡Error! No hay suficiente espacio libre en el lote para estas hectáreas.</p>
-            <form id="form-cultivo-nuevo">
-                <div class="mb-3">
-                    <label class="small fw-bold text-muted">Cultivo / Planta</label>
-                    <select id="cultivo-tipo" class="form-select" required>
-                        <option value="Maíz">Maíz</option>
-                        <option value="Soja">Soja</option>
-                        <option value="Poroto">Poroto</option>
-                        <option value="Pasto">Pasto</option>
-                    </select>
-                </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Hectáreas a Ocupar</label><input type="number" step="any" id="cultivo-ha" class="form-control" required></div>
-                <div class="form-check form-switch mb-4">
-                    <input class="form-check-input" type="checkbox" id="cultivo-mecanizado">
-                    <label class="form-check-label fw-bold text-muted" for="cultivo-mecanizado">¿Usa tecnología/maquinaria pesada?</label>
-                </div>
-                <button type="submit" id="btn-guardar-cultivo" class="btn-primary-custom w-100 py-2 justify-content-center">Registrar Siembra</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalGasto" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Agregar Egreso al Lote</h5>
-            <form id="form-gasto-nuevo">
-                <div class="mb-3">
-                    <label class="small fw-bold text-muted">Categoría Financiera</label>
-                    <select id="gasto-cat" class="form-select" required>
-                        <option value="Combustible">Combustible</option>
-                        <option value="Semillas">Semillas</option>
-                        <option value="Fertilizantes">Fertilizantes / Agroquímicos</option>
-                        <option value="Mano de Obra">Mano de Obra</option>
-                    </select>
-                </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Descripción del Gasto</label><input type="text" id="gasto-desc" class="form-control" placeholder="Ej: Compra de diesel" required></div>
-                <div class="mb-4"><label class="small fw-bold text-muted">Monto Invertido (G.)</label><input type="number" id="gasto-monto" class="form-control" placeholder="Ej: 200000" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cargar al Extracto</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalIngreso" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Agregar Ingreso (Venta) al Lote</h5>
-            <form id="form-ingreso-nuevo">
-                <div class="mb-3">
-                    <label class="small fw-bold text-muted">Concepto / Producto Vendido</label>
-                    <select id="ingreso-cat" class="form-select" required>
-                        <option value="Venta de Maíz">Venta de Maíz</option>
-                        <option value="Venta de Soja">Venta de Soja</option>
-                        <option value="Venta de Poroto">Venta de Poroto</option>
-                        <option value="Otros Ingresos">Otros Ingresos</option>
-                    </select>
-                </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Descripción o Comprobante</label><input type="text" id="ingreso-desc" class="form-control" placeholder="Ej: Liquidación de Silo" required></div>
-                <div class="mb-4"><label class="small fw-bold text-muted">Monto Percibido (G.)</label><input type="number" id="ingreso-monto" class="form-control" placeholder="Ej: 500000" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Registrar Ingreso</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalCosechar" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-2" style="color: var(--primary-dark);">Cierre de Cosecha</h5>
-            <p class="text-muted small mb-4">Ingresá los kilos reales pesados. Esto liberará contablemente las hectáreas ocupadas.</p>
-            <form id="form-cosecha-ejecutar">
-                <input type="hidden" id="cosecha-cultivo-id">
-                <div class="mb-4"><label class="small fw-bold text-muted">Kilos Totales Logrados</label><input type="number" id="cosecha-kg" class="form-control" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cerrar Producción</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalConfirmarBorrado" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
-        <div class="modal-content text-center p-4" style="border-radius: 20px; border: none;">
-            <div class="text-danger mb-3" style="font-size: 40px;"><i class="bi bi-exclamation-circle-fill"></i></div>
-            <h5 class="fw-bold mb-2" id="borrado-titulo" style="color: var(--primary-dark);">¿Eliminar registro?</h5>
-            <p class="text-muted small px-2" id="borrado-mensaje">La acción se sincronizará directamente en la nube de Firebase.</p>
-            <div class="d-flex gap-2 mt-4">
-                <button type="button" class="btn btn-light w-100 rounded-pill fw-bold text-muted py-2" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="btn-ejecutar-borrado-seguro" class="btn btn-danger w-100 rounded-pill fw-bold py-2">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
-        authDomain: "agrogestion-163d2.firebaseapp.com",
-        projectId: "agrogestion-163d2",
-        storageBucket: "agrogestion-163d2.firebasestorage.app",
-        messagingSenderId: "83410520563",
-        appId: "1:83410520563:web:0de6a6b74d8adbc1206a86"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let listaLotes = [];
-    let listaCultivos = [];
-    let listaGastos = [];
-    let listaIngresos = [];
-    
-    let idLoteSeleccionado = null;
-    let haLibresLoteSeleccionado = 0;
-    let funcionBorradoSeguro = null;
-
-    const RENDIMIENTOS = { "Maíz": 7000, "Soja": 3000, "Poroto": 1200, "Pasto": 5000 };
-
-    window.cambiarVista = (nombreVista) => {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        
-        const target = document.getElementById(`view-${nombreVista}`);
-        if(target) target.classList.add('active-view');
-        
-        const nav = Array.from(document.querySelectorAll('.nav-item')).find(i => i.outerHTML.includes(`'${nombreVista}'`));
-        if (nav) nav.classList.add('active');
-    };
-
-    onSnapshot(collection(db, "lotes"), (snap) => {
-        listaLotes = []; snap.forEach(d => { listaLotes.push({ id: d.id, ...d.data() }); });
-        renderizarTodo();
-    });
-
-    onSnapshot(collection(db, "cultivos"), (snap) => {
-        listaCultivos = []; snap.forEach(d => { listaCultivos.push({ id: d.id, ...d.data() }); });
-        renderizarTodo();
-    });
-
-    onSnapshot(collection(db, "gastos"), (snap) => {
-        listaGastos = []; snap.forEach(d => { listaGastos.push({ id: d.id, ...d.data() }); });
-        renderizarTodo();
-    });
-
-    onSnapshot(collection(db, "ingresos"), (snap) => {
-        listaIngresos = []; snap.forEach(d => { listaIngresos.push({ id: d.id, ...d.data() }); });
-        renderizarTodo();
-    });
-
-    function renderizarTodo() {
-        renderizarDashboard();
-        renderizarListadoLotes();
-        renderizarVistaGlobalGastos();
-        renderizarVistaGlobalIngresos();
-        renderizarModuloProduccion();
-        if (idLoteSeleccionado) renderizarDetalleLoteExclusivo(idLoteSeleccionado);
-    }
-
-    function renderizarDashboard() {
-        const body = document.getElementById('dash-tabla-body');
-        body.innerHTML = '';
-        let totalHa = 0, globalGastos = 0, globalIngresos = 0;
-
-        listaLotes.forEach(l => {
-            totalHa += Number(l.haTotales) || 0;
-            const gastosLote = listaGastos.filter(g => g.loteId === l.id).reduce((s, g) => s + (Number(g.monto) || 0), 0);
-            const ingresosLote = listaIngresos.filter(i => i.loteId === l.id).reduce((s, i) => s + (Number(i.monto) || 0), 0);
-            globalGastos += gastosLote;
-            globalIngresos += ingresosLote;
-
-            body.innerHTML += `
-                <tr>
-                    <td><div class="fw-bold text-dark">${l.nombre}</div></td>
-                    <td>${l.haTotales} ha</td>
-                    <td class="fw-bold text-danger">G. ${gastosLote.toLocaleString('es-PY')}</td>
-                    <td class="fw-bold text-success">G. ${ingresosLote.toLocaleString('es-PY')}</td>
-                    <td><button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-eye"></i> Ver Lote</button></td>
-                </tr>`;
-        });
-
-        const balanceLiquido = globalIngresos - globalGastos;
-        document.getElementById('dash-ha').innerText = totalHa + " ha";
-        document.getElementById('dash-inv').innerText = "G. " + globalGastos.toLocaleString('es-PY');
-        document.getElementById('dash-ingresos-total').innerText = "G. " + globalIngresos.toLocaleString('es-PY');
-        document.getElementById('dash-ganancia-estimada').innerText = "G. " + balanceLiquido.toLocaleString('es-PY');
-    }
-
-    function renderizarListadoLotes() {
-        const body = document.getElementById('lotes-tabla-body');
-        body.innerHTML = '';
-        listaLotes.forEach(l => {
-            body.innerHTML += `
-                <tr>
-                    <td><div class="fw-bold text-dark">${l.nombre}</div></td>
-                    <td>${l.haTotales} ha</td>
-                    <td class="text-center">
-                        <button class="action-btn text-success me-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-folder2-open"></i> Abrir Detalle</button>
-                        <button class="action-btn text-danger" onclick="solicitarBorradoElemento('lote', '${l.id}')"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>`;
-        });
-    }
-
-    window.abrirRadiografiaLote = (idLote) => {
-        idLoteSeleccionado = idLote;
-        cambiarVista('detalle-lote');
-        renderizarDetalleLoteExclusivo(idLote);
-    };
-
-    function renderizarDetalleLoteExclusivo(idLote) {
-        const loteObj = listaLotes.find(l => l.id === idLote);
-        if(!loteObj) return;
-
-        document.getElementById('det-lote-nombre').innerText = "Lote: " + loteObj.nombre;
-        document.getElementById('det-lote-subtitulo').innerText = `Superficie Máxima Establecida: ${loteObj.haTotales} Hectáreas`;
-
-        const cultivosEsteLote = listaCultivos.filter(c => c.loteId === idLote);
-        let haOcupadas = 0;
-        const tablaCultivos = document.getElementById('det-tabla-cultivos');
-        tablaCultivos.innerHTML = '';
-
-        cultivosEsteLote.forEach(c => {
-            if (!c.cosechado) haOcupadas += Number(c.ha) || 0;
-            const estadoCosecha = c.cosechado 
-                ? `<span class="badge bg-success py-1 px-2">Cosechado: ${Number(c.kgReales).toLocaleString('es-PY')} kg</span>`
-                : `<button class="btn btn-sm btn-warning fw-bold py-0 rounded-pill px-2" onclick="abrirModalCosecha('${c.id}')">Cosechar</button>`;
-
-            tablaCultivos.innerHTML += `
-                <tr>
-                    <td class="fw-bold text-dark">${c.tipo}</td>
-                    <td>${c.ha} ha</td>
-                    <td><span class="small text-muted">${c.mecanizado ? 'Mecanizado' : 'Manual'}</span></td>
-                    <td>${estadoCosecha}</td>
-                    <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('cultivo', '${c.id}')"><i class="bi bi-trash"></i></button></td>
-                </tr>`;
-        });
-
-        const haMaximas = Number(loteObj.haTotales) || 0;
-        haLibresLoteSeleccionado = haMaximas - haOcupadas;
-        const contenedorBadge = document.getElementById('det-lote-estado-suelo');
-        if(haLibresLoteSeleccionado < 0) {
-            contenedorBadge.innerHTML = `<span class="badge bg-danger badge-suelo">¡Error! Superado por ${Math.abs(haLibresLoteSeleccionado)} ha</span>`;
-        } else if(haLibresLoteSeleccionado === 0) {
-            contenedorBadge.innerHTML = `<span class="badge bg-success badge-suelo">100% Ocupado</span>`;
-        } else {
-            contenedorBadge.innerHTML = `<span class="badge bg-info text-dark badge-suelo">${haLibresLoteSeleccionado} ha libres</span>`;
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
         }
 
-        const tablaGastos = document.getElementById('det-tabla-gastos');
-        tablaGastos.innerHTML = '';
-        listaGastos.filter(g => g.loteId === idLote).forEach(g => {
-            tablaGastos.innerHTML += `
-                <tr>
-                    <td class="small text-muted">${g.fecha}</td>
-                    <td><span class="fw-bold d-block">${g.cat}</span><small class="text-muted">${g.desc}</small></td>
-                    <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
-                    <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('gasto', '${g.id}')"><i class="bi bi-trash"></i></button></td>
-                </tr>`;
-        });
+        // Control del Diálogo flotante de eliminación
+        let targetId = null;
+        const modalEl = document.getElementById('deleteModal');
 
-        const tablaIngresos = document.getElementById('det-tabla-ingresos');
-        tablaIngresos.innerHTML = '';
-        listaIngresos.filter(i => i.loteId === idLote).forEach(i => {
-            tablaIngresos.innerHTML += `
-                <tr>
-                    <td class="small text-muted">${i.fecha}</td>
-                    <td><span class="fw-bold d-block">${i.cat}</span><small class="text-muted">${i.desc}</small></td>
-                    <td class="text-end fw-bold text-success">G. ${Number(i.monto).toLocaleString('es-PY')}</td>
-                    <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('ingreso', '${i.id}')"><i class="bi bi-trash"></i></button></td>
-                </tr>`;
-        });
-    }
-
-    function renderizarModuloProduccion() {
-        const contenedor = document.getElementById('produccion-tarjetas-container');
-        contenedor.innerHTML = '';
-        let resumenPorCultivo = {};
-
-        listaCultivos.forEach(c => {
-            const tipo = c.tipo;
-            const ha = Number(c.ha) || 0;
-            const estimado = ha * (RENDIMIENTOS[tipo] || 2000);
-
-            if(!resumenPorCultivo[tipo]) resumenPorCultivo[tipo] = { kgEstimados: 0, kgReales: 0 };
-            if(!c.cosechado) resumenPorCultivo[tipo].kgEstimados += estimado;
-            else resumenPorCultivo[tipo].kgReales += (Number(c.kgReales) || 0);
-        });
-
-        Object.keys(resumenPorCultivo).forEach(cultivo => {
-            const r = resumenPorCultivo[cultivo];
-            contenedor.innerHTML += `
-                <div class="col-md-6">
-                    <div class="content-card p-4">
-                        <h5 class="fw-bold text-success mb-2"><i class="bi bi-flower1"></i> Cultivo: ${cultivo}</h5>
-                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                            <span class="text-muted">Proyección Esperada Activa:</span>
-                            <span class="fw-bold text-dark">${r.kgEstimados.toLocaleString('es-PY')} kg</span>
-                        </div>
-                        <div class="d-flex justify-content-between text-success fw-bold">
-                            <span>Ya Cosechado Real:</span>
-                            <span>${r.kgReales.toLocaleString('es-PY')} kg</span>
-                        </div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function renderizarVistaGlobalGastos() {
-        const body = document.getElementById('gastos-tabla-global-body');
-        body.innerHTML = ''; window.cacheExcelGastos = [];
-        listaGastos.forEach(g => {
-            const loteObj = listaLotes.find(l => l.id === g.loteId);
-            const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
-            window.cacheExcelGastos.push({ Fecha: g.fecha, Lote: loteNombre, Categoria: g.cat, Descripcion: g.desc, Monto: g.monto });
-            body.innerHTML += `<tr><td>${g.fecha}</td><td class="fw-bold text-dark">${loteNombre}</td><td><span class="badge bg-light text-dark border">${g.cat}</span></td><td>${g.desc}</td><td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td></tr>`;
-        });
-    }
-
-    function renderizarVistaGlobalIngresos() {
-        const body = document.getElementById('ingresos-tabla-global-body');
-        body.innerHTML = ''; window.cacheExcelIngresos = [];
-        listaIngresos.forEach(i => {
-            const loteObj = listaLotes.find(l => l.id === i.loteId);
-            const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
-            window.cacheExcelIngresos.push({ Fecha: i.fecha, Lote: loteNombre, Categoria: i.cat, Descripcion: i.desc, Monto: i.monto });
-            body.innerHTML += `<tr><td>${i.fecha}</td><td class="fw-bold text-dark">${loteNombre}</td><td><span class="badge bg-light text-dark border">${i.cat}</span></td><td>${i.desc}</td><td class="text-end fw-bold text-success">G. ${Number(i.monto).toLocaleString('es-PY')}</td></tr>`;
-        });
-    }
-
-    document.getElementById('form-lote-nuevo').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await addDoc(collection(db, "lotes"), { nombre: document.getElementById('lote-nombre').value, haTotales: Number(document.getElementById('lote-totales').value) });
-        bootstrap.Modal.getInstance(document.getElementById('modalLote')).hide();
-        document.getElementById('form-lote-nuevo').reset();
-    });
-
-    document.getElementById('cultivo-ha').addEventListener('input', (e) => {
-        const haIngresadas = Number(e.target.value) || 0;
-        const errorMsg = document.getElementById('error-limite-ha');
-        const btnGuardar = document.getElementById('btn-guardar-cultivo');
-        if(haIngresadas > haLibresLoteSeleccionado) { errorMsg.classList.remove('d-none'); btnGuardar.disabled = true; }
-        else { errorMsg.classList.add('d-none'); btnGuardar.disabled = false; }
-    });
-
-    window.abrirModalCultivo = () => {
-        document.getElementById('error-limite-ha').classList.add('d-none');
-        document.getElementById('btn-guardar-cultivo').disabled = false;
-        new bootstrap.Modal(document.getElementById('modalCultivo')).show();
-    };
-
-    document.getElementById('form-cultivo-nuevo').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await addDoc(collection(db, "cultivos"), { loteId: idLoteSeleccionado, tipo: document.getElementById('cultivo-tipo').value, ha: Number(document.getElementById('cultivo-ha').value), mecanizado: document.getElementById('cultivo-mecanizado').checked, cosechado: false, kgReales: 0 });
-        bootstrap.Modal.getInstance(document.getElementById('modalCultivo')).hide();
-        document.getElementById('form-cultivo-nuevo').reset();
-    });
-
-    window.abrirModalGasto = () => { new bootstrap.Modal(document.getElementById('modalGasto')).show(); };
-    document.getElementById('form-gasto-nuevo').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const hoy = new Date();
-        const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
-        await addDoc(collection(db, "gastos"), { loteId: idLoteSeleccionado, cat: document.getElementById('gasto-cat').value, desc: document.getElementById('gasto-desc').value, monto: Number(document.getElementById('gasto-monto').value), fecha: fechaStr });
-        bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
-        document.getElementById('form-gasto-nuevo').reset();
-    });
-
-    window.abrirModalIngreso = () => { new bootstrap.Modal(document.getElementById('modalIngreso')).show(); };
-    document.getElementById('form-ingreso-nuevo').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const hoy = new Date();
-        const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
-        await addDoc(collection(db, "ingresos"), { loteId: idLoteSeleccionado, cat: document.getElementById('ingreso-cat').value, desc: document.getElementById('ingreso-desc').value, monto: Number(document.getElementById('ingreso-monto').value), fecha: fechaStr });
-        bootstrap.Modal.getInstance(document.getElementById('modalIngreso')).hide();
-        document.getElementById('form-ingreso-nuevo').reset();
-    });
-
-    window.abrirModalCosecha = (idCultivo) => {
-        document.getElementById('cosecha-cultivo-id').value = idCultivo;
-        new bootstrap.Modal(document.getElementById('modalCosechar')).show();
-    };
-
-    document.getElementById('form-cosecha-ejecutar').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const cid = document.getElementById('cosecha-cultivo-id').value;
-        const kg = Number(document.getElementById('cosecha-kg').value);
-        await updateDoc(doc(db, "cultivos", cid), { cosechado: true, kgReales: kg });
-        bootstrap.Modal.getInstance(document.getElementById('modalCosechar')).hide();
-        document.getElementById('form-cosecha-ejecutar').reset();
-    });
-
-    window.solicitarBorradoElemento = (tipo, id) => {
-        document.getElementById('borrado-titulo').innerText = `¿Eliminar este ${tipo}?`;
-        if(tipo === 'lote') {
-            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "lotes", id)); if(idLoteSeleccionado === id) idLoteSeleccionado = null; cambiarVista('lotes'); };
-        } else if(tipo === 'cultivo') {
-            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "cultivos", id)); };
-        } else if(tipo === 'gasto') {
-            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "gastos", id)); };
-        } else if(tipo === 'ingreso') {
-            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "ingresos", id)); };
+        function openConfirmModal(id) {
+            targetId = id;
+            modalEl.classList.add('open');
         }
-        new bootstrap.Modal(document.getElementById('modalConfirmarBorrado')).show();
-    };
 
-    document.getElementById('btn-ejecutar-borrado-seguro').addEventListener('click', async () => {
-        if(funcionBorradoSeguro) { await funcionBorradoSeguro(); funcionBorradoSeguro = null; }
-        bootstrap.Modal.getInstance(document.getElementById('modalConfirmarBorrado')).hide();
-    });
-
-    window.descargarExcelGastos = () => {
-        if(!window.cacheExcelGastos || window.cacheExcelGastos.length === 0) return;
-        const ws = XLSX.utils.json_to_sheet(window.cacheExcelGastos);
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Gastos");
-        XLSX.writeFile(wb, "Auditoria_Egresos_Agrogestion.xlsx");
-    };
-
-    window.descargarExcelIngresos = () => {
-        if(!window.cacheExcelIngresos || window.cacheExcelIngresos.length === 0) return;
-        const ws = XLSX.utils.json_to_sheet(window.cacheExcelIngresos);
-        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Ingresos");
-        XLSX.writeFile(wb, "Auditoria_Ingresos_Agrogestion.xlsx");
-    };
-</script>
-
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado correctamente', reg))
-                .catch(err => console.error('Error al registrar Service Worker', err));
+        document.getElementById('confirmCancel').addEventListener('click', () => {
+            modalEl.classList.remove('open');
+            targetId = null;
         });
-    }
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        document.getElementById('confirmOk').addEventListener('click', () => {
+            if (targetId) {
+                const element = document.getElementById(targetId);
+                if (element) element.remove();
+            }
+            modalEl.classList.remove('open');
+            targetId = null;
+        });
+
+        // Registro Automático de PWA Service Worker si existe en tu repositorio
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+            });
+        }
+    </script>
 </body>
 </html>

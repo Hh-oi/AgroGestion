@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AGROGESTION - Panel Profesional</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght|300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
@@ -64,8 +64,6 @@
 
         .btn-primary-custom { background-color: var(--primary-dark); color: var(--white); border: none; padding: 10px 24px; border-radius: 50px; font-size: 14px; font-weight: 600; transition: background-color 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary-custom:hover { background-color: var(--accent-green); color: white; }
-        .btn-outline-custom { background-color: transparent; color: var(--text-main); border: 1px solid var(--text-main); padding: 10px 24px; border-radius: 50px; font-size: 14px; font-weight: 600; text-decoration: none; }
-        .action-btn { background: none; border: none; font-size: 16px; cursor: pointer; padding: 0 5px; }
         
         .view-section { display: none; }
         .view-section.active-view { display: block; }
@@ -89,6 +87,7 @@
         <div class="nav-item" onclick="cambiarVista('lotes')"><i class="bi bi-geo-alt"></i> Lotes de Tierra</div>
         <div class="nav-item" onclick="cambiarVista('produccion')"><i class="bi bi-flower1"></i> Producción / Cosecha</div>
         <div class="nav-item" onclick="cambiarVista('gastos')"><i class="bi bi-cash-stack"></i> Auditoría de Gastos</div>
+        <div class="nav-item" onclick="cambiarVista('ingresos')"><i class="bi bi-graph-up-arrow"></i> Control de Ingresos</div>
         
         <div class="menu-section-title" style="margin-top: 32px;">Configuración</div>
         <div class="nav-item" onclick="cambiarVista('ajustes')"><i class="bi bi-gear"></i> Ajustes Nube</div>
@@ -107,15 +106,15 @@
 
             <div class="kpi-grid">
                 <div class="kpi-card"><div class="kpi-icon-container icon-green"><i class="bi bi-layers"></i></div><div class="kpi-label">Superficie Total</div><div class="kpi-value" id="dash-ha">0 ha</div></div>
-                <div class="kpi-card"><div class="kpi-icon-container icon-blue"><i class="bi bi-geo"></i></div><div class="kpi-label">Lotes Totales</div><div class="kpi-value" id="dash-lotes">0</div></div>
-                <div class="kpi-card"><div class="kpi-icon-container icon-gold"><i class="bi bi-cash-stack"></i></div><div class="kpi-label">Inversión Acumulada</div><div class="kpi-value text-danger" id="dash-inv">G. 0</div></div>
-                <div class="kpi-card kpi-card-dark"><div class="kpi-icon-container icon-trans"><i class="bi bi-calculator"></i></div><div class="kpi-label">Proyección Estimada</div><div class="kpi-value" id="dash-prod-total">0 kg</div></div>
+                <div class="kpi-card"><div class="kpi-icon-container icon-blue"><i class="bi bi-cash-stack"></i></div><div class="kpi-label">Egresos / Gastos Totales</div><div class="kpi-value text-danger" id="dash-inv">G. 0</div></div>
+                <div class="kpi-card"><div class="kpi-icon-container icon-gold"><i class="bi bi-graph-up-arrow"></i></div><div class="kpi-label">Ingresos por Ventas</div><div class="kpi-value text-success" id="dash-ingresos-total">G. 0</div></div>
+                <div class="kpi-card kpi-card-dark"><div class="kpi-icon-container icon-trans"><i class="bi bi-wallet2"></i></div><div class="kpi-label">Ganancia Líquida (Margen)</div><div class="kpi-value" id="dash-ganancia-estimada" style="color: var(--gold);">G. 0</div></div>
             </div>
 
             <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Estado General por Lote</div></div>
+                <div class="card-header-custom"><div class="card-title-custom">Estado Financiero por Lote</div></div>
                 <table class="table-custom">
-                    <thead><tr><th>Identificador de Terreno</th><th>Superficie Total</th><th>Egresos Registrados</th><th>Acción</th></tr></thead>
+                    <thead><tr><th>Identificador de Terreno</th><th>Superficie Total</th><th>Egresos (Gastos)</th><th>Ingresos (Ventas)</th><th>Acción</th></tr></thead>
                     <tbody id="dash-tabla-body"></tbody>
                 </table>
             </div>
@@ -146,24 +145,22 @@
                 <div id="det-lote-estado-suelo"></div>
             </div>
 
+            <div class="content-card mb-4">
+                <div class="card-header-custom">
+                    <div class="card-title-custom"><i class="bi bi-flower1"></i> Cultivos Sembrados en el Terreno</div>
+                    <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalCultivo()"><i class="bi bi-plus"></i> Sembrar Cultivo</button>
+                </div>
+                <table class="table-custom">
+                    <thead><tr><th>Cultivo</th><th>Área</th><th>Tipo</th><th>Producción / Cosecha</th><th>Eliminar</th></tr></thead>
+                    <tbody id="det-tabla-cultivos"></tbody>
+                </table>
+            </div>
+
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <div class="content-card h-100">
                         <div class="card-header-custom">
-                            <div class="card-title-custom"><i class="bi bi-flower1"></i> Cultivos Sembrados</div>
-                            <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalCultivo()"><i class="bi bi-plus"></i> Sembrar</button>
-                        </div>
-                        <table class="table-custom">
-                            <thead><tr><th>Cultivo</th><th>Área</th><th>Tipo</th><th>Producción / Cosecha</th><th>Eliminar</th></tr></thead>
-                            <tbody id="det-tabla-cultivos"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="content-card h-100">
-                        <div class="card-header-custom">
-                            <div class="card-title-custom"><i class="bi bi-cash-coin"></i> Historial / Extracto de Gastos</div>
+                            <div class="card-title-custom"><i class="bi bi-cash-coin"></i> Extracto de Gastos (Egresos)</div>
                             <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalGasto()"><i class="bi bi-plus"></i> Añadir Gasto</button>
                         </div>
                         <table class="table-custom">
@@ -172,22 +169,34 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="col-md-6">
+                    <div class="content-card h-100">
+                        <div class="card-header-custom">
+                            <div class="card-title-custom"><i class="bi bi-graph-up-arrow"></i> Registro de Ventas (Ingresos)</div>
+                            <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalIngreso()"><i class="bi bi-plus"></i> Añadir Ingreso</button>
+                        </div>
+                        <table class="table-custom">
+                            <thead><tr><th>Fecha</th><th>Detalle/Producto</th><th class="text-end">Monto</th><th>Eliminar</th></tr></thead>
+                            <tbody id="det-tabla-ingresos"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div id="view-produccion" class="view-section">
-            <div class="panel-header"><div class="panel-title">Proyecciones vs Cosecha Real Consolidada</div></div>
-            <div class="row g-4" id="produccion-tarjetas-container">
-                </div>
+            <div class="panel-header"><div class="panel-title">Proyecciones de Rendimiento Estimado</div></div>
+            <div class="row g-4" id="produccion-tarjetas-container"></div>
         </div>
 
         <div id="view-gastos" class="view-section">
             <div class="panel-header">
-                <div class="panel-title">Auditoría Financiera Consolidada</div>
-                <button class="btn-primary-custom" onclick="descargarExcelGastos()"><i class="bi bi-file-earmark-excel"></i> Descargar Excel Completo</button>
+                <div class="panel-title">Auditoría Financiera de Gastos (Egresos)</div>
+                <button class="btn-primary-custom" onclick="descargarExcelGastos()"><i class="bi bi-file-earmark-excel"></i> Descargar Excel Gastos</button>
             </div>
             <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Todas las Transacciones del Establecimiento</div></div>
+                <div class="card-header-custom"><div class="card-title-custom">Todas las Transacciones de Salida</div></div>
                 <table class="table-custom">
                     <thead><tr><th>Fecha</th><th>Lote</th><th>Categoría</th><th>Descripción</th><th class="text-end">Monto</th></tr></thead>
                     <tbody id="gastos-tabla-global-body"></tbody>
@@ -195,11 +204,25 @@
             </div>
         </div>
 
+        <div id="view-ingresos" class="view-section">
+            <div class="panel-header">
+                <div class="panel-title">Auditoría Financiera de Ingresos (Ventas)</div>
+                <button class="btn-primary-custom" onclick="descargarExcelIngresos()"><i class="bi bi-file-earmark-excel"></i> Descargar Excel Ingresos</button>
+            </div>
+            <div class="content-card">
+                <div class="card-header-custom"><div class="card-title-custom">Todas las Transacciones de Entrada</div></div>
+                <table class="table-custom">
+                    <thead><tr><th>Fecha</th><th>Lote</th><th>Concepto/Producto</th><th>Descripción</th><th class="text-end">Monto</th></tr></thead>
+                    <tbody id="ingresos-tabla-global-body"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="view-ajustes" class="view-section">
             <div class="panel-header"><div class="panel-title">Ajustes del Sistema</div></div>
             <div class="content-card p-4">
-                <h6 class="fw-bold text-success"><i class="bi bi-cloud-check"></i> Firebase Conectado Correctamente</h6>
-                <p class="text-muted small mt-2 mb-0">Base de datos configurada de manera plana: `lotes`, `cultivos` y `gastos` sincrónicos en la raíz.</p>
+                <h6 class="fw-bold text-success"><i class="bi bi-cloud-check"></i> Firebase Conectado Sincrónicamente</h6>
+                <p class="text-muted small mt-2 mb-0">Base de datos estructurada con 4 colecciones planas en la raíz: `lotes`, `cultivos`, `gastos` e `ingresos`.</p>
             </div>
         </div>
 
@@ -260,8 +283,30 @@
                     </select>
                 </div>
                 <div class="mb-3"><label class="small fw-bold text-muted">Descripción del Gasto</label><input type="text" id="gasto-desc" class="form-control" placeholder="Ej: Compra de diesel para tractor" required></div>
-                <div class="mb-4"><label class="small fw-bold text-muted">Monto Invertido (G.)</label><input type="number" id="gasto-monto" class="form-control" required></div>
+                <div class="mb-4"><label class="small fw-bold text-muted">Monto Invertido (G.)</label><input type="number" id="gasto-monto" class="form-control" placeholder="Ej: 200000" required></div>
                 <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cargar al Extracto</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalIngreso" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4" style="border-radius: 16px;">
+            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Agregar Ingreso (Venta) al Lote</h5>
+            <form id="form-ingreso-nuevo">
+                <div class="mb-3">
+                    <label class="small fw-bold text-muted">Concepto / Producto Vendido</label>
+                    <select id="ingreso-cat" class="form-select" required>
+                        <option value="Venta de Maíz">Venta de Maíz</option>
+                        <option value="Venta de Soja">Venta de Soja</option>
+                        <option value="Venta de Poroto">Venta de Poroto</option>
+                        <option value="Otros Ingresos">Otros Ingresos</option>
+                    </select>
+                </div>
+                <div class="mb-3"><label class="small fw-bold text-muted">Descripción o Comprobante</label><input type="text" id="ingreso-desc" class="form-control" placeholder="Ej: Liquidación de Silo / Granos" required></div>
+                <div class="mb-4"><label class="small fw-bold text-muted">Monto Percibido (G.)</label><input type="number" id="ingreso-monto" class="form-control" placeholder="Ej: 500000" required></div>
+                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Registrar Ingreso</button>
             </form>
         </div>
     </div>
@@ -312,19 +357,19 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Estado local plano de la aplicación
+    // Estado local de la aplicación
     let listaLotes = [];
     let listaCultivos = [];
     let listaGastos = [];
+    let listaIngresos = [];
     
     let idLoteSeleccionado = null;
     let haLibresLoteSeleccionado = 0;
     let funcionBorradoSeguro = null;
 
-    // Rendimientos Estándar por Hectárea de la Zona (Paraguay)
     const RENDIMIENTOS = { "Maíz": 7000, "Soja": 3000, "Poroto": 1200, "Pasto": 5000 };
 
-    // CONTROLADOR DE CAMBIO DE PANTALLA
+    // CONTROLADOR DE NAVEGACIÓN
     window.cambiarVista = (nombreVista) => {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -336,34 +381,33 @@
         if (nav) nav.classList.add('active');
     };
 
-    // ESCUCHADORES EN LA RAÍZ (PERFECTO SCONCRONISMO PLANO)
-    
-    // 1. Escuchar Lotes
+    // ESCUCHADORES DE COLEXIONES PLANAS EN FIRESTORE
     onSnapshot(collection(db, "lotes"), (snap) => {
-        listaLotes = [];
-        snap.forEach(d => { listaLotes.push({ id: d.id, ...d.data() }); });
+        listaLotes = []; snap.forEach(d => { listaLotes.push({ id: d.id, ...d.data() }); });
         renderizarTodo();
     });
 
-    // 2. Escuchar Cultivos
     onSnapshot(collection(db, "cultivos"), (snap) => {
-        listaCultivos = [];
-        snap.forEach(d => { listaCultivos.push({ id: d.id, ...d.data() }); });
+        listaCultivos = []; snap.forEach(d => { listaCultivos.push({ id: d.id, ...d.data() }); });
         renderizarTodo();
     });
 
-    // 3. Escuchar Gastos
     onSnapshot(collection(db, "gastos"), (snap) => {
-        listaGastos = [];
-        snap.forEach(d => { listaGastos.push({ id: d.id, ...d.data() }); });
+        listaGastos = []; snap.forEach(d => { listaGastos.push({ id: d.id, ...d.data() }); });
         renderizarTodo();
     });
 
-    // MOTOR DE CORRESPONDENCIA Y ACTUALIZACIÓN VISUAL EN VIVO
+    onSnapshot(collection(db, "ingresos"), (snap) => {
+        listaIngresos = []; snap.forEach(d => { listaIngresos.push({ id: d.id, ...d.data() }); });
+        renderizarTodo();
+    });
+
+    // RENDERIZADOR GENERAL CENTRALIZADO
     function renderizarTodo() {
         renderizarDashboard();
         renderizarListadoLotes();
         renderizarVistaGlobalGastos();
+        renderizarVistaGlobalIngresos();
         renderizarModuloProduccion();
         
         if (idLoteSeleccionado) {
@@ -371,41 +415,48 @@
         }
     }
 
+    // 1. DASHBOARD GENERAL CON PUNTOS EN DINERO
     function renderizarDashboard() {
         const body = document.getElementById('dash-tabla-body');
         body.innerHTML = '';
 
         let totalHa = 0;
-        let totalGastos = 0;
+        let globalGastos = 0;
+        let globalIngresos = 0;
 
         listaLotes.forEach(l => {
             totalHa += Number(l.haTotales) || 0;
             
-            // Sumar gastos correspondientes a este lote de forma plana
-            const gastosEsteLote = listaGastos.filter(g => g.loteId === l.id)
-                                              .reduce((sum, g) => sum + (Number(g.monto) || 0), 0);
-            totalGastos += gastosEsteLote;
+            // Sumadores planos por ID con puntos
+            const gastosLote = listaGastos.filter(g => g.loteId === l.id).reduce((s, g) => s + (Number(g.monto) || 0), 0);
+            const ingresosLote = listaIngresos.filter(i => i.loteId === l.id).reduce((s, i) => s + (Number(i.monto) || 0), 0);
+            
+            globalGastos += gastosLote;
+            globalIngresos += ingresosLote;
 
             body.innerHTML += `
                 <tr>
                     <td><div class="fw-bold text-dark">${l.nombre}</div></td>
                     <td>${l.haTotales} ha</td>
-                    <td class="fw-bold text-danger">G. ${gastosEsteLote.toLocaleString('es-PY')}</td>
+                    <td class="fw-bold text-danger">G. ${gastosLote.toLocaleString('es-PY')}</td>
+                    <td class="fw-bold text-success">G. ${ingresosLote.toLocaleString('es-PY')}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-eye"></i> Ver Lote</button>
                     </td>
                 </tr>`;
         });
 
+        const balanceLiquido = globalIngresos - globalGastos;
+
         document.getElementById('dash-ha').innerText = totalHa + " ha";
-        document.getElementById('dash-lotes').innerText = listaLotes.length;
-        document.getElementById('dash-inv').innerText = "G. " + totalGastos.toLocaleString('es-PY');
+        document.getElementById('dash-inv').innerText = "G. " + globalGastos.toLocaleString('es-PY');
+        document.getElementById('dash-ingresos-total').innerText = "G. " + globalIngresos.toLocaleString('es-PY');
+        document.getElementById('dash-ganancia-estimada').innerText = "G. " + balanceLiquido.toLocaleString('es-PY');
     }
 
     function renderizarListadoLotes() {
         const body = document.getElementById('lotes-tabla-body');
         body.innerHTML = '';
-
         listaLotes.forEach(l => {
             body.innerHTML += `
                 <tr>
@@ -419,13 +470,13 @@
         });
     }
 
-    // ABRIR PANTALLA EXCLUSIVA INTERNA POR LOTE
     window.abrirRadiografiaLote = (idLote) => {
         idLoteSeleccionado = idLote;
         cambiarVista('detalle-lote');
         renderizarDetalleLoteExclusivo(idLote);
     };
 
+    // 2. RADIOGRAFIA DETALLADA DEL LOTE SELECCIONADO
     function renderizarDetalleLoteExclusivo(idLote) {
         const loteObj = listaLotes.find(l => l.id === idLote);
         if(!loteObj) return;
@@ -433,18 +484,14 @@
         document.getElementById('det-lote-nombre').innerText = "Lote: " + loteObj.nombre;
         document.getElementById('det-lote-subtitulo').innerText = `Superficie Máxima Establecida: ${loteObj.haTotales} Hectáreas`;
 
-        // Filtrar cultivos de este lote que sigan activos o sembrados (ocupando suelo)
+        // Procesar e inyectar Cultivos
         const cultivosEsteLote = listaCultivos.filter(c => c.loteId === idLote);
-        
         let haOcupadas = 0;
         const tablaCultivos = document.getElementById('det-tabla-cultivos');
         tablaCultivos.innerHTML = '';
 
         cultivosEsteLote.forEach(c => {
-            // Si no está cosechado, ocupa suelo real ahora mismo
-            if (!c.cosechado) {
-                haOcupadas += Number(c.ha) || 0;
-            }
+            if (!c.cosechado) haOcupadas += Number(c.ha) || 0;
 
             const estadoCosecha = c.cosechado 
                 ? `<span class="badge bg-success py-1 px-2">Cosechado: ${Number(c.kgReales).toLocaleString('es-PY')} kg</span>`
@@ -460,10 +507,9 @@
                 </tr>`;
         });
 
-        // Calcular Suelo Restante o libre en vivo
+        // Badge indicador de estado de suelo
         const haMaximas = Number(loteObj.haTotales) || 0;
         haLibresLoteSeleccionado = haMaximas - haOcupadas;
-        
         const contenedorBadge = document.getElementById('det-lote-estado-suelo');
         if(haLibresLoteSeleccionado < 0) {
             contenedorBadge.innerHTML = `<span class="badge bg-danger badge-suelo">¡Error! Superado por ${Math.abs(haLibresLoteSeleccionado)} ha</span>`;
@@ -473,12 +519,10 @@
             contenedorBadge.innerHTML = `<span class="badge bg-info text-dark badge-suelo">${haLibresLoteSeleccionado} ha libres (Viendo qué plantar)</span>`;
         }
 
-        // Filtrar e inyectar Gastos específicos del Lote
+        // Inyectar Gastos del Lote con puntos
         const tablaGastos = document.getElementById('det-tabla-gastos');
         tablaGastos.innerHTML = '';
-        const gastosFiltrados = listaGastos.filter(g => g.loteId === idLote);
-
-        gastosFiltrados.forEach(g => {
+        listaGastos.filter(g => g.loteId === idLote).forEach(g => {
             tablaGastos.innerHTML += `
                 <tr>
                     <td class="small text-muted">${g.fecha}</td>
@@ -487,67 +531,62 @@
                     <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('gasto', '${g.id}')"><i class="bi bi-trash"></i></button></td>
                 </tr>`;
         });
+
+        // Inyectar Ingresos del Lote con puntos
+        const tablaIngresos = document.getElementById('det-tabla-ingresos');
+        tablaIngresos.innerHTML = '';
+        listaIngresos.filter(i => i.loteId === idLote).forEach(i => {
+            tablaIngresos.innerHTML += `
+                <tr>
+                    <td class="small text-muted">${i.fecha}</td>
+                    <td><span class="fw-bold d-block">${i.cat}</span><small class="text-muted">${i.desc}</small></td>
+                    <td class="text-end fw-bold text-success">G. ${Number(i.monto).toLocaleString('es-PY')}</td>
+                    <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('ingreso', '${i.id}')"><i class="bi bi-trash"></i></button></td>
+                </tr>`;
+        });
     }
 
-    // MANEJO DE COSECHAS Y PROYECCIONES AUTOMÁTICAS
+    // 3. SECCIÓN DE PRODUCCIÓN
     function renderizarModuloProduccion() {
         const contenedor = document.getElementById('produccion-tarjetas-container');
         contenedor.innerHTML = '';
 
-        // Agrupar datos planos para KPIs globales
         let resumenPorCultivo = {};
-        let sumaKgEstimadosGlobal = 0;
-
         listaCultivos.forEach(c => {
             const tipo = c.tipo;
             const ha = Number(c.ha) || 0;
-            const rinde = RENDIMIENTOS[tipo] || 2000;
-            const estimado = ha * rinde;
+            const estimado = ha * (RENDIMIENTOS[tipo] || 2000);
 
             if(!resumenPorCultivo[tipo]) {
-                resumenPorCultivo[tipo] = { haOcupadas: 0, kgEstimados: 0, kgReales: 0 };
+                resumenPorCultivo[tipo] = { kgEstimados: 0, kgReales: 0 };
             }
-
-            // Si está activo, suma estimación y área activa
             if(!c.cosechado) {
-                resumenPorCultivo[tipo].haOcupadas += ha;
                 resumenPorCultivo[tipo].kgEstimados += estimado;
-                sumaKgEstimadosGlobal += estimado;
             } else {
                 resumenPorCultivo[tipo].kgReales += (Number(c.kgReales) || 0);
             }
         });
 
-        // Inyectar Tarjetas de Reportes
         Object.keys(resumenPorCultivo).forEach(cultivo => {
             const r = resumenPorCultivo[cultivo];
-            const faltante = Math.max(0, r.kgEstimados - r.kgReales);
-
             contenedor.innerHTML += `
                 <div class="col-md-6">
                     <div class="content-card p-4">
                         <h5 class="fw-bold text-success mb-2"><i class="bi bi-flower1"></i> Cultivo: ${cultivo}</h5>
-                        <p class="text-muted small mb-3">Estadística consolidada en base al mapa actual del campo.</p>
                         <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                            <span class="text-muted">Proyección Esperada (En desarrollo):</span>
+                            <span class="text-muted">Proyección Esperada Activa:</span>
                             <span class="fw-bold text-dark">${r.kgEstimados.toLocaleString('es-PY')} kg</span>
                         </div>
-                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                            <span class="text-muted">Ya Cosechado e Ingresado a Silo:</span>
-                            <span class="fw-bold text-success">${r.kgReales.toLocaleString('es-PY')} kg</span>
-                        </div>
-                        <div class="d-flex justify-content-between text-danger fw-bold">
-                            <span>Pendiente aproximado por Cosechar:</span>
-                            <span>${faltante.toLocaleString('es-PY')} kg</span>
+                        <div class="d-flex justify-content-between text-success fw-bold">
+                            <span>Ya Cosechado Real:</span>
+                            <span>${r.kgReales.toLocaleString('es-PY')} kg</span>
                         </div>
                     </div>
                 </div>`;
         });
-
-        document.getElementById('dash-prod-total').innerText = sumaKgEstimadosGlobal.toLocaleString('es-PY') + " kg";
     }
 
-    // AUDITORÍA DE GASTOS GLOBAL
+    // 4. TABLA GLOBAL DE GASTOS
     function renderizarVistaGlobalGastos() {
         const body = document.getElementById('gastos-tabla-global-body');
         body.innerHTML = '';
@@ -557,13 +596,7 @@
             const loteObj = listaLotes.find(l => l.id === g.loteId);
             const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
 
-            window.cacheExcelGastos.push({
-                Fecha: g.fecha,
-                Lote: loteNombre,
-                Categoria: g.cat,
-                Descripcion: g.desc,
-                Monto_Guaranies: g.monto
-            });
+            window.cacheExcelGastos.push({ Fecha: g.fecha, Lote: loteNombre, Categoria: g.cat, Descripcion: g.desc, Monto: g.monto });
 
             body.innerHTML += `
                 <tr>
@@ -576,9 +609,32 @@
         });
     }
 
-    // OPERACIONES Y REGISTROS DIRECTOS (GUARDADO A LA PRIMERA)
+    // 5. TABLA GLOBAL DE INGRESOS
+    function renderizarVistaGlobalIngresos() {
+        const body = document.getElementById('ingresos-tabla-global-body');
+        body.innerHTML = '';
+        window.cacheExcelIngresos = [];
+
+        listaIngresos.forEach(i => {
+            const loteObj = listaLotes.find(l => l.id === i.loteId);
+            const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
+
+            window.cacheExcelIngresos.push({ Fecha: i.fecha, Lote: loteNombre, Categoria: i.cat, Descripcion: i.desc, Monto: i.monto });
+
+            body.innerHTML += `
+                <tr>
+                    <td>${i.fecha}</td>
+                    <td class="fw-bold text-dark">${loteNombre}</td>
+                    <td><span class="badge bg-light text-dark border">${i.cat}</span></td>
+                    <td>${i.desc}</td>
+                    <td class="text-end fw-bold text-success">G. ${Number(i.monto).toLocaleString('es-PY')}</td>
+                </tr>`;
+        });
+    }
+
+    // ACCIONES DE REGISTRO DIRECTO A BASE DE DATOS
     
-    // Crear Lote Padre
+    // Crear Lote
     document.getElementById('form-lote-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
         await addDoc(collection(db, "lotes"), {
@@ -589,18 +645,16 @@
         document.getElementById('form-lote-nuevo').reset();
     });
 
-    // Validar Hectáreas Disponibles en Vivo al Escribir
+    // Control de Candado de Terreno Libre
     document.getElementById('cultivo-ha').addEventListener('input', (e) => {
         const haIngresadas = Number(e.target.value) || 0;
         const errorMsg = document.getElementById('error-limite-ha');
         const btnGuardar = document.getElementById('btn-guardar-cultivo');
 
         if(haIngresadas > haLibresLoteSeleccionado) {
-            errorMsg.classList.remove('d-none');
-            btnGuardar.disabled = true; // Bloquea si supera el espacio libre disponible
+            errorMsg.classList.remove('d-none'); btnGuardar.disabled = true;
         } else {
-            errorMsg.classList.add('d-none');
-            btnGuardar.disabled = false;
+            errorMsg.classList.add('d-none'); btnGuardar.disabled = false;
         }
     });
 
@@ -610,11 +664,9 @@
         new bootstrap.Modal(document.getElementById('modalCultivo')).show();
     };
 
-    // Registrar Siembra de Cultivo Plana
+    // Registrar Siembra
     document.getElementById('form-cultivo-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(!idLoteSeleccionado) return;
-
         await addDoc(collection(db, "cultivos"), {
             loteId: idLoteSeleccionado,
             tipo: document.getElementById('cultivo-tipo').value,
@@ -623,18 +675,15 @@
             cosechado: false,
             kgReales: 0
         });
-
         bootstrap.Modal.getInstance(document.getElementById('modalCultivo')).hide();
         document.getElementById('form-cultivo-nuevo').reset();
     });
 
     window.abrirModalGasto = () => { new bootstrap.Modal(document.getElementById('modalGasto')).show(); };
 
-    // Registrar Gasto Plano
+    // Cargar Gasto
     document.getElementById('form-gasto-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(!idLoteSeleccionado) return;
-
         const hoy = new Date();
         const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
 
@@ -645,9 +694,27 @@
             monto: Number(document.getElementById('gasto-monto').value),
             fecha: fechaStr
         });
-
         bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
         document.getElementById('form-gasto-nuevo').reset();
+    });
+
+    window.abrirModalIngreso = () => { new bootstrap.Modal(document.getElementById('modalIngreso')).show(); };
+
+    // Cargar Ingreso (Ventas)
+    document.getElementById('form-ingreso-nuevo').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const hoy = new Date();
+        const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+
+        await addDoc(collection(db, "ingresos"), {
+            loteId: idLoteSeleccionado,
+            cat: document.getElementById('ingreso-cat').value,
+            desc: document.getElementById('ingreso-desc').value,
+            monto: Number(document.getElementById('ingreso-monto').value),
+            fecha: fechaStr
+        });
+        bootstrap.Modal.getInstance(document.getElementById('modalIngreso')).hide();
+        document.getElementById('form-ingreso-nuevo').reset();
     });
 
     window.abrirModalCosecha = (idCultivo) => {
@@ -655,25 +722,21 @@
         new bootstrap.Modal(document.getElementById('modalCosechar')).show();
     };
 
-    // Ejecutar Cierre de Cosecha (Libera suelo para rotación de cultivos)
+    // Procesar Cosecha
     document.getElementById('form-cosecha-ejecutar').addEventListener('submit', async (e) => {
         e.preventDefault();
         const cid = document.getElementById('cosecha-cultivo-id').value;
         const kg = Number(document.getElementById('cosecha-kg').value);
 
-        await updateDoc(doc(db, "cultivos", cid), {
-            cosechado: true,
-            kgReales: kg
-        });
-
+        await updateDoc(doc(db, "cultivos", cid), { cosechado: true, kgReales: kg });
         bootstrap.Modal.getInstance(document.getElementById('modalCosechar')).hide();
         document.getElementById('form-cosecha-ejecutar').reset();
     });
 
-    // SISTEMA INTEGRADO DE CONFIRMACIONES (REEMPLAZA CONFIRM COMPLETAMENTE)
+    // CONTROL REMOTO DE MODAL DE BORRADO SEGURO
     window.solicitarBorradoElemento = (tipo, id) => {
         document.getElementById('borrado-titulo').innerText = `¿Eliminar este ${tipo}?`;
-        document.getElementById('borrado-mensaje').innerText = `Se purgarán los datos vinculados en la colección de Firebase de manera definitiva.`;
+        document.getElementById('borrado-mensaje').innerText = `La eliminación impactará directamente sobre las planillas en la nube.`;
         
         if(tipo === 'lote') {
             funcionBorradoSeguro = async () => { 
@@ -685,26 +748,30 @@
             funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "cultivos", id)); };
         } else if(tipo === 'gasto') {
             funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "gastos", id)); };
+        } else if(tipo === 'ingreso') {
+            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "ingresos", id)); };
         }
-
         new bootstrap.Modal(document.getElementById('modalConfirmarBorrado')).show();
     };
 
     document.getElementById('btn-ejecutar-borrado-seguro').addEventListener('click', async () => {
-        if(funcionBorradoSeguro) {
-            await funcionBorradoSeguro();
-            funcionBorradoSeguro = null;
-        }
+        if(funcionBorradoSeguro) { await funcionBorradoSeguro(); funcionBorradoSeguro = null; }
         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarBorrado')).hide();
     });
 
-    // EXPORTACIÓN A EXCEL
+    // EXPORTADORES EXCEL
     window.descargarExcelGastos = () => {
         if(!window.cacheExcelGastos || window.cacheExcelGastos.length === 0) return;
         const ws = XLSX.utils.json_to_sheet(window.cacheExcelGastos);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Auditoria de Costos");
-        XLSX.writeFile(wb, "Reporte_General_Agrogestion.xlsx");
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Gastos");
+        XLSX.writeFile(wb, "Auditoria_Egresos_Agrogestion.xlsx");
+    };
+
+    window.descargarExcelIngresos = () => {
+        if(!window.cacheExcelIngresos || window.cacheExcelIngresos.length === 0) return;
+        const ws = XLSX.utils.json_to_sheet(window.cacheExcelIngresos);
+        const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Ingresos");
+        XLSX.writeFile(wb, "Auditoria_Ingresos_Agrogestion.xlsx");
     };
 </script>
 

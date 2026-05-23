@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AGROGESTION - Panel Profesional</title>
     
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0b3022">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -30,8 +33,9 @@
         .sidebar-cell { display: table-cell; width: 260px; background-color: var(--white); border-right: 1px solid var(--border-color); vertical-align: top; padding: 24px 16px; }
         .main-cell { display: table-cell; vertical-align: top; padding: 32px 40px; }
 
+        /* Estilo adaptado para el nuevo logo profesional */
         .brand-wrapper { display: flex; align-items: center; gap: 12px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color); margin-bottom: 24px; }
-        .brand-box { width: 36px; height: 36px; background-color: var(--primary-dark); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-weight: 700; font-size: 20px; }
+        .brand-logo-img { width: 38px; height: 38px; object-fit: cover; border-radius: 50%; border: 1px solid var(--border-color); }
         .brand-title { font-size: 16px; font-weight: 700; color: var(--primary-dark); letter-spacing: 0.5px; }
 
         .menu-section-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 12px; }
@@ -70,6 +74,7 @@
 
         .badge-suelo { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 30px; }
         .back-link { cursor: pointer; color: var(--accent-green); font-weight: 600; margin-bottom: 15px; display: inline-block; text-decoration: none; }
+        .action-btn { border: none; background: none; font-size: 14px; font-weight: 500; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -78,7 +83,7 @@
     
     <div class="sidebar-cell">
         <div class="brand-wrapper">
-            <div class="brand-box">A</div>
+            <img src="logo.png" alt="Logo" class="brand-logo-img">
             <div class="brand-title">AGROGESTION</div>
         </div>
         
@@ -222,7 +227,7 @@
             <div class="panel-header"><div class="panel-title">Ajustes del Sistema</div></div>
             <div class="content-card p-4">
                 <h6 class="fw-bold text-success"><i class="bi bi-cloud-check"></i> Firebase Conectado Sincrónicamente</h6>
-                <p class="text-muted small mt-2 mb-0">Base de datos estructurada con 4 colecciones planas en la raíz: `lotes`, `cultivos`, `gastos` e `ingresos`.</p>
+                <p class="text-muted small mt-2 mb-0">Modo PWA Activo con manifiesto e icono sincronizado.</p>
             </div>
         </div>
 
@@ -282,7 +287,7 @@
                         <option value="Mano de Obra">Mano de Obra</option>
                     </select>
                 </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Descripción del Gasto</label><input type="text" id="gasto-desc" class="form-control" placeholder="Ej: Compra de diesel para tractor" required></div>
+                <div class="mb-3"><label class="small fw-bold text-muted">Descripción del Gasto</label><input type="text" id="gasto-desc" class="form-control" placeholder="Ej: Compra de diesel" required></div>
                 <div class="mb-4"><label class="small fw-bold text-muted">Monto Invertido (G.)</label><input type="number" id="gasto-monto" class="form-control" placeholder="Ej: 200000" required></div>
                 <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cargar al Extracto</button>
             </form>
@@ -304,7 +309,7 @@
                         <option value="Otros Ingresos">Otros Ingresos</option>
                     </select>
                 </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Descripción o Comprobante</label><input type="text" id="ingreso-desc" class="form-control" placeholder="Ej: Liquidación de Silo / Granos" required></div>
+                <div class="mb-3"><label class="small fw-bold text-muted">Descripción o Comprobante</label><input type="text" id="ingreso-desc" class="form-control" placeholder="Ej: Liquidación de Silo" required></div>
                 <div class="mb-4"><label class="small fw-bold text-muted">Monto Percibido (G.)</label><input type="number" id="ingreso-monto" class="form-control" placeholder="Ej: 500000" required></div>
                 <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Registrar Ingreso</button>
             </form>
@@ -340,7 +345,6 @@
     </div>
 </div>
 
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -357,7 +361,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Estado local de la aplicación
     let listaLotes = [];
     let listaCultivos = [];
     let listaGastos = [];
@@ -369,7 +372,6 @@
 
     const RENDIMIENTOS = { "Maíz": 7000, "Soja": 3000, "Poroto": 1200, "Pasto": 5000 };
 
-    // CONTROLADOR DE NAVEGACIÓN
     window.cambiarVista = (nombreVista) => {
         document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -381,7 +383,6 @@
         if (nav) nav.classList.add('active');
     };
 
-    // ESCUCHADORES DE COLEXIONES PLANAS EN FIRESTORE
     onSnapshot(collection(db, "lotes"), (snap) => {
         listaLotes = []; snap.forEach(d => { listaLotes.push({ id: d.id, ...d.data() }); });
         renderizarTodo();
@@ -402,35 +403,24 @@
         renderizarTodo();
     });
 
-    // RENDERIZADOR GENERAL CENTRALIZADO
     function renderizarTodo() {
         renderizarDashboard();
         renderizarListadoLotes();
         renderizarVistaGlobalGastos();
         renderizarVistaGlobalIngresos();
         renderizarModuloProduccion();
-        
-        if (idLoteSeleccionado) {
-            renderizarDetalleLoteExclusivo(idLoteSeleccionado);
-        }
+        if (idLoteSeleccionado) renderizarDetalleLoteExclusivo(idLoteSeleccionado);
     }
 
-    // 1. DASHBOARD GENERAL CON PUNTOS EN DINERO
     function renderizarDashboard() {
         const body = document.getElementById('dash-tabla-body');
         body.innerHTML = '';
-
-        let totalHa = 0;
-        let globalGastos = 0;
-        let globalIngresos = 0;
+        let totalHa = 0, globalGastos = 0, globalIngresos = 0;
 
         listaLotes.forEach(l => {
             totalHa += Number(l.haTotales) || 0;
-            
-            // Sumadores planos por ID con puntos
             const gastosLote = listaGastos.filter(g => g.loteId === l.id).reduce((s, g) => s + (Number(g.monto) || 0), 0);
             const ingresosLote = listaIngresos.filter(i => i.loteId === l.id).reduce((s, i) => s + (Number(i.monto) || 0), 0);
-            
             globalGastos += gastosLote;
             globalIngresos += ingresosLote;
 
@@ -440,14 +430,11 @@
                     <td>${l.haTotales} ha</td>
                     <td class="fw-bold text-danger">G. ${gastosLote.toLocaleString('es-PY')}</td>
                     <td class="fw-bold text-success">G. ${ingresosLote.toLocaleString('es-PY')}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-eye"></i> Ver Lote</button>
-                    </td>
+                    <td><button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-eye"></i> Ver Lote</button></td>
                 </tr>`;
         });
 
         const balanceLiquido = globalIngresos - globalGastos;
-
         document.getElementById('dash-ha').innerText = totalHa + " ha";
         document.getElementById('dash-inv').innerText = "G. " + globalGastos.toLocaleString('es-PY');
         document.getElementById('dash-ingresos-total').innerText = "G. " + globalIngresos.toLocaleString('es-PY');
@@ -476,7 +463,6 @@
         renderizarDetalleLoteExclusivo(idLote);
     };
 
-    // 2. RADIOGRAFIA DETALLADA DEL LOTE SELECCIONADO
     function renderizarDetalleLoteExclusivo(idLote) {
         const loteObj = listaLotes.find(l => l.id === idLote);
         if(!loteObj) return;
@@ -484,7 +470,6 @@
         document.getElementById('det-lote-nombre').innerText = "Lote: " + loteObj.nombre;
         document.getElementById('det-lote-subtitulo').innerText = `Superficie Máxima Establecida: ${loteObj.haTotales} Hectáreas`;
 
-        // Procesar e inyectar Cultivos
         const cultivosEsteLote = listaCultivos.filter(c => c.loteId === idLote);
         let haOcupadas = 0;
         const tablaCultivos = document.getElementById('det-tabla-cultivos');
@@ -492,7 +477,6 @@
 
         cultivosEsteLote.forEach(c => {
             if (!c.cosechado) haOcupadas += Number(c.ha) || 0;
-
             const estadoCosecha = c.cosechado 
                 ? `<span class="badge bg-success py-1 px-2">Cosechado: ${Number(c.kgReales).toLocaleString('es-PY')} kg</span>`
                 : `<button class="btn btn-sm btn-warning fw-bold py-0 rounded-pill px-2" onclick="abrirModalCosecha('${c.id}')">Cosechar</button>`;
@@ -507,7 +491,6 @@
                 </tr>`;
         });
 
-        // Badge indicador de estado de suelo
         const haMaximas = Number(loteObj.haTotales) || 0;
         haLibresLoteSeleccionado = haMaximas - haOcupadas;
         const contenedorBadge = document.getElementById('det-lote-estado-suelo');
@@ -516,10 +499,9 @@
         } else if(haLibresLoteSeleccionado === 0) {
             contenedorBadge.innerHTML = `<span class="badge bg-success badge-suelo">100% Ocupado</span>`;
         } else {
-            contenedorBadge.innerHTML = `<span class="badge bg-info text-dark badge-suelo">${haLibresLoteSeleccionado} ha libres (Viendo qué plantar)</span>`;
+            contenedorBadge.innerHTML = `<span class="badge bg-info text-dark badge-suelo">${haLibresLoteSeleccionado} ha libres</span>`;
         }
 
-        // Inyectar Gastos del Lote con puntos
         const tablaGastos = document.getElementById('det-tabla-gastos');
         tablaGastos.innerHTML = '';
         listaGastos.filter(g => g.loteId === idLote).forEach(g => {
@@ -532,7 +514,6 @@
                 </tr>`;
         });
 
-        // Inyectar Ingresos del Lote con puntos
         const tablaIngresos = document.getElementById('det-tabla-ingresos');
         tablaIngresos.innerHTML = '';
         listaIngresos.filter(i => i.loteId === idLote).forEach(i => {
@@ -546,25 +527,19 @@
         });
     }
 
-    // 3. SECCIÓN DE PRODUCCIÓN
     function renderizarModuloProduccion() {
         const contenedor = document.getElementById('produccion-tarjetas-container');
         contenedor.innerHTML = '';
-
         let resumenPorCultivo = {};
+
         listaCultivos.forEach(c => {
             const tipo = c.tipo;
             const ha = Number(c.ha) || 0;
             const estimado = ha * (RENDIMIENTOS[tipo] || 2000);
 
-            if(!resumenPorCultivo[tipo]) {
-                resumenPorCultivo[tipo] = { kgEstimados: 0, kgReales: 0 };
-            }
-            if(!c.cosechado) {
-                resumenPorCultivo[tipo].kgEstimados += estimado;
-            } else {
-                resumenPorCultivo[tipo].kgReales += (Number(c.kgReales) || 0);
-            }
+            if(!resumenPorCultivo[tipo]) resumenPorCultivo[tipo] = { kgEstimados: 0, kgReales: 0 };
+            if(!c.cosechado) resumenPorCultivo[tipo].kgEstimados += estimado;
+            else resumenPorCultivo[tipo].kgReales += (Number(c.kgReales) || 0);
         });
 
         Object.keys(resumenPorCultivo).forEach(cultivo => {
@@ -586,76 +561,41 @@
         });
     }
 
-    // 4. TABLA GLOBAL DE GASTOS
     function renderizarVistaGlobalGastos() {
         const body = document.getElementById('gastos-tabla-global-body');
-        body.innerHTML = '';
-        window.cacheExcelGastos = [];
-
+        body.innerHTML = ''; window.cacheExcelGastos = [];
         listaGastos.forEach(g => {
             const loteObj = listaLotes.find(l => l.id === g.loteId);
             const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
-
             window.cacheExcelGastos.push({ Fecha: g.fecha, Lote: loteNombre, Categoria: g.cat, Descripcion: g.desc, Monto: g.monto });
-
-            body.innerHTML += `
-                <tr>
-                    <td>${g.fecha}</td>
-                    <td class="fw-bold text-dark">${loteNombre}</td>
-                    <td><span class="badge bg-light text-dark border">${g.cat}</span></td>
-                    <td>${g.desc}</td>
-                    <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
-                </tr>`;
+            body.innerHTML += `<tr><td>${g.fecha}</td><td class="fw-bold text-dark">${loteNombre}</td><td><span class="badge bg-light text-dark border">${g.cat}</span></td><td>${g.desc}</td><td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td></tr>`;
         });
     }
 
-    // 5. TABLA GLOBAL DE INGRESOS
     function renderizarVistaGlobalIngresos() {
         const body = document.getElementById('ingresos-tabla-global-body');
-        body.innerHTML = '';
-        window.cacheExcelIngresos = [];
-
+        body.innerHTML = ''; window.cacheExcelIngresos = [];
         listaIngresos.forEach(i => {
             const loteObj = listaLotes.find(l => l.id === i.loteId);
             const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
-
             window.cacheExcelIngresos.push({ Fecha: i.fecha, Lote: loteNombre, Categoria: i.cat, Descripcion: i.desc, Monto: i.monto });
-
-            body.innerHTML += `
-                <tr>
-                    <td>${i.fecha}</td>
-                    <td class="fw-bold text-dark">${loteNombre}</td>
-                    <td><span class="badge bg-light text-dark border">${i.cat}</span></td>
-                    <td>${i.desc}</td>
-                    <td class="text-end fw-bold text-success">G. ${Number(i.monto).toLocaleString('es-PY')}</td>
-                </tr>`;
+            body.innerHTML += `<tr><td>${i.fecha}</td><td class="fw-bold text-dark">${loteNombre}</td><td><span class="badge bg-light text-dark border">${i.cat}</span></td><td>${i.desc}</td><td class="text-end fw-bold text-success">G. ${Number(i.monto).toLocaleString('es-PY')}</td></tr>`;
         });
     }
 
-    // ACCIONES DE REGISTRO DIRECTO A BASE DE DATOS
-    
-    // Crear Lote
     document.getElementById('form-lote-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
-        await addDoc(collection(db, "lotes"), {
-            nombre: document.getElementById('lote-nombre').value,
-            haTotales: Number(document.getElementById('lote-totales').value)
-        });
+        await addDoc(collection(db, "lotes"), { nombre: document.getElementById('lote-nombre').value, haTotales: Number(document.getElementById('lote-totales').value) });
         bootstrap.Modal.getInstance(document.getElementById('modalLote')).hide();
         document.getElementById('form-lote-nuevo').reset();
     });
 
-    // Control de Candado de Terreno Libre
     document.getElementById('cultivo-ha').addEventListener('input', (e) => {
         const haIngresadas = Number(e.target.value) || 0;
         const errorMsg = document.getElementById('error-limite-ha');
         const btnGuardar = document.getElementById('btn-guardar-cultivo');
-
-        if(haIngresadas > haLibresLoteSeleccionado) {
-            errorMsg.classList.remove('d-none'); btnGuardar.disabled = true;
-        } else {
-            errorMsg.classList.add('d-none'); btnGuardar.disabled = false;
-        }
+        if(haIngresadas > haLibresLoteSeleccionado) { errorMsg.classList.remove('d-none'); btnGuardar.disabled = true; }
+        else { errorMsg.classList.add('d-none'); btnGuardar.disabled = false; }
     });
 
     window.abrirModalCultivo = () => {
@@ -664,55 +604,29 @@
         new bootstrap.Modal(document.getElementById('modalCultivo')).show();
     };
 
-    // Registrar Siembra
     document.getElementById('form-cultivo-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
-        await addDoc(collection(db, "cultivos"), {
-            loteId: idLoteSeleccionado,
-            tipo: document.getElementById('cultivo-tipo').value,
-            ha: Number(document.getElementById('cultivo-ha').value),
-            mecanizado: document.getElementById('cultivo-mecanizado').checked,
-            cosechado: false,
-            kgReales: 0
-        });
+        await addDoc(collection(db, "cultivos"), { loteId: idLoteSeleccionado, tipo: document.getElementById('cultivo-tipo').value, ha: Number(document.getElementById('cultivo-ha').value), mecanizado: document.getElementById('cultivo-mecanizado').checked, cosechado: false, kgReales: 0 });
         bootstrap.Modal.getInstance(document.getElementById('modalCultivo')).hide();
         document.getElementById('form-cultivo-nuevo').reset();
     });
 
     window.abrirModalGasto = () => { new bootstrap.Modal(document.getElementById('modalGasto')).show(); };
-
-    // Cargar Gasto
     document.getElementById('form-gasto-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
         const hoy = new Date();
         const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
-
-        await addDoc(collection(db, "gastos"), {
-            loteId: idLoteSeleccionado,
-            cat: document.getElementById('gasto-cat').value,
-            desc: document.getElementById('gasto-desc').value,
-            monto: Number(document.getElementById('gasto-monto').value),
-            fecha: fechaStr
-        });
+        await addDoc(collection(db, "gastos"), { loteId: idLoteSeleccionado, cat: document.getElementById('gasto-cat').value, desc: document.getElementById('gasto-desc').value, monto: Number(document.getElementById('gasto-monto').value), fecha: fechaStr });
         bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
         document.getElementById('form-gasto-nuevo').reset();
     });
 
     window.abrirModalIngreso = () => { new bootstrap.Modal(document.getElementById('modalIngreso')).show(); };
-
-    // Cargar Ingreso (Ventas)
     document.getElementById('form-ingreso-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
         const hoy = new Date();
         const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
-
-        await addDoc(collection(db, "ingresos"), {
-            loteId: idLoteSeleccionado,
-            cat: document.getElementById('ingreso-cat').value,
-            desc: document.getElementById('ingreso-desc').value,
-            monto: Number(document.getElementById('ingreso-monto').value),
-            fecha: fechaStr
-        });
+        await addDoc(collection(db, "ingresos"), { loteId: idLoteSeleccionado, cat: document.getElementById('ingreso-cat').value, desc: document.getElementById('ingreso-desc').value, monto: Number(document.getElementById('ingreso-monto').value), fecha: fechaStr });
         bootstrap.Modal.getInstance(document.getElementById('modalIngreso')).hide();
         document.getElementById('form-ingreso-nuevo').reset();
     });
@@ -722,28 +636,19 @@
         new bootstrap.Modal(document.getElementById('modalCosechar')).show();
     };
 
-    // Procesar Cosecha
     document.getElementById('form-cosecha-ejecutar').addEventListener('submit', async (e) => {
         e.preventDefault();
         const cid = document.getElementById('cosecha-cultivo-id').value;
         const kg = Number(document.getElementById('cosecha-kg').value);
-
         await updateDoc(doc(db, "cultivos", cid), { cosechado: true, kgReales: kg });
         bootstrap.Modal.getInstance(document.getElementById('modalCosechar')).hide();
         document.getElementById('form-cosecha-ejecutar').reset();
     });
 
-    // CONTROL REMOTO DE MODAL DE BORRADO SEGURO
     window.solicitarBorradoElemento = (tipo, id) => {
         document.getElementById('borrado-titulo').innerText = `¿Eliminar este ${tipo}?`;
-        document.getElementById('borrado-mensaje').innerText = `La eliminación impactará directamente sobre las planillas en la nube.`;
-        
         if(tipo === 'lote') {
-            funcionBorradoSeguro = async () => { 
-                await deleteDoc(doc(db, "lotes", id));
-                if(idLoteSeleccionado === id) idLoteSeleccionado = null;
-                cambiarVista('lotes');
-            };
+            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "lotes", id)); if(idLoteSeleccionado === id) idLoteSeleccionado = null; cambiarVista('lotes'); };
         } else if(tipo === 'cultivo') {
             funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "cultivos", id)); };
         } else if(tipo === 'gasto') {
@@ -759,7 +664,6 @@
         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarBorrado')).hide();
     });
 
-    // EXPORTADORES EXCEL
     window.descargarExcelGastos = () => {
         if(!window.cacheExcelGastos || window.cacheExcelGastos.length === 0) return;
         const ws = XLSX.utils.json_to_sheet(window.cacheExcelGastos);
@@ -773,6 +677,16 @@
         const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Ingresos");
         XLSX.writeFile(wb, "Auditoria_Ingresos_Agrogestion.xlsx");
     };
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registrado correctamente', reg))
+                .catch(err => console.error('Error al registrar Service Worker', err));
+        });
+    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

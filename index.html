@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGROGESTION - Sistema de Control Gerencial</title>
+    <title>AGROGESTION - Panel Profesional</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght|300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
@@ -70,7 +70,7 @@
         .view-section { display: none; }
         .view-section.active-view { display: block; }
 
-        .badge-suelo { font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 30px; }
+        .badge-suelo { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 30px; }
         .back-link { cursor: pointer; color: var(--accent-green); font-weight: 600; margin-bottom: 15px; display: inline-block; text-decoration: none; }
     </style>
 </head>
@@ -84,15 +84,14 @@
             <div class="brand-title">AGROGESTION</div>
         </div>
         
-        <div class="menu-section-title">Menú</div>
+        <div class="menu-section-title">Menú Operativo</div>
         <div class="nav-item active" onclick="cambiarVista('dashboard')"><i class="bi bi-speedometer2"></i> Dashboard</div>
-        <div class="nav-item" onclick="cambiarVista('produccion')"><i class="bi bi-flower1"></i> Producción</div>
-        <div class="nav-item" onclick="cambiarVista('lotes')"><i class="bi bi-geo-alt"></i> Lotes</div>
-        <div class="nav-item" onclick="cambiarVista('gastos')"><i class="bi bi-cash-stack"></i> Gastos Globales</div>
-        <div class="nav-item" onclick="cambiarVista('reportes')"><i class="bi bi-file-earmark-bar-graph"></i> Reportes</div>
+        <div class="nav-item" onclick="cambiarVista('lotes')"><i class="bi bi-geo-alt"></i> Lotes de Tierra</div>
+        <div class="nav-item" onclick="cambiarVista('produccion')"><i class="bi bi-flower1"></i> Producción / Cosecha</div>
+        <div class="nav-item" onclick="cambiarVista('gastos')"><i class="bi bi-cash-stack"></i> Auditoría de Gastos</div>
         
         <div class="menu-section-title" style="margin-top: 32px;">Configuración</div>
-        <div class="nav-item" onclick="cambiarVista('ajustes')"><i class="bi bi-gear"></i> Ajustes</div>
+        <div class="nav-item" onclick="cambiarVista('ajustes')"><i class="bi bi-gear"></i> Ajustes Nube</div>
     </div>
 
     <div class="main-cell">
@@ -100,56 +99,49 @@
         <div id="view-dashboard" class="view-section active-view">
             <div class="panel-header">
                 <div>
-                    <div class="panel-title">Panel de Control General</div>
-                    <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Ciclo Agrícola Activo 2026</div>
+                    <div class="panel-title">Resumen Gerencial del Campo</div>
+                    <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Monitoreo en Tiempo Real</div>
                 </div>
-                <button class="btn-primary-custom" onclick="cambiarVista('lotes')">Gestionar Lotes</button>
+                <button class="btn-primary-custom" onclick="cambiarVista('lotes')">Administrar Campo</button>
             </div>
 
             <div class="kpi-grid">
                 <div class="kpi-card"><div class="kpi-icon-container icon-green"><i class="bi bi-layers"></i></div><div class="kpi-label">Superficie Total</div><div class="kpi-value" id="dash-ha">0 ha</div></div>
-                <div class="kpi-card"><div class="kpi-icon-container icon-blue"><i class="bi bi-droplet"></i></div><div class="kpi-label">Lotes Registrados</div><div class="kpi-value" id="dash-lotes">0</div></div>
-                <div class="kpi-card"><div class="kpi-icon-container icon-gold"><i class="bi bi-cash-stack"></i></div><div class="kpi-label">Inversión Total Acum.</div><div class="kpi-value text-danger" id="dash-inv">G. 0</div></div>
-                <div class="kpi-card kpi-card-dark"><div class="kpi-icon-container icon-trans"><i class="bi bi-flower1"></i></div><div class="kpi-label">Kilos Sembrados Est.</div><div class="kpi-value" id="dash-prod-total">0 kg</div></div>
+                <div class="kpi-card"><div class="kpi-icon-container icon-blue"><i class="bi bi-geo"></i></div><div class="kpi-label">Lotes Totales</div><div class="kpi-value" id="dash-lotes">0</div></div>
+                <div class="kpi-card"><div class="kpi-icon-container icon-gold"><i class="bi bi-cash-stack"></i></div><div class="kpi-label">Inversión Acumulada</div><div class="kpi-value text-danger" id="dash-inv">G. 0</div></div>
+                <div class="kpi-card kpi-card-dark"><div class="kpi-icon-container icon-trans"><i class="bi bi-calculator"></i></div><div class="kpi-label">Proyección Estimada</div><div class="kpi-value" id="dash-prod-total">0 kg</div></div>
             </div>
 
             <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Resumen de Ocupación de Suelos y Costos</div></div>
+                <div class="card-header-custom"><div class="card-title-custom">Estado General por Lote</div></div>
                 <table class="table-custom">
-                    <thead><tr><th>Nombre de Lote</th><th>Superficie Total</th><th>Inversión Cargada</th><th>Opciones</th></tr></thead>
+                    <thead><tr><th>Identificador de Terreno</th><th>Superficie Total</th><th>Egresos Registrados</th><th>Acción</th></tr></thead>
                     <tbody id="dash-tabla-body"></tbody>
                 </table>
             </div>
         </div>
 
-        <div id="view-produccion" class="view-section">
-            <div class="panel-header"><div class="panel-title">Módulo de Producción y Auditoría de Cosechas</div></div>
-            
-            <div class="row g-4 mb-4" id="produccion-tarjetas-container">
-                </div>
-        </div>
-
         <div id="view-lotes" class="view-section">
             <div class="panel-header">
-                <div class="panel-title">Estructura de Lotes del Establecimiento</div>
-                <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalLote"><i class="bi bi-plus-circle"></i> Crear Nuevo Lote</button>
+                <div class="panel-title">Gestión y Apertura de Lotes</div>
+                <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalLote"><i class="bi bi-plus-circle"></i> Registrar Lote Nuevo</button>
             </div>
             <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Listado General</div></div>
+                <div class="card-header-custom"><div class="card-title-custom">Listado del Establecimiento</div></div>
                 <table class="table-custom">
-                    <thead><tr><th>Lote</th><th>Hectáreas Totales</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Lote</th><th>Hectáreas Declaradas</th><th class="text-center">Operaciones</th></tr></thead>
                     <tbody id="lotes-tabla-body"></tbody>
                 </table>
             </div>
         </div>
 
         <div id="view-detalle-lote" class="view-section">
-            <a class="back-link" onclick="cambiarVista('lotes')"><i class="bi bi-arrow-left"></i> Volver a listado de lotes</a>
+            <a class="back-link" onclick="cambiarVista('lotes')"><i class="bi bi-arrow-left"></i> Volver a Lotes</a>
             
             <div class="panel-header mt-2">
                 <div>
-                    <h2 class="panel-title" id="det-lote-nombre">Cargando Lote...</h2>
-                    <div class="text-muted mt-1" id="det-lote-subtitulo">Superficie Declarada: 0 ha</div>
+                    <h2 class="panel-title" id="det-lote-nombre">Cargando...</h2>
+                    <div class="text-muted mt-1" id="det-lote-subtitulo">Superficie Total: 0 ha</div>
                 </div>
                 <div id="det-lote-estado-suelo"></div>
             </div>
@@ -158,11 +150,11 @@
                 <div class="col-md-6">
                     <div class="content-card h-100">
                         <div class="card-header-custom">
-                            <div class="card-title-custom">Cultivos en este Terreno</div>
+                            <div class="card-title-custom"><i class="bi bi-flower1"></i> Cultivos Sembrados</div>
                             <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalCultivo()"><i class="bi bi-plus"></i> Sembrar</button>
                         </div>
                         <table class="table-custom">
-                            <thead><tr><th>Cultivo</th><th>Área</th><th>Mecanizado</th><th>Cosechado</th><th>Acción</th></tr></thead>
+                            <thead><tr><th>Cultivo</th><th>Área</th><th>Tipo</th><th>Producción / Cosecha</th><th>Eliminar</th></tr></thead>
                             <tbody id="det-tabla-cultivos"></tbody>
                         </table>
                     </div>
@@ -171,11 +163,11 @@
                 <div class="col-md-6">
                     <div class="content-card h-100">
                         <div class="card-header-custom">
-                            <div class="card-title-custom">Extracto de Inversiones en el Lote</div>
+                            <div class="card-title-custom"><i class="bi bi-cash-coin"></i> Historial / Extracto de Gastos</div>
                             <button class="btn-primary-custom btn-sm rounded-pill px-3" onclick="abrirModalGasto()"><i class="bi bi-plus"></i> Añadir Gasto</button>
                         </div>
                         <table class="table-custom">
-                            <thead><tr><th>Fecha</th><th>Categoría/Detalle</th><th class="text-end">Monto</th><th>Acción</th></tr></thead>
+                            <thead><tr><th>Fecha</th><th>Detalle/Categoría</th><th class="text-end">Monto</th><th>Eliminar</th></tr></thead>
                             <tbody id="det-tabla-gastos"></tbody>
                         </table>
                     </div>
@@ -183,39 +175,31 @@
             </div>
         </div>
 
+        <div id="view-produccion" class="view-section">
+            <div class="panel-header"><div class="panel-title">Proyecciones vs Cosecha Real Consolidada</div></div>
+            <div class="row g-4" id="produccion-tarjetas-container">
+                </div>
+        </div>
+
         <div id="view-gastos" class="view-section">
             <div class="panel-header">
-                <div class="panel-title">Auditoría Global de Gastos</div>
-                <button class="btn-primary-custom" onclick="descargarExcelGastos()"><i class="bi bi-file-earmark-excel"></i> Descargar Planilla Completa</button>
+                <div class="panel-title">Auditoría Financiera Consolidada</div>
+                <button class="btn-primary-custom" onclick="descargarExcelGastos()"><i class="bi bi-file-earmark-excel"></i> Descargar Excel Completo</button>
             </div>
             <div class="content-card">
-                <div class="card-header-custom"><div class="card-title-custom">Historial de Transacciones Consolidadas</div></div>
+                <div class="card-header-custom"><div class="card-title-custom">Todas las Transacciones del Establecimiento</div></div>
                 <table class="table-custom">
-                    <thead><tr><th>Fecha</th><th>Lote Relacionado</th><th>Categoría</th><th>Descripción</th><th class="text-end">Monto</th></tr></thead>
+                    <thead><tr><th>Fecha</th><th>Lote</th><th>Categoría</th><th>Descripción</th><th class="text-end">Monto</th></tr></thead>
                     <tbody id="gastos-tabla-global-body"></tbody>
                 </table>
             </div>
         </div>
 
-        <div id="view-reportes" class="view-section">
-            <div class="panel-header"><div class="panel-title">Reportes Operativos</div></div>
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="content-card p-4 text-center">
-                        <i class="bi bi-file-earmark-spreadsheet text-success" style="font-size: 3rem;"></i>
-                        <h5 class="fw-bold mt-3">Exportar Base de Datos Comercial</h5>
-                        <p class="text-muted small">Cierre general con el desglose de costos y kg calculados.</p>
-                        <button class="btn-primary-custom mt-2" onclick="descargarExcelGastos()">Generar Libro Excel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div id="view-ajustes" class="view-section">
-            <div class="panel-header"><div class="panel-title">Ajustes</div></div>
+            <div class="panel-header"><div class="panel-title">Ajustes del Sistema</div></div>
             <div class="content-card p-4">
-                <h6 class="fw-bold text-success"><i class="bi bi-check-circle-fill"></i> Sincronización en la Nube Activa</h6>
-                <p class="text-muted small mt-2">Proyecto Firebase: agrogestion-163d2. Datos protegidos y aislados en tiempo real.</p>
+                <h6 class="fw-bold text-success"><i class="bi bi-cloud-check"></i> Firebase Conectado Correctamente</h6>
+                <p class="text-muted small mt-2 mb-0">Base de datos configurada de manera plana: `lotes`, `cultivos` y `gastos` sincrónicos en la raíz.</p>
             </div>
         </div>
 
@@ -225,11 +209,11 @@
 <div class="modal fade" id="modalLote" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Registrar Nuevo Lote</h5>
+            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Registrar Nuevo Terreno</h5>
             <form id="form-lote-nuevo">
                 <div class="mb-3"><label class="small fw-bold text-muted">Nombre Identificador</label><input type="text" id="lote-nombre" class="form-control" placeholder="Ej: Rolon Kue" required></div>
-                <div class="mb-4"><label class="small fw-bold text-muted">Superficie Total (Hectáreas)</label><input type="number" id="lote-totales" class="form-control" placeholder="Ej: 20" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Guardar Terreno</button>
+                <div class="mb-4"><label class="small fw-bold text-muted">Hectáreas Totales</label><input type="number" id="lote-totales" class="form-control" placeholder="Ej: 20" required></div>
+                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Crear Lote</button>
             </form>
         </div>
     </div>
@@ -238,10 +222,11 @@
 <div class="modal fade" id="modalCultivo" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Sembrar Cultivo en Lote</h5>
+            <h5 class="fw-bold mb-2" style="color: var(--primary-dark);">Sembrar en Lote</h5>
+            <p class="text-danger small fw-bold d-none" id="error-limite-ha">¡Error! No hay suficiente espacio libre en el lote para estas hectáreas.</p>
             <form id="form-cultivo-nuevo">
                 <div class="mb-3">
-                    <label class="small fw-bold text-muted">Variedad / Cultivo</label>
+                    <label class="small fw-bold text-muted">Cultivo / Planta</label>
                     <select id="cultivo-tipo" class="form-select" required>
                         <option value="Maíz">Maíz</option>
                         <option value="Soja">Soja</option>
@@ -249,12 +234,12 @@
                         <option value="Pasto">Pasto</option>
                     </select>
                 </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Hectáreas Destinadas</label><input type="number" step="any" id="cultivo-ha" class="form-control" required></div>
+                <div class="mb-3"><label class="small fw-bold text-muted">Hectáreas a Ocupar</label><input type="number" step="any" id="cultivo-ha" class="form-control" required></div>
                 <div class="form-check form-switch mb-4">
                     <input class="form-check-input" type="checkbox" id="cultivo-mecanizado">
-                    <label class="form-check-label fw-bold text-muted" for="cultivo-mecanizado">¿Es Siembras/Cosecha Mecanizada?</label>
+                    <label class="form-check-label fw-bold text-muted" for="cultivo-mecanizado">¿Usa tecnología/maquinaria pesada?</label>
                 </div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Asignar Área</button>
+                <button type="submit" id="btn-guardar-cultivo" class="btn-primary-custom w-100 py-2 justify-content-center">Registrar Siembra</button>
             </form>
         </div>
     </div>
@@ -263,10 +248,10 @@
 <div class="modal fade" id="modalGasto" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Registrar Egreso / Inversión</h5>
+            <h5 class="fw-bold mb-4" style="color: var(--primary-dark);">Agregar Egreso al Lote</h5>
             <form id="form-gasto-nuevo">
                 <div class="mb-3">
-                    <label class="small fw-bold text-muted">Categoría Contable</label>
+                    <label class="small fw-bold text-muted">Categoría Financiera</label>
                     <select id="gasto-cat" class="form-select" required>
                         <option value="Combustible">Combustible</option>
                         <option value="Semillas">Semillas</option>
@@ -274,9 +259,9 @@
                         <option value="Mano de Obra">Mano de Obra</option>
                     </select>
                 </div>
-                <div class="mb-3"><label class="small fw-bold text-muted">Descripción Corta</label><input type="text" id="gasto-desc" class="form-control" placeholder="Ej: Compra de urea" required></div>
-                <div class="mb-4"><label class="small fw-bold text-muted">Monto de Inversión (Guaraníes)</label><input type="number" id="gasto-monto" class="form-control" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cargar Gasto al Extracto</button>
+                <div class="mb-3"><label class="small fw-bold text-muted">Descripción del Gasto</label><input type="text" id="gasto-desc" class="form-control" placeholder="Ej: Compra de diesel para tractor" required></div>
+                <div class="mb-4"><label class="small fw-bold text-muted">Monto Invertido (G.)</label><input type="number" id="gasto-monto" class="form-control" required></div>
+                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cargar al Extracto</button>
             </form>
         </div>
     </div>
@@ -285,12 +270,12 @@
 <div class="modal fade" id="modalCosechar" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4" style="border-radius: 16px;">
-            <h5 class="fw-bold mb-3" style="color: var(--primary-dark);">Registrar Levantamiento de Cosecha</h5>
-            <p class="text-muted small mb-4">Ingresá los kilos reales pesados en báscula/silo para cerrar la producción de este sector.</p>
+            <h5 class="fw-bold mb-2" style="color: var(--primary-dark);">Cierre de Cosecha</h5>
+            <p class="text-muted small mb-4">Ingresá los kilos reales pesados. Esto liberará contablemente las hectáreas ocupadas.</p>
             <form id="form-cosecha-ejecutar">
                 <input type="hidden" id="cosecha-cultivo-id">
-                <div class="mb-4"><label class="small fw-bold text-muted">Kilos Reales Logrados</label><input type="number" id="cosecha-kg" class="form-control" placeholder="Ej: 25000" required></div>
-                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cerrar Cosecha</button>
+                <div class="mb-4"><label class="small fw-bold text-muted">Kilos Totales Logrados</label><input type="number" id="cosecha-kg" class="form-control" required></div>
+                <button type="submit" class="btn-primary-custom w-100 py-2 justify-content-center">Cerrar Producción</button>
             </form>
         </div>
     </div>
@@ -301,7 +286,7 @@
         <div class="modal-content text-center p-4" style="border-radius: 20px; border: none;">
             <div class="text-danger mb-3" style="font-size: 40px;"><i class="bi bi-exclamation-circle-fill"></i></div>
             <h5 class="fw-bold mb-2" id="borrado-titulo" style="color: var(--primary-dark);">¿Eliminar registro?</h5>
-            <p class="text-muted small px-2" id="borrado-mensaje">Esta acción modificará la base de datos de manera definitiva.</p>
+            <p class="text-muted small px-2" id="borrado-mensaje">La acción se sincronizará directamente en la nube de Firebase.</p>
             <div class="d-flex gap-2 mt-4">
                 <button type="button" class="btn btn-light w-100 rounded-pill fw-bold text-muted py-2" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" id="btn-ejecutar-borrado-seguro" class="btn btn-danger w-100 rounded-pill fw-bold py-2">Confirmar</button>
@@ -313,7 +298,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDow_HqFuXPHSEtaV2RsuqQuy6utIakOCo",
@@ -327,224 +312,356 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Variables de Estado Interno
-    let cacheLotes = {};
+    // Estado local plano de la aplicación
+    let listaLotes = [];
+    let listaCultivos = [];
+    let listaGastos = [];
+    
     let idLoteSeleccionado = null;
+    let haLibresLoteSeleccionado = 0;
     let funcionBorradoSeguro = null;
-    let desuscribirCultivos = null;
-    let desuscribirGastos = null;
 
-    // Rendimientos Estándar por Hectárea (Configurable)
+    // Rendimientos Estándar por Hectárea de la Zona (Paraguay)
     const RENDIMIENTOS = { "Maíz": 7000, "Soja": 3000, "Poroto": 1200, "Pasto": 5000 };
 
-    // CONTROL DE VISTAS NAIVAS
+    // CONTROLADOR DE CAMBIO DE PANTALLA
     window.cambiarVista = (nombreVista) => {
-        document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-view'));
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active-view'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         
-        const destino = document.getElementById(`view-${nombreVista}`);
-        if(destino) destino.classList.add('active-view');
+        const target = document.getElementById(`view-${nombreVista}`);
+        if(target) target.classList.add('active-view');
         
-        const navActivo = Array.from(document.querySelectorAll('.nav-item')).find(i => i.outerHTML.includes(`'${nombreVista}'`));
-        if (navActivo) navActivo.classList.add('active');
+        const nav = Array.from(document.querySelectorAll('.nav-item')).find(i => i.outerHTML.includes(`'${nombreVista}'`));
+        if (nav) nav.classList.add('active');
     };
 
-    // ESCUCHA PRINCIPAL: LOTES DE TIERRA
-    onSnapshot(collection(db, "lotes"), (snapshot) => {
-        const dashBody = document.getElementById('dash-tabla-body');
-        const lotesBody = document.getElementById('lotes-tabla-body');
-        
-        let totalHaGlobal = 0, totalGastosGlobal = 0, totalLotes = 0;
-        dashBody.innerHTML = '';
-        lotesBody.innerHTML = '';
-        cacheLotes = {};
-
-        snapshot.forEach(docSnap => {
-            const id = docSnap.id;
-            const lote = docSnap.data();
-            cacheLotes[id] = lote;
-
-            const ha = Number(lote.haTotales) || 0;
-            const inversion = Number(lote.gastos) || 0;
-
-            totalHaGlobal += ha;
-            totalGastosGlobal += inversion;
-            totalLotes++;
-
-            // Render Tablero
-            dashBody.innerHTML += `
-                <tr>
-                    <td><div class="fw-bold text-dark">${lote.nombre}</div></td>
-                    <td>${ha} ha</td>
-                    <td class="fw-bold text-danger">G. ${inversion.toLocaleString('es-PY')}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="verDetalleLote('${id}')"><i class="bi bi-eye"></i> Ver Lote</button>
-                    </td>
-                </tr>`;
-
-            // Render Estructura Lotes
-            lotesBody.innerHTML += `
-                <tr>
-                    <td><div class="fw-bold">${lote.nombre}</div></td>
-                    <td>${ha} ha</td>
-                    <td>
-                        <button class="action-btn text-success me-2" onclick="verDetalleLote('${id}')"><i class="bi bi-folder2-open"></i></button>
-                        <button class="action-btn text-danger" onclick="abrirBorradoSeguro('lote', '${id}', null, 0)"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>`;
-        });
-
-        document.getElementById('dash-ha').innerText = totalHaGlobal + " ha";
-        document.getElementById('dash-lotes').innerText = totalLotes;
-        document.getElementById('dash-inv').innerText = "G. " + totalGastosGlobal.toLocaleString('es-PY');
-        
-        if(idLoteSeleccionado && cacheLotes[idLoteSeleccionado]) {
-            actualizarCabeceraDetalle(idLoteSeleccionado);
-        }
-        recalcularProduccionYAuditoriaGlobal();
+    // ESCUCHADORES EN LA RAÍZ (PERFECTO SCONCRONISMO PLANO)
+    
+    // 1. Escuchar Lotes
+    onSnapshot(collection(db, "lotes"), (snap) => {
+        listaLotes = [];
+        snap.forEach(d => { listaLotes.push({ id: d.id, ...d.data() }); });
+        renderizarTodo();
     });
 
-    // ABRIR RADIOGRAFIA DE UN LOTE EXCLUSIVO
-    window.verDetalleLote = (idLote) => {
-        idLoteSeleccionado = idLote;
-        cambiarVista('detalle-lote');
-        actualizarCabeceraDetalle(idLote);
+    // 2. Escuchar Cultivos
+    onSnapshot(collection(db, "cultivos"), (snap) => {
+        listaCultivos = [];
+        snap.forEach(d => { listaCultivos.push({ id: d.id, ...d.data() }); });
+        renderizarTodo();
+    });
 
-        if(desuscribirCultivos) desuscribirCultivos();
-        if(desuscribirGastos) desuscribirGastos();
+    // 3. Escuchar Gastos
+    onSnapshot(collection(db, "gastos"), (snap) => {
+        listaGastos = [];
+        snap.forEach(d => { listaGastos.push({ id: d.id, ...d.data() }); });
+        renderizarTodo();
+    });
 
-        // Escuchar cultivos de este lote en tiempo real
-        desuscribirCultivos = onSnapshot(collection(db, "lotes", idLote, "cultivos"), (snap) => {
-            const tabla = document.getElementById('det-tabla-cultivos');
-            tabla.innerHTML = '';
-            let haOcupadas = 0;
-
-            snap.forEach(d => {
-                const c = d.data();
-                const cid = d.id;
-                haOcupadas += Number(c.ha) || 0;
-
-                const statusCosecha = c.cosechado ? `<span class="badge bg-success">Listo: ${Number(c.kgReales).toLocaleString('es-PY')} kg</span>` : `<button class="btn btn-sm btn-warning py-0" onclick="abrirModalCosecha('${cid}')">Cosechar</button>`;
-
-                tabla.innerHTML += `
-                    <tr>
-                        <td class="fw-bold">${c.tipo}</td>
-                        <td>${c.ha} ha</td>
-                        <td>${c.mecanizado ? 'Sí' : 'No'}</td>
-                        <td>${statusCosecha}</td>
-                        <td><button class="action-btn text-danger" onclick="abrirBorradoSeguro('cultivo', '${cid}', null, 0)"><i class="bi bi-trash"></i></button></td>
-                    </tr>`;
-            });
-
-            // Control de ocupación superficial en el lote
-            const totales = Number(cacheLotes[idLote].haTotales) || 0;
-            const libres = totales - haOcupadas;
-            const badgeBox = document.getElementById('det-lote-estado-suelo');
-
-            if(libres < 0) {
-                badgeBox.innerHTML = `<span class="badge bg-danger badge-suelo">¡Error! Superaste por ${Math.abs(libres)} ha la capacidad</span>`;
-            } else if(libres === 0) {
-                badgeBox.innerHTML = `<span class="badge bg-success badge-suelo">100% Suelo Ocupado</span>`;
-            } else {
-                badgeBox.innerHTML = `<span class="badge bg-info text-dark badge-suelo">${libres} ha libres (Planeando qué plantar)</span>`;
-            }
-            recalcularProduccionYAuditoriaGlobal();
-        });
-
-        // Escuchar gastos específicos de este lote
-        desuscribirGastos = onSnapshot(collection(db, "lotes", idLote, "gastos_detalle"), (snap) => {
-            const tabla = document.getElementById('det-tabla-gastos');
-            tabla.innerHTML = '';
-            snap.forEach(d => {
-                const g = d.data();
-                tabla.innerHTML += `
-                    <tr>
-                        <td class="small">${g.fecha}</td>
-                        <td><span class="d-block fw-bold">${g.cat}</span><small class="text-muted">${g.desc}</small></td>
-                        <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
-                        <td><button class="action-btn text-danger" onclick="abrirBorradoSeguro('gasto', '${d.id}', '${idLote}', ${g.monto})"><i class="bi bi-trash"></i></button></td>
-                    </tr>`;
-            });
-        });
-    };
-
-    function actualizarCabeceraDetalle(idLote) {
-        const l = cacheLotes[idLote];
-        document.getElementById('det-lote-nombre').innerText = "Extracto: " + l.nombre;
-        document.getElementById('det-lote-subtitulo').innerText = `Superficie Máxima Declarada: ${l.haTotales} Hectáreas`;
+    // MOTOR DE CORRESPONDENCIA Y ACTUALIZACIÓN VISUAL EN VIVO
+    function renderizarTodo() {
+        renderizarDashboard();
+        renderizarListadoLotes();
+        renderizarVistaGlobalGastos();
+        renderizarModuloProduccion();
+        
+        if (idLoteSeleccionado) {
+            renderizarDetalleLoteExclusivo(idLoteSeleccionado);
+        }
     }
 
-    // NAVEGACIÓN Y APERTURA DE MODALES SIN COMPLICACIONES
-    window.abrirModalCultivo = () => { new bootstrap.Modal(document.getElementById('modalCultivo')).show(); };
-    window.abrirModalGasto = () => { new bootstrap.Modal(document.getElementById('modalGasto')).show(); };
-    window.abrirModalCosecha = (idCultivo) => {
-        document.getElementById('cosecha-cultivo-id').value = idCultivo;
-        new bootstrap.Modal(document.getElementById('modalCosechar')).show();
+    function renderizarDashboard() {
+        const body = document.getElementById('dash-tabla-body');
+        body.innerHTML = '';
+
+        let totalHa = 0;
+        let totalGastos = 0;
+
+        listaLotes.forEach(l => {
+            totalHa += Number(l.haTotales) || 0;
+            
+            // Sumar gastos correspondientes a este lote de forma plana
+            const gastosEsteLote = listaGastos.filter(g => g.loteId === l.id)
+                                              .reduce((sum, g) => sum + (Number(g.monto) || 0), 0);
+            totalGastos += gastosEsteLote;
+
+            body.innerHTML += `
+                <tr>
+                    <td><div class="fw-bold text-dark">${l.nombre}</div></td>
+                    <td>${l.haTotales} ha</td>
+                    <td class="fw-bold text-danger">G. ${gastosEsteLote.toLocaleString('es-PY')}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-eye"></i> Ver Lote</button>
+                    </td>
+                </tr>`;
+        });
+
+        document.getElementById('dash-ha').innerText = totalHa + " ha";
+        document.getElementById('dash-lotes').innerText = listaLotes.length;
+        document.getElementById('dash-inv').innerText = "G. " + totalGastos.toLocaleString('es-PY');
+    }
+
+    function renderizarListadoLotes() {
+        const body = document.getElementById('lotes-tabla-body');
+        body.innerHTML = '';
+
+        listaLotes.forEach(l => {
+            body.innerHTML += `
+                <tr>
+                    <td><div class="fw-bold text-dark">${l.nombre}</div></td>
+                    <td>${l.haTotales} ha</td>
+                    <td class="text-center">
+                        <button class="action-btn text-success me-3" onclick="abrirRadiografiaLote('${l.id}')"><i class="bi bi-folder2-open"></i> Abrir Detalle</button>
+                        <button class="action-btn text-danger" onclick="solicitarBorradoElemento('lote', '${l.id}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    // ABRIR PANTALLA EXCLUSIVA INTERNA POR LOTE
+    window.abrirRadiografiaLote = (idLote) => {
+        idLoteSeleccionado = idLote;
+        cambiarVista('detalle-lote');
+        renderizarDetalleLoteExclusivo(idLote);
     };
 
-    // ACCIÓN: REGISTRAR LOTE PADRE
+    function renderizarDetalleLoteExclusivo(idLote) {
+        const loteObj = listaLotes.find(l => l.id === idLote);
+        if(!loteObj) return;
+
+        document.getElementById('det-lote-nombre').innerText = "Lote: " + loteObj.nombre;
+        document.getElementById('det-lote-subtitulo').innerText = `Superficie Máxima Establecida: ${loteObj.haTotales} Hectáreas`;
+
+        // Filtrar cultivos de este lote que sigan activos o sembrados (ocupando suelo)
+        const cultivosEsteLote = listaCultivos.filter(c => c.loteId === idLote);
+        
+        let haOcupadas = 0;
+        const tablaCultivos = document.getElementById('det-tabla-cultivos');
+        tablaCultivos.innerHTML = '';
+
+        cultivosEsteLote.forEach(c => {
+            // Si no está cosechado, ocupa suelo real ahora mismo
+            if (!c.cosechado) {
+                haOcupadas += Number(c.ha) || 0;
+            }
+
+            const estadoCosecha = c.cosechado 
+                ? `<span class="badge bg-success py-1 px-2">Cosechado: ${Number(c.kgReales).toLocaleString('es-PY')} kg</span>`
+                : `<button class="btn btn-sm btn-warning fw-bold py-0 rounded-pill px-2" onclick="abrirModalCosecha('${c.id}')">Cosechar</button>`;
+
+            tablaCultivos.innerHTML += `
+                <tr>
+                    <td class="fw-bold text-dark">${c.tipo}</td>
+                    <td>${c.ha} ha</td>
+                    <td><span class="small text-muted">${c.mecanizado ? 'Mecanizado' : 'Manual'}</span></td>
+                    <td>${estadoCosecha}</td>
+                    <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('cultivo', '${c.id}')"><i class="bi bi-trash"></i></button></td>
+                </tr>`;
+        });
+
+        // Calcular Suelo Restante o libre en vivo
+        const haMaximas = Number(loteObj.haTotales) || 0;
+        haLibresLoteSeleccionado = haMaximas - haOcupadas;
+        
+        const contenedorBadge = document.getElementById('det-lote-estado-suelo');
+        if(haLibresLoteSeleccionado < 0) {
+            contenedorBadge.innerHTML = `<span class="badge bg-danger badge-suelo">¡Error! Superado por ${Math.abs(haLibresLoteSeleccionado)} ha</span>`;
+        } else if(haLibresLoteSeleccionado === 0) {
+            contenedorBadge.innerHTML = `<span class="badge bg-success badge-suelo">100% Ocupado</span>`;
+        } else {
+            contenedorBadge.innerHTML = `<span class="badge bg-info text-dark badge-suelo">${haLibresLoteSeleccionado} ha libres (Viendo qué plantar)</span>`;
+        }
+
+        // Filtrar e inyectar Gastos específicos del Lote
+        const tablaGastos = document.getElementById('det-tabla-gastos');
+        tablaGastos.innerHTML = '';
+        const gastosFiltrados = listaGastos.filter(g => g.loteId === idLote);
+
+        gastosFiltrados.forEach(g => {
+            tablaGastos.innerHTML += `
+                <tr>
+                    <td class="small text-muted">${g.fecha}</td>
+                    <td><span class="fw-bold d-block">${g.cat}</span><small class="text-muted">${g.desc}</small></td>
+                    <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
+                    <td><button class="action-btn text-danger" onclick="solicitarBorradoElemento('gasto', '${g.id}')"><i class="bi bi-trash"></i></button></td>
+                </tr>`;
+        });
+    }
+
+    // MANEJO DE COSECHAS Y PROYECCIONES AUTOMÁTICAS
+    function renderizarModuloProduccion() {
+        const contenedor = document.getElementById('produccion-tarjetas-container');
+        contenedor.innerHTML = '';
+
+        // Agrupar datos planos para KPIs globales
+        let resumenPorCultivo = {};
+        let sumaKgEstimadosGlobal = 0;
+
+        listaCultivos.forEach(c => {
+            const tipo = c.tipo;
+            const ha = Number(c.ha) || 0;
+            const rinde = RENDIMIENTOS[tipo] || 2000;
+            const estimado = ha * rinde;
+
+            if(!resumenPorCultivo[tipo]) {
+                resumenPorCultivo[tipo] = { haOcupadas: 0, kgEstimados: 0, kgReales: 0 };
+            }
+
+            // Si está activo, suma estimación y área activa
+            if(!c.cosechado) {
+                resumenPorCultivo[tipo].haOcupadas += ha;
+                resumenPorCultivo[tipo].kgEstimados += estimado;
+                sumaKgEstimadosGlobal += estimado;
+            } else {
+                resumenPorCultivo[tipo].kgReales += (Number(c.kgReales) || 0);
+            }
+        });
+
+        // Inyectar Tarjetas de Reportes
+        Object.keys(resumenPorCultivo).forEach(cultivo => {
+            const r = resumenPorCultivo[cultivo];
+            const faltante = Math.max(0, r.kgEstimados - r.kgReales);
+
+            contenedor.innerHTML += `
+                <div class="col-md-6">
+                    <div class="content-card p-4">
+                        <h5 class="fw-bold text-success mb-2"><i class="bi bi-flower1"></i> Cultivo: ${cultivo}</h5>
+                        <p class="text-muted small mb-3">Estadística consolidada en base al mapa actual del campo.</p>
+                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                            <span class="text-muted">Proyección Esperada (En desarrollo):</span>
+                            <span class="fw-bold text-dark">${r.kgEstimados.toLocaleString('es-PY')} kg</span>
+                        </div>
+                        <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                            <span class="text-muted">Ya Cosechado e Ingresado a Silo:</span>
+                            <span class="fw-bold text-success">${r.kgReales.toLocaleString('es-PY')} kg</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-danger fw-bold">
+                            <span>Pendiente aproximado por Cosechar:</span>
+                            <span>${faltante.toLocaleString('es-PY')} kg</span>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        document.getElementById('dash-prod-total').innerText = sumaKgEstimadosGlobal.toLocaleString('es-PY') + " kg";
+    }
+
+    // AUDITORÍA DE GASTOS GLOBAL
+    function renderizarVistaGlobalGastos() {
+        const body = document.getElementById('gastos-tabla-global-body');
+        body.innerHTML = '';
+        window.cacheExcelGastos = [];
+
+        listaGastos.forEach(g => {
+            const loteObj = listaLotes.find(l => l.id === g.loteId);
+            const loteNombre = loteObj ? loteObj.nombre : 'Desconocido';
+
+            window.cacheExcelGastos.push({
+                Fecha: g.fecha,
+                Lote: loteNombre,
+                Categoria: g.cat,
+                Descripcion: g.desc,
+                Monto_Guaranies: g.monto
+            });
+
+            body.innerHTML += `
+                <tr>
+                    <td>${g.fecha}</td>
+                    <td class="fw-bold text-dark">${loteNombre}</td>
+                    <td><span class="badge bg-light text-dark border">${g.cat}</span></td>
+                    <td>${g.desc}</td>
+                    <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
+                </tr>`;
+        });
+    }
+
+    // OPERACIONES Y REGISTROS DIRECTOS (GUARDADO A LA PRIMERA)
+    
+    // Crear Lote Padre
     document.getElementById('form-lote-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
         await addDoc(collection(db, "lotes"), {
             nombre: document.getElementById('lote-nombre').value,
-            haTotales: Number(document.getElementById('lote-totales').value),
-            gastos: 0
+            haTotales: Number(document.getElementById('lote-totales').value)
         });
         bootstrap.Modal.getInstance(document.getElementById('modalLote')).hide();
         document.getElementById('form-lote-nuevo').reset();
     });
 
-    // ACCIÓN: ASIGNAR CULTIVO INTERNO
+    // Validar Hectáreas Disponibles en Vivo al Escribir
+    document.getElementById('cultivo-ha').addEventListener('input', (e) => {
+        const haIngresadas = Number(e.target.value) || 0;
+        const errorMsg = document.getElementById('error-limite-ha');
+        const btnGuardar = document.getElementById('btn-guardar-cultivo');
+
+        if(haIngresadas > haLibresLoteSeleccionado) {
+            errorMsg.classList.remove('d-none');
+            btnGuardar.disabled = true; // Bloquea si supera el espacio libre disponible
+        } else {
+            errorMsg.classList.add('d-none');
+            btnGuardar.disabled = false;
+        }
+    });
+
+    window.abrirModalCultivo = () => {
+        document.getElementById('error-limite-ha').classList.add('d-none');
+        document.getElementById('btn-guardar-cultivo').disabled = false;
+        new bootstrap.Modal(document.getElementById('modalCultivo')).show();
+    };
+
+    // Registrar Siembra de Cultivo Plana
     document.getElementById('form-cultivo-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
         if(!idLoteSeleccionado) return;
 
-        await addDoc(collection(db, "lotes", idLoteSeleccionado, "cultivos"), {
+        await addDoc(collection(db, "cultivos"), {
+            loteId: idLoteSeleccionado,
             tipo: document.getElementById('cultivo-tipo').value,
             ha: Number(document.getElementById('cultivo-ha').value),
             mecanizado: document.getElementById('cultivo-mecanizado').checked,
             cosechado: false,
             kgReales: 0
         });
+
         bootstrap.Modal.getInstance(document.getElementById('modalCultivo')).hide();
         document.getElementById('form-cultivo-nuevo').reset();
     });
 
-    // ACCIÓN: INTRODUCIR GASTO AL LOTE Y SUMAR AL CONSOLIDADO
+    window.abrirModalGasto = () => { new bootstrap.Modal(document.getElementById('modalGasto')).show(); };
+
+    // Registrar Gasto Plano
     document.getElementById('form-gasto-nuevo').addEventListener('submit', async (e) => {
         e.preventDefault();
         if(!idLoteSeleccionado) return;
 
-        const monto = Number(document.getElementById('gasto-monto').value);
-        const d = new Date();
-        const fechaStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const hoy = new Date();
+        const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
 
-        const gastoObjeto = {
+        await addDoc(collection(db, "gastos"), {
+            loteId: idLoteSeleccionado,
             cat: document.getElementById('gasto-cat').value,
             desc: document.getElementById('gasto-desc').value,
-            monto: monto,
-            fecha: fechaStr,
-            loteId: idLoteSeleccionado
-        };
-
-        // Guardar subcolección interna
-        await addDoc(collection(db, "lotes", idLoteSeleccionado, "gastos_detalle"), gastoObjeto);
-        // Guardar copia en colección global para auditoría cruzada rápida
-        await addDoc(collection(db, "gastos_globales_auditoria"), gastoObjeto);
-        // Incrementar contador de inversiones del lote padre
-        await updateDoc(doc(db, "lotes", idLoteSeleccionado), { gastos: increment(monto) });
+            monto: Number(document.getElementById('gasto-monto').value),
+            fecha: fechaStr
+        });
 
         bootstrap.Modal.getInstance(document.getElementById('modalGasto')).hide();
         document.getElementById('form-gasto-nuevo').reset();
     });
 
-    // ACCIÓN: FINALIZAR COSECHA (PASAR DE ESTIMACIÓN A PRODUCCIÓN REAL)
+    window.abrirModalCosecha = (idCultivo) => {
+        document.getElementById('cosecha-cultivo-id').value = idCultivo;
+        new bootstrap.Modal(document.getElementById('modalCosechar')).show();
+    };
+
+    // Ejecutar Cierre de Cosecha (Libera suelo para rotación de cultivos)
     document.getElementById('form-cosecha-ejecutar').addEventListener('submit', async (e) => {
         e.preventDefault();
         const cid = document.getElementById('cosecha-cultivo-id').value;
         const kg = Number(document.getElementById('cosecha-kg').value);
 
-        await updateDoc(doc(db, "lotes", idLoteSeleccionado, "cultivos", cid), {
+        await updateDoc(doc(db, "cultivos", cid), {
             cosechado: true,
             kgReales: kg
         });
@@ -553,20 +670,21 @@
         document.getElementById('form-cosecha-ejecutar').reset();
     });
 
-    // FILTRADO GLOBAL SEGURO Y ORDENADO DE EXPULSIÓN DE DATOS (REEMPLAZA CONFIRM)
-    window.abrirBorradoSeguro = (tipo, id, refId, extraMonto) => {
-        document.getElementById('borrado-titulo').innerText = `¿Eliminar ${tipo}?`;
-        document.getElementById('borrado-mensaje').innerText = `Esta operación purgará los registros vinculados en Firebase.`;
+    // SISTEMA INTEGRADO DE CONFIRMACIONES (REEMPLAZA CONFIRM COMPLETAMENTE)
+    window.solicitarBorradoElemento = (tipo, id) => {
+        document.getElementById('borrado-titulo').innerText = `¿Eliminar este ${tipo}?`;
+        document.getElementById('borrado-mensaje').innerText = `Se purgarán los datos vinculados en la colección de Firebase de manera definitiva.`;
         
         if(tipo === 'lote') {
-            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "lotes", id)); cambiarVista('lotes'); };
-        } else if(tipo === 'cultivo') {
-            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "lotes", idLoteSeleccionado, "cultivos", id)); };
-        } else if(tipo === 'gasto') {
-            funcionBorradoSeguro = async () => {
-                await deleteDoc(doc(db, "lotes", refId, "gastos_detalle", id));
-                await updateDoc(doc(db, "lotes", refId), { gastos: increment(-extraMonto) });
+            funcionBorradoSeguro = async () => { 
+                await deleteDoc(doc(db, "lotes", id));
+                if(idLoteSeleccionado === id) idLoteSeleccionado = null;
+                cambiarVista('lotes');
             };
+        } else if(tipo === 'cultivo') {
+            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "cultivos", id)); };
+        } else if(tipo === 'gasto') {
+            funcionBorradoSeguro = async () => { await deleteDoc(doc(db, "gastos", id)); };
         }
 
         new bootstrap.Modal(document.getElementById('modalConfirmarBorrado')).show();
@@ -580,110 +698,13 @@
         bootstrap.Modal.getInstance(document.getElementById('modalConfirmarBorrado')).hide();
     });
 
-    // AUDITORÍA INTERNA DE CULTIVOS EN TODO EL ESTABLECIMIENTO
-    function recalcularProduccionYAuditoriaGlobal() {
-        let haPorCultivo = {}, kgLogradosPorCultivo = {}, kgEstimadosGlobal = 0;
-        
-        const listaLotesIds = Object.keys(cacheLotes);
-        if(listaLotesIds.length === 0) return;
-
-        let totalProcesados = 0;
-        
-        listaLotesIds.forEach(lid => {
-            // Escuchar cruzado para KPIs del Home sin romper flujos
-            onSnapshot(collection(db, "lotes", lid, "cultivos"), (snap) => {
-                snap.forEach(d => {
-                    const c = d.data();
-                    const tipo = c.tipo;
-                    const ha = Number(c.ha) || 0;
-                    
-                    if(!haPorCultivo[tipo]) haPorCultivo[tipo] = 0;
-                    if(!kgLogradosPorCultivo[tipo]) kgLogradosPorCultivo[tipo] = 0;
-
-                    haPorCultivo[tipo] += ha;
-                    if(c.cosechado) {
-                        kgLogradosPorCultivo[tipo] += (Number(c.kgReales) || 0);
-                    }
-                });
-
-                totalProcesados++;
-                if(totalProcesados >= listaLotesIds.length) {
-                    // Armar panel visual de producción consolidada
-                    const contenedor = document.getElementById('produccion-tarjetas-container');
-                    contenedor.innerHTML = '';
-                    let kpisSumaKg = 0;
-
-                    Object.keys(haPorCultivo).forEach(cultivo => {
-                        const haTotalesCultivo = haPorCultivo[cultivo];
-                        const rindeStandard = RENDIMIENTOS[cultivo] || 2000;
-                        const estimadoTeorico = haTotalesCultivo * rindeStandard;
-                        const cosechadoYa = kgLogradosPorCultivo[cultivo];
-                        const faltante = Math.max(0, estimadoTeorico - cosechadoYa);
-
-                        kpisSumaKg += estimadoTeorico;
-
-                        contenedor.innerHTML += `
-                            <div class="col-md-6">
-                                <div class="content-card p-4">
-                                    <h5 class="fw-bold text-success mb-2"><i class="bi bi-flower1"></i> Cultivo: ${cultivo}</h5>
-                                    <p class="text-muted small mb-3">Estadísticas consolidadas en base a ${haTotalesCultivo} ha asignadas.</p>
-                                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                                        <span class="text-muted">Proyección Inicial Esperada:</span>
-                                        <span class="fw-bold text-dark">${estimadoTeorico.toLocaleString('es-PY')} kg</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
-                                        <span class="text-muted">Procesado en Silo / Báscula:</span>
-                                        <span class="fw-bold text-success">${cosechadoYa.toLocaleString('es-PY')} kg</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between text-danger">
-                                        <span class="fw-bold">Falta recolectar / Pendiente:</span>
-                                        <span class="fw-bold">${faltante.toLocaleString('es-PY')} kg</span>
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
-                    document.getElementById('dash-prod-total').innerText = kpisSumaKg.toLocaleString('es-PY') + " kg";
-                }
-            });
-        });
-    }
-
-    // AUDITORÍA Y ESCUCHA DE GASTOS GLOBALES (HISTORIAL CONSOLIDADO)
-    onSnapshot(collection(db, "gastos_globales_auditoria"), (snapshot) => {
-        const body = document.getElementById('gastos-tabla-global-body');
-        body.innerHTML = '';
-        window.cacheExcelGastosCompleto = [];
-
-        snapshot.forEach(docSnap => {
-            const g = docSnap.data();
-            const loteNombre = cacheLotes[g.loteId] ? cacheLotes[g.loteId].nombre : 'General';
-            
-            window.cacheExcelGastosCompleto.push({
-                Fecha: g.fecha,
-                Lote: loteNombre,
-                Categoria: g.cat,
-                Descripcion: g.desc,
-                Monto: g.monto
-            });
-
-            body.innerHTML += `
-                <tr>
-                    <td>${g.fecha}</td>
-                    <td class="fw-bold text-dark">${loteNombre}</td>
-                    <td><span class="badge bg-light text-dark border">${g.cat}</span></td>
-                    <td>${g.desc}</td>
-                    <td class="text-end fw-bold text-danger">G. ${Number(g.monto).toLocaleString('es-PY')}</td>
-                </tr>`;
-        });
-    });
-
-    // EXPORTACIÓN EXCEL PROFESIONAL
+    // EXPORTACIÓN A EXCEL
     window.descargarExcelGastos = () => {
-        if(!window.cacheExcelGastosCompleto || window.cacheExcelGastosCompleto.length === 0) return;
-        const ws = XLSX.utils.json_to_sheet(window.cacheExcelGastosCompleto);
+        if(!window.cacheExcelGastos || window.cacheExcelGastos.length === 0) return;
+        const ws = XLSX.utils.json_to_sheet(window.cacheExcelGastos);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Libro de Costos Campo");
-        XLSX.writeFile(wb, "Auditoria_Costos_AGROGESTION.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Auditoria de Costos");
+        XLSX.writeFile(wb, "Reporte_General_Agrogestion.xlsx");
     };
 </script>
 

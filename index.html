@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agrogestión</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Agrogestión - Panel de Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #062f1e;
-            --primary-light: #0b462e;
-            --accent: #eab308;
-            --bg-main: #f8fafc;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+            --bg-main: #f8f9fa;
+            --sidebar-width: 260px;
+            --primary-dark: #0a2e1d;
+            --primary-light: #1b4d3e;
+            --accent-gold: #d4af37;
+            --text-dark: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --success-bg: #e6f4ea;
+            --success-text: #137333;
+            --danger-text: #dc3545;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
@@ -31,114 +35,137 @@
             min-height: 100vh;
         }
 
-        /* Sidebar */
+        /* Sidebar Lateral Estilizado */
         .sidebar {
-            width: 260px;
-            background: #ffffff;
-            border-right: 1px solid var(--border);
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            padding: 24px 16px;
             position: fixed;
             height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
         }
 
-        .brand {
+        .sidebar-brand {
+            padding: 24px;
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
+            color: var(--primary-dark);
             font-weight: 700;
-            font-size: 1.15rem;
-            color: var(--primary);
-            margin-bottom: 32px;
-            padding-left: 8px;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        /* Ajuste exacto para tu nuevo logo cargado */
-        .brand img {
-            width: 32px;
-            height: 32px;
+        /* Carga del nuevo logo unificado */
+        .sidebar-brand img {
+            height: 40px;
+            width: 40px;
             object-fit: contain;
         }
 
-        .menu-section {
-            margin-bottom: 24px;
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 14px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .menu-label {
-            font-size: 0.725rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 1px;
             color: var(--text-muted);
-            font-weight: 700;
-            padding: 0 12px 8px;
+            padding: 10px 12px 4px 12px;
+            font-weight: 600;
         }
 
-        .nav-item {
+        .sidebar-item a {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 8px;
-            margin-bottom: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .nav-item:hover {
-            background: #f1f5f9;
             color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
 
-        .nav-item.active {
-            background: var(--primary);
+        .sidebar-item a:hover, .sidebar-item.active a {
+            background-color: var(--primary-dark);
             color: #ffffff;
         }
 
-        .nav-item.logout {
-            margin-top: auto;
-            color: #ef4444;
+        .sidebar-item a i {
+            width: 20px;
+            font-size: 1.1rem;
+            text-align: center;
+            color: var(--text-muted);
         }
 
-        .nav-item.logout:hover {
-            background: #fef2f2;
+        .sidebar-item.active a i, .sidebar-item a:hover i {
+            color: #ffffff;
         }
 
-        /* Main Content */
+        .logout-btn {
+            padding: 20px 26px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .logout-btn a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--danger-text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Contenedor Principal */
         .main-content {
-            margin-left: 260px;
+            margin-left: var(--sidebar-width);
             flex-grow: 1;
             padding: 40px;
+            background-color: var(--bg-main);
+            min-height: 100vh;
         }
 
-        .view {
+        /* Control de Vistas Activas */
+        .view-section {
             display: none;
         }
 
-        .view.active {
+        .view-section.active-view {
             display: block;
         }
 
-        .view-header {
+        /* Secciones de Encabezados */
+        .content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
         }
 
-        .view-title h1 {
+        .header-title h1 {
             font-size: 1.75rem;
-            font-weight: 700;
             color: var(--text-dark);
+            font-weight: 700;
         }
 
-        .view-title p {
-            color: var(--text-muted);
+        .header-title p {
             font-size: 0.9rem;
+            color: var(--text-muted);
             margin-top: 4px;
         }
 
@@ -148,98 +175,99 @@
         }
 
         .btn {
-            padding: 10px 18px;
-            border-radius: 9999px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            background: #ffffff;
-            color: var(--text-dark);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .btn:hover {
-            background: #f8fafc;
+            background-color: #f1f5f9;
         }
 
         .btn-primary {
-            background: var(--primary);
+            background-color: var(--primary-dark);
             color: #ffffff;
             border: none;
         }
 
         .btn-primary:hover {
-            background: var(--primary-light);
+            background-color: var(--primary-light);
         }
 
-        /* KPI Cards */
-        .kpi-grid {
+        /* Cuadrícula de Tarjetas KPI */
+        .cards-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            margin-bottom: 32px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
+        .kpi-card {
+            background-color: #ffffff;
+            border-radius: 12px;
             padding: 24px;
-            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            justify-content: space-between;
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+        .kpi-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            margin-bottom: 16px;
         }
 
-        .icon-surface { background: #f0fdf4; color: #166534; }
-        .icon-active { background: #f0f9ff; color: #075985; }
-        .icon-investment { background: #fef9c3; color: #854d0e; }
+        .icon-lotes { background-color: #e6f4ea; color: #137333; }
+        .icon-lotes-activos { background-color: #e8f0fe; color: #1a73e8; }
+        .icon-inversion { background-color: #fef7e0; color: #b06000; }
 
-        .card.featured {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-        }
-
-        .card.featured .card-icon {
-            background: rgba(255,255,255,0.1);
+        .kpi-card.featured-card {
+            background-color: var(--primary-dark);
             color: #ffffff;
         }
 
-        .card-label {
+        .kpi-card.featured-card .kpi-icon-wrapper {
+            background-color: rgba(255,255,255,0.15);
+            color: #ffffff;
+        }
+
+        .kpi-label {
             font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 500;
         }
 
-        .card.featured .card-label {
+        .featured-card .kpi-label {
             color: rgba(255,255,255,0.7);
         }
 
-        .card-value {
-            font-size: 1.75rem;
+        .kpi-value {
+            font-size: 1.8rem;
             font-weight: 700;
+            margin-top: 8px;
         }
 
-        /* Tables & Content Blocks */
+        /* Tablas y Bloques de Información */
         .content-block {
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid var(--border);
+            background-color: #ffffff;
+            border-radius: 12px;
             padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 24px;
         }
 
@@ -247,300 +275,286 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .block-header h2 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 700;
+            color: var(--text-dark);
         }
 
-        .select-custom {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+        .select-filter {
+            padding: 8px 14px;
             font-size: 0.85rem;
-            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             outline: none;
-            background: #ffffff;
+            background-color: #ffffff;
+            font-weight: 500;
+            cursor: pointer;
         }
 
-        .table-container {
+        .custom-table-container {
             overflow-x: auto;
         }
 
-        .data-table {
+        .custom-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
             font-size: 0.9rem;
         }
 
-        .data-table th {
-            padding: 12px 16px;
+        .custom-table th {
+            padding: 14px 16px;
             font-weight: 600;
             color: var(--text-muted);
-            border-bottom: 1px solid var(--border);
-            font-size: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
         }
 
-        .data-table td {
+        .custom-table td {
             padding: 16px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
         }
 
-        .data-table tr:last-child td {
-            border-bottom: none;
+        .item-title {
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
-        .text-id {
+        .item-subtitle {
             font-size: 0.75rem;
             color: var(--text-muted);
             margin-top: 2px;
         }
 
-        .monto-red {
-            color: #b91c1c;
+        .monto-val {
             font-weight: 600;
+            color: #dc3545;
         }
 
-        .badge-sembrado {
-            background: #dcfce7;
-            color: #15803d;
+        .badge {
+            display: inline-flex;
             padding: 4px 12px;
-            border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
+            border-radius: 12px;
         }
 
-        .action-btn {
+        .badge-success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .action-icon-btn {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 6px;
+            font-size: 1rem;
             color: var(--text-muted);
-            border-radius: 6px;
-            margin-right: 4px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            margin-right: 6px;
         }
 
-        .action-btn:hover {
-            background: #f1f5f9;
-            color: var(--text-dark);
-        }
+        .action-icon-btn:hover { background-color: #f1f5f9; }
+        .action-icon-btn.btn-view:hover { color: var(--primary-light); }
+        .action-icon-btn.btn-add-item:hover { color: var(--success-text); }
+        .action-icon-btn.btn-edit:hover { color: #1a73e8; }
+        .action-icon-btn.btn-delete:hover { color: var(--danger-text); }
 
-        /* Modulo Producción Proyecciones */
-        .prod-grid {
+        /* Módulo Producción (Estimación de cosecha) */
+        .prod-cards-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-top: 16px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 15px;
         }
 
-        .prod-card {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            background: #ffffff;
+        .prod-subcard {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #ffffff;
         }
 
-        .prod-title {
+        .prod-subcard-title {
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 12px;
         }
 
-        .prod-title.maiz { color: #166534; }
-        .prod-title.soja { color: #b45309; }
+        .title-maiz { color: #2e7d32; }
+        .title-soja { color: #f9a825; }
 
-        .prod-value {
-            font-size: 2rem;
+        .prod-subcard-value {
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
-        .prod-calc {
+        .prod-subcard-desc {
             font-size: 0.8rem;
             color: var(--text-muted);
         }
 
-        /* Modal Alerta Original (hh-oi.github.io dice) */
-        .modal-overlay {
+        /* Ventana emergente flotante (hh-oi.github.io dice) */
+        .alert-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+            background-color: rgba(0,0,0,0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 1000;
             opacity: 0; pointer-events: none;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s ease;
         }
 
-        .modal-overlay.open {
+        .alert-overlay.show-alert {
             opacity: 1;
             pointer-events: auto;
         }
 
-        .modal-box {
-            background: #1e293b;
+        .alert-box {
+            background-color: #1e293b;
             color: #ffffff;
             border-radius: 12px;
-            width: 360px;
+            width: 380px;
             padding: 24px;
             text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
-        .modal-header-text {
-            font-size: 0.9rem;
-            color: #94a3b8;
+        .alert-title {
+            font-size: 0.95rem;
             margin-bottom: 8px;
+            color: rgba(255,255,255,0.7);
         }
 
-        .modal-body-text {
-            font-size: 1.05rem;
+        .alert-msg {
+            font-size: 1.1rem;
             font-weight: 500;
             margin-bottom: 24px;
         }
 
-        .modal-actions {
+        .alert-buttons {
             display: flex;
             justify-content: center;
             gap: 12px;
         }
 
-        .modal-btn {
+        .alert-btn {
             padding: 10px 24px;
-            border-radius: 9999px;
+            border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             border: none;
         }
 
-        .btn-confirm {
-            background: #7dd3fc;
-            color: #0369a1;
-        }
-
-        .btn-cancel {
-            background: #0c4a6e;
-            color: #7dd3fc;
-        }
+        .btn-alert-confirm { background-color: #7dd3fc; color: #0369a1; }
+        .btn-alert-cancel { background-color: #0c4a6e; color: #7dd3fc; }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="brand">
-            <img src="logo.png" alt="Logo">
+    <nav class="sidebar">
+        <a href="#" class="sidebar-brand">
+            <img src="logo.png" alt="Logo Agrogestión">
             <span>AGROGESTION</span>
+        </a>
+        <ul class="sidebar-menu">
+            <li class="menu-label">Menú</li>
+            <li class="sidebar-item active" data-view="dashboard">
+                <a href="#"><i class="fa-solid fa-chart-pie"></i>Dashboard</a>
+            </li>
+            <li class="sidebar-item" data-view="produccion">
+                <a href="#"><i class="fa-solid fa-seedling"></i>Producción</a>
+            </li>
+            <li class="sidebar-item" data-view="lotes">
+                <a href="#"><i class="fa-solid fa-layer-group"></i>Lotes</a>
+            </li>
+            <li class="sidebar-item" data-view="gastos">
+                <a href="#"><i class="fa-solid fa-wallet"></i>Gastos / Extractos</a>
+            </li>
+            <li class="sidebar-item" data-view="reportes">
+                <a href="#"><i class="fa-solid fa-file-invoice-dollar"></i>Reportes</a>
+            </li>
+            <li class="menu-label" style="margin-top: 15px;">Configuración</li>
+            <li class="sidebar-item" data-view="ajustes">
+                <a href="#"><i class="fa-solid fa-sliders"></i>Ajustes</a>
+            </li>
+        </ul>
+        <div class="logout-btn">
+            <a href="#" onclick="alert('Sesión finalizada.')">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </a>
         </div>
-        
-        <div class="menu-section">
-            <div class="menu-label">Menú</div>
-            <div class="nav-item active" onclick="switchView('dashboard', this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
-                Dashboard
-            </div>
-            <div class="nav-item" onclick="switchView('produccion', this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                Producción
-            </div>
-            <div class="nav-item" onclick="switchView('lotes', this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                Lotes
-            </div>
-            <div class="nav-item" onclick="switchView('gastos', this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="12" y1="10" x2="12" y2="10"></line></svg>
-                Gastos / Extractos
-            </div>
-            <div class="nav-item" onclick="switchView('reportes', this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                Reportes
-            </div>
-        </div>
-
-        <div class="menu-section" style="margin-top: auto;">
-            <div class="menu-label">Configuración</div>
-            <div class="nav-item" onclick="switchView('ajustes', this)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                Ajustes
-            </div>
-            <div class="nav-item logout" onclick="alert('Cerrando sesión...')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                Cerrar Sesión
-            </div>
-        </div>
-    </aside>
+    </nav>
 
     <main class="main-content">
 
-        <section id="dashboard" class="view active">
-            <div class="view-header">
-                <div class="view-title">
+        <section id="dashboard" class="view-section active-view">
+            <div class="content-header">
+                <div class="header-title">
                     <h1>Panel de Producción</h1>
                     <p>Mayo de 2026</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn" onclick="alert('Agregar Lote clicked')">+ Agregar Lote</button>
-                    <button class="btn btn-primary" onclick="alert('Generando Reporte...')">Generar Reporte</button>
+                    <button class="btn" onclick="alert('Formulario de lote iniciado')"><i class="fa-solid fa-plus"></i> Agregar Lote</button>
+                    <button class="btn btn-primary" onclick="alert('Descargando reporte unificado...')">Generar Reporte</button>
                 </div>
             </div>
 
-            <div class="kpi-grid">
-                <div class="card">
-                    <div class="card-icon icon-surface">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-                    </div>
+            <div class="cards-grid">
+                <div class="kpi-card">
                     <div>
-                        <div class="card-label">Superficie Total</div>
-                        <div class="card-value">58 ha</div>
+                        <div class="kpi-icon-wrapper icon-lotes"><i class="fa-solid fa-layer-group"></i></div>
+                        <span class="kpi-label">Superficie Total</span>
                     </div>
+                    <div class="kpi-value">58 ha</div>
                 </div>
-                <div class="card">
-                    <div class="card-icon icon-active">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    </div>
+                <div class="kpi-card">
                     <div>
-                        <div class="card-label">Lotes Activos</div>
-                        <div class="card-value">2</div>
+                        <div class="kpi-icon-wrapper icon-lotes-activos"><i class="fa-solid fa-droplet"></i></div>
+                        <span class="kpi-label">Lotes Activos</span>
                     </div>
+                    <div class="kpi-value">2</div>
                 </div>
-                <div class="card">
-                    <div class="card-icon icon-investment">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    </div>
+                <div class="kpi-card">
                     <div>
-                        <div class="card-label">Inversión Total</div>
-                        <div class="card-value" style="color: #b91c1c;">G. 800.000</div>
+                        <div class="kpi-icon-wrapper icon-inversion"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <span class="kpi-label">Inversión Total</span>
                     </div>
+                    <div class="kpi-value" style="color: #dc3545;">G. 800.000</div>
                 </div>
-                <div class="card featured">
-                    <div class="card-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                    </div>
+                <div class="kpi-card featured-card">
                     <div>
-                        <div class="card-label">Rendimiento Est.</div>
-                        <div class="card-value">312.500 kg</div>
+                        <div class="kpi-icon-wrapper"><i class="fa-solid fa-chart-line"></i></div>
+                        <span class="kpi-label">Rendimiento Est.</span>
                     </div>
+                    <div class="kpi-value">312.500 kg</div>
                 </div>
             </div>
 
             <div class="content-block">
                 <div class="block-header">
                     <h2>Resumen de Lotes y Cultivos</h2>
-                    <select class="select-custom"><option>Este Mes</option></select>
+                    <select class="select-filter"><option>Este Mes</option></select>
                 </div>
-                <div class="table-container">
-                    <table class="data-table">
+                <div class="custom-table-container">
+                    <table class="custom-table">
                         <thead>
                             <tr>
                                 <th>Lote</th>
@@ -554,23 +568,23 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Rolon Kue</strong><div class="text-id">ID: 0OjhF</div></td>
+                                <td><div class="item-title">Rolon Kue</div><div class="item-subtitle">ID: 0OjhF</div></td>
                                 <td>18 ha</td><td>10</td><td>8</td>
-                                <td class="monto-red">G. 800.000</td>
-                                <td><span class="badge-sembrado">Sembrado</span></td>
+                                <td class="monto-val">G. 800.000</td>
+                                <td><span class="badge badge-success">Sembrado</span></td>
                                 <td>
-                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+                                    <button class="action-icon-btn btn-view"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="action-icon-btn btn-add-item"><i class="fa-solid fa-circle-plus"></i></button>
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Salame kue</strong><div class="text-id">ID: da1yN</div></td>
+                                <td><div class="item-title">Salame kue</div><div class="item-subtitle">ID: da1yN</div></td>
                                 <td>40 ha</td><td>20</td><td>20</td>
-                                <td class="monto-red">G. 0</td>
-                                <td><span class="badge-sembrado">Sembrado</span></td>
+                                <td class="monto-val" style="color: #dc3545;">G. 0</td>
+                                <td><span class="badge badge-success">Sembrado</span></td>
                                 <td>
-                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                                    <button class="action-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+                                    <button class="action-icon-btn btn-view"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="action-icon-btn btn-add-item"><i class="fa-solid fa-circle-plus"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -579,50 +593,50 @@
             </div>
         </section>
 
-        <section id="produccion" class="view">
-            <div class="view-header">
-                <div class="view-title">
-                    <h1>Módulo de Producción Agrícola</h1>
+        <section id="produccion" class="view-section">
+            <div class="content-header">
+                <div class="header-title">
+                    <h1>Módulo de Production Agrícola</h1>
                 </div>
             </div>
             <div class="content-block">
                 <div class="block-header">
                     <div>
-                        <h2 style="font-size: 1.2rem;">Estimación de Cosecha Sembrada</h2>
+                        <h2>Estimación de Cosecha Sembrada</h2>
                         <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Proyecciones automáticas basadas en la superficie declarada de cada cultivo de la temporada.</p>
                     </div>
                 </div>
-                <div class="prod-grid">
-                    <div class="prod-card">
-                        <div class="prod-title maiz">⚛ Maíz (Mecanizado)</div>
-                        <div class="prod-value">210.000 kg</div>
-                        <div class="prod-calc">Cálculo estimado a 7.000 Kg/Ha</div>
+                <div class="prod-cards-row">
+                    <div class="prod-subcard">
+                        <div class="prod-subcard-title title-maiz"><i class="fa-solid fa-wheat-awn"></i> Maíz (Mecanizado)</div>
+                        <div class="prod-subcard-value">210.000 kg</div>
+                        <div class="prod-subcard-desc">Cálculo estimado a 7.000 Kg/Ha</div>
                     </div>
-                    <div class="prod-card">
-                        <div class="prod-title soja">☖ Soja (Natural / Restante)</div>
-                        <div class="prod-value">84.000 kg</div>
-                        <div class="prod-calc">Cálculo estimado a 3.000 Kg/Ha</div>
+                    <div class="prod-subcard">
+                        <div class="prod-subcard-title title-soja"><i class="fa-solid fa-seedling"></i> Soja (Natural / Restante)</div>
+                        <div class="prod-subcard-value">84.000 kg</div>
+                        <div class="prod-subcard-desc">Cálculo estimado a 3.000 Kg/Ha</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="gastos" class="view">
-            <div class="view-header">
-                <div class="view-title">
+        <section id="gastos" class="view-section">
+            <div class="content-header">
+                <div class="header-title">
                     <h1>Extractos de Gastos Operativos</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="btn" style="background:#022c1b; color:#ffffff; border:none;" onclick="alert('Exportando excel...')">☒ Descargar Excel</button>
+                    <button class="btn" onclick="alert('Descargando archivo estructurado...')"><i class="fa-solid fa-file-excel"></i> Descargar Excel</button>
                 </div>
             </div>
             <div class="content-block">
                 <div class="block-header">
                     <h2>Historial de Transacciones Registradas</h2>
-                    <select class="select-custom"><option>Todos los lotes</option></select>
+                    <select class="select-filter"><option>Todos los lotes</option></select>
                 </div>
-                <div class="table-container">
-                    <table class="data-table">
+                <div class="custom-table-container">
+                    <table class="custom-table">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
@@ -633,39 +647,39 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr id="exp-1">
-                                <td>2026-05-06</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 200.000</td>
+                            <tr id="r-1">
+                                <td>2026-05-06</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-val">G. 200.000</td>
                                 <td>
-                                    <button class="action-btn">✏</button>
-                                    <button class="action-btn" onclick="openConfirmModal('exp-1')" style="color:#ef4444;">🗑</button>
+                                    <button class="action-icon-btn btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="action-icon-btn btn-delete" onclick="solicitarEliminar('r-1')"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
-                            <tr id="exp-2">
-                                <td>2026-05-15</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 300.000</td>
+                            <tr id="r-2">
+                                <td>2026-05-15</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-val">G. 300.000</td>
                                 <td>
-                                    <button class="action-btn">✏</button>
-                                    <button class="action-btn" onclick="openConfirmModal('exp-2')" style="color:#ef4444;">🗑</button>
+                                    <button class="action-icon-btn btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="action-icon-btn btn-delete" onclick="solicitarEliminar('r-2')"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
-                            <tr id="exp-3">
-                                <td>2026-05-06</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 200.000</td>
+                            <tr id="r-3">
+                                <td>2026-05-06</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-val">G. 200.000</td>
                                 <td>
-                                    <button class="action-btn">✏</button>
-                                    <button class="action-btn" onclick="openConfirmModal('exp-3')" style="color:#ef4444;">🗑</button>
+                                    <button class="action-icon-btn btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="action-icon-btn btn-delete" onclick="solicitarEliminar('r-3')"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
-                            <tr id="exp-4">
-                                <td>2026-03-03</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-red">G. 20.000</td>
+                            <tr id="r-4">
+                                <td>2026-03-03</td><td><strong>Rolon Kue</strong></td><td>Combustible</td><td class="monto-val">G. 20.000</td>
                                 <td>
-                                    <button class="action-btn">✏</button>
-                                    <button class="action-btn" onclick="openConfirmModal('exp-4')" style="color:#ef4444;">🗑</button>
+                                    <button class="action-icon-btn btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="action-icon-btn btn-delete" onclick="solicitarEliminar('r-4')"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
-                            <tr id="exp-5">
-                                <td>2026-03-12</td><td><strong>Rolon Kue</strong></td><td>Fertilizantes</td><td class="monto-red">G. 400.000</td>
+                            <tr id="r-5">
+                                <td>2026-03-12</td><td><strong>Rolon Kue</strong></td><td>Fertilizantes</td><td class="monto-val">G. 400.000</td>
                                 <td>
-                                    <button class="action-btn">✏</button>
-                                    <button class="action-btn" onclick="openConfirmModal('exp-5')" style="color:#ef4444;">🗑</button>
+                                    <button class="action-icon-btn btn-edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="action-icon-btn btn-delete" onclick="solicitarEliminar('r-5')"><i class="fa-solid fa-trash"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -674,62 +688,64 @@
             </div>
         </section>
 
-        <section id="lotes" class="view"><div class="content-block"><h2>Gestión de Terrenos</h2></div></section>
-        <section id="reportes" class="view"><div class="content-block"><h2>Reportes Generales</h2></div></section>
-        <section id="ajustes" class="view"><div class="content-block"><h2>Configuración del Sistema</h2></div></section>
-
+        <section id="lotes" class="view-section"><div class="content-block"><h2>Lotes</h2><p>Mapeo de parcelas en desarrollo.</p></div></section>
+        <section id="reportes" class="view-section"><div class="content-block"><h2>Reportes Financieros</h2><p>Gráficos detallados de balances.</p></div></section>
+        <section id="ajustes" class="view-section"><div class="content-block"><h2>Ajustes</h2><p>Configuración general de Agrogestión.</p></div></section>
     </main>
 
-    <div class="modal-overlay" id="deleteModal">
-        <div class="modal-box">
-            <div class="modal-header-text">hh-oi.github.io dice</div>
-            <div class="modal-body-text">¿Eliminar este gasto del extracto?</div>
-            <div class="modal-actions">
-                <button class="modal-btn btn-confirm" id="confirmOk">Aceptar</button>
-                <button class="modal-btn btn-cancel" id="confirmCancel">Cancelar</button>
+    <div class="alert-overlay" id="customAlert">
+        <div class="alert-box">
+            <div class="alert-title">hh-oi.github.io dice</div>
+            <div class="alert-msg">¿Eliminar este gasto del extracto?</div>
+            <div class="alert-buttons">
+                <button class="alert-btn btn-alert-confirm" id="btnConfirmar">Aceptar</button>
+                <button class="alert-btn btn-alert-cancel" id="btnCancelar">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Cambiar entre pantallas manteniendo el estilo original
-        function switchView(viewId, element) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
-            document.getElementById(viewId).classList.add('active');
-            element.classList.add('active');
-        }
+        // Lógica de Sincronización de Navegación Lateral
+        const menuItems = document.querySelectorAll('.sidebar-item');
+        const sections = document.querySelectorAll('.view-section');
 
-        // Control del Diálogo flotante de eliminación
-        let targetId = null;
-        const modalEl = document.getElementById('deleteModal');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
 
-        function openConfirmModal(id) {
-            targetId = id;
-            modalEl.classList.add('open');
-        }
-
-        document.getElementById('confirmCancel').addEventListener('click', () => {
-            modalEl.classList.remove('open');
-            targetId = null;
-        });
-
-        document.getElementById('confirmOk').addEventListener('click', () => {
-            if (targetId) {
-                const element = document.getElementById(targetId);
-                if (element) element.remove();
-            }
-            modalEl.classList.remove('open');
-            targetId = null;
-        });
-
-        // Registro Automático de PWA Service Worker si existe en tu repositorio
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+                sections.forEach(s => s.classList.remove('active-view'));
+                const view = this.getAttribute('data-view');
+                document.getElementById(view).classList.add('active-view');
             });
+        });
+
+        // Manejo Exclusivo del Diálogo Flotante de Confirmación
+        let filaSeleccionadaId = null;
+        const modal = document.getElementById('customAlert');
+
+        function solicitarEliminar(id) {
+            filaSeleccionadaId = id;
+            modal.classList.add('show-alert');
         }
+
+        document.getElementById('btnCancelar').addEventListener('click', () => {
+            modal.classList.remove('show-alert');
+            filaSeleccionadaId = null;
+        });
+
+        document.getElementById('btnConfirmar').addEventListener('click', () => {
+            if(filaSeleccionadaId) {
+                const fila = document.getElementById(filaSeleccionadaId);
+                if(fila) {
+                    fila.style.opacity = "0";
+                    setTimeout(() => fila.remove(), 250);
+                }
+            }
+            modal.classList.remove('show-alert');
+            filaSeleccionadaId = null;
+        });
     </script>
 </body>
 </html>

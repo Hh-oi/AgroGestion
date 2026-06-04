@@ -3,50 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AGROGESTION - Panel Profesional</title>
+    <title>AGROGESTION</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="theme-color" content="#0b3022">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+    
     <style>
-        :root { --primary-dark: #0b3022; --accent-green: #2d6a4f; --gold: #d4af37; --bg-light: #f8fafc; --white: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --border-color: #e2e8f0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); }
+        :root { --primary-dark: #0b3022; --bg-light: #f8fafc; }
+        body { font-family: sans-serif; background-color: var(--bg-light); margin: 0; }
         
-        /* Contenedor Flex para que sea adaptable */
-        .app-container { display: flex; width: 100%; min-height: 100vh; }
-        .sidebar-cell { width: 260px; background: var(--white); border-right: 1px solid var(--border-color); padding: 20px; flex-shrink: 0; }
-        .main-cell { flex-grow: 1; padding: 40px; overflow-x: hidden; }
-
-        /* Estilos de Tablas para Móvil */
-        .table-responsive { overflow-x: auto; }
-        .table-custom { width: 100%; min-width: 500px; border-collapse: collapse; }
+        /* DISEÑO FLEXIBLE: Se adapta a cualquier pantalla */
+        .app-container { display: flex; flex-direction: row; min-height: 100vh; }
+        .sidebar-cell { width: 260px; background: white; border-right: 1px solid #ddd; padding: 20px; }
+        .main-cell { flex: 1; padding: 20px; overflow-x: hidden; }
         
-        /* ADAPTACIÓN MÓVIL CRÍTICA */
+        /* AJUSTE PARA CELULARES */
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
-            .sidebar-cell { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
-            .main-cell { padding: 15px; }
+            .sidebar-cell { width: 100%; border-right: none; border-bottom: 2px solid #ddd; }
             .kpi-grid { grid-template-columns: 1fr 1fr !important; }
-            .btn-primary-custom { width: 100%; justify-content: center; margin-bottom: 10px; }
+            .table-responsive { display: block; width: 100%; overflow-x: auto; }
         }
-
-        /* --- Resto de tus estilos originales sin cambios --- */
-        .view-section { display: none; }
-        .view-section.active-view { display: block; }
-        /* ... (mantén el resto de tus clases .kpi-card, .nav-item, etc. aquí) ... */
     </style>
 </head>
 <body>
-    <div class="app-container">
+
+<div class="app-container">
+    <div class="sidebar-cell">
+        <div class="nav-item active" onclick="cambiarVista('dashboard')">Dashboard</div>
         </div>
-    
-    <script type="module">
-        // (Toda tu lógica de Firebase y funciones que ya tienes)
-    </script>
+    <div class="main-cell">
+        <div class="table-responsive">
+            <table class="table-custom">
+                </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

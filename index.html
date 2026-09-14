@@ -18,9 +18,9 @@
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; }
 
         /* Estructura adaptable moderna */
-        .app-container { display: flex; min-height: 100vh; }
+        .app-container { display: flex; min-height: 100vh; width: 100%; }
         .sidebar-cell { width: 260px; background: #fff; border-right: 1px solid #dee2e6; padding: 20px; flex-shrink: 0; }
-        .main-cell { flex-grow: 1; padding: 30px; overflow-x: hidden; }
+        .main-cell { flex-grow: 1; padding: 30px; overflow-x: hidden; width: calc(100% - 260px); }
 
         /* Estilos originales de menú y tarjetas */
         .nav-item { padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; color: #333; font-weight: 500; display: flex; align-items: center; }
@@ -31,8 +31,9 @@
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
             .sidebar-cell { width: 100%; border-right: none; border-bottom: 1px solid #dee2e6; padding: 15px; }
-            .main-cell { padding: 15px; }
-            .kpi-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 10px; }
+            .main-cell { width: 100%; padding: 15px; }
+            .kpi-grid { display: flex !important; flex-wrap: wrap; }
+            .kpi-grid > div { width: 50% !important; flex: 0 0 50%; max-width: 50%; }
             .table-responsive { width: 100%; overflow-x: auto; display: block; }
         }
     </style>

@@ -49,8 +49,8 @@
         <div class="text-muted small text-uppercase fw-bold mb-2">Menú Operativo</div>
         <div class="nav-item active" onclick="cambiarSeccion('dashboard', this)"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard</div>
         <div class="nav-item" onclick="cambiarSeccion('lotes', this)"><i class="bi bi-geo-alt me-2"></i> Lotes de Tierra</div>
-        <div class="nav-item" onclick="cambiarSeccion('gastos', this)"><i class="bi bi-receipt me-2"></i> Auditoría de Gastos</div>
         <div class="nav-item" onclick="cambiarSeccion('ingresos', this)"><i class="bi bi-graph-up-arrow me-2"></i> Control de Ingresos</div>
+        <div class="nav-item" onclick="cambiarSeccion('gastos', this)"><i class="bi bi-receipt me-2"></i> Auditoría de Gastos</div>
         
         <div class="text-muted small text-uppercase fw-bold mt-4 mb-2">Configuración</div>
         <div class="nav-item" onclick="cambiarSeccion('nube', this)"><i class="bi bi-cloud-arrow-up me-2"></i> Ajustes Nube</div>
@@ -72,7 +72,7 @@
 
         <!-- CONTENEDOR DINÁMICO DE VISTAS -->
         <div id="contenido-dinamico">
-            <!-- TARJETAS KPI -->
+            <!-- TARJETAS KPI (PRIMERO INGRESOS, DESPUÉS EGRESOS) -->
             <div class="row g-3 mb-4 kpi-grid">
                 <div class="col-md-3 col-6">
                     <div class="kpi-card">
@@ -82,14 +82,14 @@
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="kpi-card">
-                        <div class="text-muted small">Egresos / Gastos Totales</div>
-                        <h3 class="fw-bold mt-2 text-danger" id="kpi-egresos">G. 0</h3>
+                        <div class="text-muted small">Ingresos por Ventas</div>
+                        <h3 class="fw-bold mt-2 text-success" id="kpi-ingresos">G. 0</h3>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="kpi-card">
-                        <div class="text-muted small">Ingresos por Ventas</div>
-                        <h3 class="fw-bold mt-2 text-success" id="kpi-ingresos">G. 0</h3>
+                        <div class="text-muted small">Egresos / Gastos Totales</div>
+                        <h3 class="fw-bold mt-2 text-danger" id="kpi-egresos">G. 0</h3>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
@@ -113,8 +113,8 @@
                                 <tr>
                                     <th>Terreno</th>
                                     <th>Superficie</th>
-                                    <th>Egresos</th>
                                     <th>Ingresos</th>
+                                    <th>Egresos</th>
                                     <th>Rentabilidad Neta</th>
                                     <th>Acción</th>
                                 </tr>
@@ -156,7 +156,7 @@
     </div>
 </div>
 
-<!-- MODAL TRANSACCIÓN (GASTO / INGRESO) -->
+<!-- MODAL TRANSACCIÓN -->
 <div class="modal fade" id="modalTransaccion" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
@@ -172,7 +172,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-uppercase">Concepto / Descripción</label>
-                    <input type="text" id="inputConcepto" class="form-control" placeholder="Ej: Compra de semillas / Venta de soja">
+                    <input type="text" id="inputConcepto" class="form-control" placeholder="Ej: Venta de cosecha / Compra de semillas">
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-uppercase">Monto en Guaraníes (G.)</label>
@@ -191,10 +191,10 @@
 <script>
     let modalLoteObj, modalTransObj;
     
-    // Base de datos local inicial con tus lotes de ejemplo si está vacío
     let lotesData = JSON.parse(localStorage.getItem('agro_lotes')) || [
-        { nombre: 'salame kue', superficie: 40, egresos: 0, ingresos: 0 },
-        { nombre: 'Rolon Kue', superficie: 20, egresos: 200000, ingresos: 0 }
+        { nombre: 'salame kue', superficie: 40, egresos: 150000, ingresos: 450000 },
+        { nombre: 'Rolon Kue', superficie: 20, egresos: 200000, ingresos: 0 },
+        { nombre: 'Lote Caro', superficie: 20, egresos: 0, ingresos: 0 }
     ];
 
     let transaccionesData = JSON.parse(localStorage.getItem('agro_trans')) || [];
@@ -225,8 +225,8 @@
                 <tr>
                     <td class="fw-bold">${lote.nombre}</td>
                     <td>${lote.superficie} ha</td>
-                    <td class="text-danger">G. ${lote.egresos.toLocaleString()}</td>
                     <td class="text-success">G. ${lote.ingresos.toLocaleString()}</td>
+                    <td class="text-danger">G. ${lote.egresos.toLocaleString()}</td>
                     <td class="fw-bold ${claseRent}">G. ${rentabilidad.toLocaleString()}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="verDetalleLote('${lote.nombre}')"><i class="bi bi-eye"></i> Ver</button>
@@ -237,8 +237,8 @@
         let gananciaNeta = totalIngresos - totalEgresos;
 
         document.getElementById('kpi-superficie').innerText = totalSup + " ha";
-        document.getElementById('kpi-egresos').innerText = "G. " + totalEgresos.toLocaleString();
         document.getElementById('kpi-ingresos').innerText = "G. " + totalIngresos.toLocaleString();
+        document.getElementById('kpi-egresos').innerText = "G. " + totalEgresos.toLocaleString();
         
         const kpiGanancia = document.getElementById('kpi-ganancia');
         kpiGanancia.innerText = "G. " + gananciaNeta.toLocaleString();
@@ -262,21 +262,6 @@
             });
             html += `</ul></div>`;
             contenedor.innerHTML = html;
-        } else if (seccion === 'gastos') {
-            titulo.innerText = "Auditoría de Gastos (Egresos)";
-            let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Historial de Inversiones y Gastos</h5><button class="btn btn-sm btn-danger" onclick="abrirModalTransaccion('gasto')">+ Registrar Gasto</button></div>`;
-            let gastosList = transaccionesData.filter(t => t.tipo === 'gasto');
-            if(gastosList.length === 0) {
-                html += `<p class="text-muted">No hay gastos registrados todavía.</p>`;
-            } else {
-                html += `<ul class="list-group">`;
-                gastosList.forEach(g => {
-                    html += `<li class="list-group-item d-flex justify-content-between align-items-center"><span><b>${g.lote}</b>: ${g.concepto}</span><span class="text-danger fw-bold">G. ${Number(g.monto).toLocaleString()}</span></li>`;
-                });
-                html += `</ul>`;
-            }
-            html += `</div>`;
-            contenedor.innerHTML = html;
         } else if (seccion === 'ingresos') {
             titulo.innerText = "Control de Ingresos (Ventas)";
             let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Historial de Ventas</h5><button class="btn btn-sm btn-success" onclick="abrirModalTransaccion('ingreso')">+ Registrar Ingreso</button></div>`;
@@ -287,6 +272,21 @@
                 html += `<ul class="list-group">`;
                 ingresosList.forEach(i => {
                     html += `<li class="list-group-item d-flex justify-content-between align-items-center"><span><b>${i.lote}</b>: ${i.concepto}</span><span class="text-success fw-bold">G. ${Number(i.monto).toLocaleString()}</span></li>`;
+                });
+                html += `</ul>`;
+            }
+            html += `</div>`;
+            contenedor.innerHTML = html;
+        } else if (seccion === 'gastos') {
+            titulo.innerText = "Auditoría de Gastos (Egresos)";
+            let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Historial de Inversiones y Gastos</h5><button class="btn btn-sm btn-danger" onclick="abrirModalTransaccion('gasto')">+ Registrar Gasto</button></div>`;
+            let gastosList = transaccionesData.filter(t => t.tipo === 'gasto');
+            if(gastosList.length === 0) {
+                html += `<p class="text-muted">No hay gastos registrados todavía.</p>`;
+            } else {
+                html += `<ul class="list-group">`;
+                gastosList.forEach(g => {
+                    html += `<li class="list-group-item d-flex justify-content-between align-items-center"><span><b>${g.lote}</b>: ${g.concepto}</span><span class="text-danger fw-bold">G. ${Number(g.monto).toLocaleString()}</span></li>`;
                 });
                 html += `</ul>`;
             }
@@ -328,7 +328,7 @@
             select.innerHTML += `<option value="${l.nombre}">${l.nombre}</option>`;
         });
 
-        document.getElementById('tituloModalTrans').innerText = tipo === 'gasto' ? 'Registrar Gasto (Egreso)' : 'Registrar Venta (Ingreso)';
+        document.getElementById('tituloModalTrans').innerText = tipo === 'ingreso' ? 'Registrar Venta (Ingreso)' : 'Registrar Gasto (Egreso)';
         modalTransObj.show();
     }
 
@@ -343,13 +343,12 @@
             return;
         }
 
-        // Actualizar el lote correspondiente
         let loteEncontrado = lotesData.find(l => l.nombre === loteNombre);
         if(loteEncontrado) {
-            if(tipo === 'gasto') {
-                loteEncontrado.egresos += monto;
-            } else {
+            if(tipo === 'ingreso') {
                 loteEncontrado.ingresos += monto;
+            } else {
+                loteEncontrado.egresos += monto;
             }
         }
 
@@ -371,8 +370,8 @@
             <div class="card border-0 shadow-sm p-4">
                 <h5 class="fw-bold text-success mb-3">Balance del Terreno: ${nombreLote}</h5>
                 <p><b>Superficie:</b> ${lote.superficie} hectáreas</p>
-                <p class="text-danger"><b>Total Egresos:</b> G. ${lote.egresos.toLocaleString()}</p>
                 <p class="text-success"><b>Total Ingresos:</b> G. ${lote.ingresos.toLocaleString()}</p>
+                <p class="text-danger"><b>Total Egresos:</b> G. ${lote.egresos.toLocaleString()}</p>
                 <hr>
                 <h4 class="fw-bold ${rentabilidad >= 0 ? 'text-success' : 'text-danger'}">Rentabilidad Neta: G. ${rentabilidad.toLocaleString()}</h4>
                 <button class="btn btn-outline-dark btn-sm mt-3" onclick="location.reload()"><i class="bi bi-arrow-left"></i> Volver al Dashboard</button>
@@ -381,8 +380,8 @@
 
     function exportarExcel() {
         let wb = XLSX.utils.book_new();
-        let datos = [["AGROGESTION - Reporte de Rentabilidad"], ["Terreno", "Superficie", "Egresos", "Ingresos", "Rentabilidad Neta"]];
-        lotesData.forEach(l => datos.push([l.nombre, l.superficie + " ha", l.egresos, l.ingresos, l.ingresos - l.egresos]));
+        let datos = [["AGROGESTION - Reporte de Rentabilidad"], ["Terreno", "Superficie", "Ingresos", "Egresos", "Rentabilidad Neta"]];
+        lotesData.forEach(l => datos.push([l.nombre, l.superficie + " ha", l.ingresos, l.egresos, l.ingresos - l.egresos]));
         let ws = XLSX.utils.aoa_to_sheet(datos);
         XLSX.utils.book_append_sheet(wb, ws, "Rentabilidad");
         XLSX.writeFile(wb, "Reporte_Rentabilidad_Agrogestion.xlsx");

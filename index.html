@@ -17,32 +17,27 @@
         :root { --primary-dark: #0b3022; --bg-light: #f8fafc; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; }
 
+        /* Estructura adaptable moderna */
         .app-container { display: flex; min-height: 100vh; width: 100%; }
         .sidebar-cell { width: 260px; background: #fff; border-right: 1px solid #dee2e6; padding: 20px; flex-shrink: 0; }
         .main-cell { flex-grow: 1; padding: 30px; overflow-x: hidden; width: calc(100% - 260px); }
 
+        /* Estilos originales de menú y tarjetas */
         .nav-item { padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; color: #333; font-weight: 500; display: flex; align-items: center; }
         .nav-item.active { background-color: #0b3022; color: #fff; }
         .kpi-card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; height: 100%; }
 
-        /* MEJORA MÓVIL ABSOLUTA */
+        /* ADAPTACIÓN MÓVIL EXACTA Y LIMPIA */
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
-            .sidebar-cell { width: 100%; border-right: none; border-bottom: 1px solid #dee2e6; padding: 12px; }
-            .main-cell { width: 100%; padding: 12px; }
+            .sidebar-cell { width: 100%; border-right: none; border-bottom: 1px solid #dee2e6; padding: 15px; }
+            .main-cell { width: 100%; padding: 15px; }
             
-            /* Menú horizontal deslizable o compacto en celular para que no ocupe toda la pantalla vertical */
-            .sidebar-cell .d-flex.align-items-center { margin-bottom: 10px !important; }
-            .sidebar-cell .text-muted { display: none; } /* Oculta títulos de sección menores para ahorrar espacio */
-            .nav-item { display: inline-flex; margin-right: 5px; margin-bottom: 5px; padding: 6px 12px; font-size: 0.85rem; }
-
-            /* Cuadrícula de 2x2 perfecta para tarjetas */
-            .kpi-grid { display: flex !important; flex-wrap: wrap; gap: 8px; }
-            .kpi-grid > div { width: calc(50% - 4px) !important; flex: 0 0 calc(50% - 4px); max-width: calc(50% - 4px); padding: 0 !important; }
-            .kpi-card { padding: 12px; }
-            .kpi-card h3 { font-size: 1.1rem; }
-
-            .table-responsive { width: 100%; overflow-x: auto; display: block; }
+            /* Fuerza las tarjetas KPI a un bloque 2x2 idéntico a la pc pero adaptado al ancho del celular */
+            .kpi-grid { display: flex !important; flex-wrap: wrap; margin-right: -6px; margin-left: -6px; }
+            .kpi-grid > div { width: 50% !important; flex: 0 0 50%; max-width: 50%; padding-right: 6px; padding-left: 6px; margin-bottom: 12px; }
+            
+            .table-responsive { width: 100%; overflow-x: auto; display: block; -webkit-overflow-scrolling: touch; }
         }
     </style>
 </head>
@@ -51,72 +46,72 @@
 <div class="app-container">
     <!-- SIDEBAR -->
     <div class="sidebar-cell">
-        <div class="d-flex align-items-center mb-3">
-            <img src="logo.png" alt="Logo" width="30" height="30" class="me-2 rounded-circle" onerror="this.style.display='none'">
+        <div class="d-flex align-items-center mb-4">
+            <img src="logo.png" alt="Logo" width="35" height="35" class="me-2 rounded-circle" onerror="this.style.display='none'">
             <h5 class="mb-0 fw-bold" style="color: var(--primary-dark);">AGROGESTION</h5>
         </div>
         
         <div class="text-muted small text-uppercase fw-bold mb-2">Menú Operativo</div>
-        <div class="d-flex flex-wrap gap-1">
-            <div class="nav-item active"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</div>
-            <div class="nav-item"><i class="bi bi-geo-alt me-1"></i> Lotes</div>
-            <div class="nav-item"><i class="bi bi-flower1 me-1"></i> Cosecha</div>
-            <div class="nav-item"><i class="bi bi-receipt me-1"></i> Gastos</div>
-            <div class="nav-item"><i class="bi bi-graph-up-arrow me-1"></i> Ingresos</div>
-            <div class="nav-item"><i class="bi bi-cloud-arrow-up me-1"></i> Nube</div>
-        </div>
+        <div class="nav-item active"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard</div>
+        <div class="nav-item"><i class="bi bi-geo-alt me-2"></i> Lotes de Tierra</div>
+        <div class="nav-item"><i class="bi bi-flower1 me-2"></i> Producción / Cosecha</div>
+        <div class="nav-item"><i class="bi bi-receipt me-2"></i> Auditoría de Gastos</div>
+        <div class="nav-item"><i class="bi bi-graph-up-arrow me-2"></i> Control de Ingresos</div>
+        
+        <div class="text-muted small text-uppercase fw-bold mt-4 mb-2">Configuración</div>
+        <div class="nav-item"><i class="bi bi-cloud-arrow-up me-2"></i> Ajustes Nube</div>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="main-cell">
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div>
-                <h3 class="fw-bold mb-0">Resumen Gerencial</h3>
+                <h2 class="fw-bold mb-0">Resumen Gerencial del Campo</h2>
                 <p class="text-muted small mb-0">Monitoreo en Tiempo Real</p>
             </div>
-            <button class="btn btn-dark btn-sm" style="background-color: var(--primary-dark);">Administrar</button>
+            <button class="btn btn-dark" style="background-color: var(--primary-dark);">Administrar Campo</button>
         </div>
 
         <!-- TARJETAS KPI -->
         <div class="row g-3 mb-4 kpi-grid">
             <div class="col-md-3 col-6">
                 <div class="kpi-card">
-                    <div class="text-muted small" style="font-size: 0.75rem;">Superficie Total</div>
-                    <h3 class="fw-bold mt-1" id="kpi-superficie">60 ha</h3>
+                    <div class="text-muted small">Superficie Total</div>
+                    <h3 class="fw-bold mt-2" id="kpi-superficie">60 ha</h3>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="kpi-card">
-                    <div class="text-muted small" style="font-size: 0.75rem;">Gastos Totales</div>
-                    <h3 class="fw-bold mt-1 text-danger" id="kpi-egresos">G. 200.000</h3>
+                    <div class="text-muted small">Egresos / Gastos Totales</div>
+                    <h3 class="fw-bold mt-2 text-danger" id="kpi-egresos">G. 200.000</h3>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="kpi-card">
-                    <div class="text-muted small" style="font-size: 0.75rem;">Ingresos Ventas</div>
-                    <h3 class="fw-bold mt-1 text-success" id="kpi-ingresos">G. 0</h3>
+                    <div class="text-muted small">Ingresos por Ventas</div>
+                    <h3 class="fw-bold mt-2 text-success" id="kpi-ingresos">G. 0</h3>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="kpi-card text-white" style="background-color: var(--primary-dark);">
-                    <div class="small opacity-75" style="font-size: 0.75rem;">Ganancia Líquida</div>
-                    <h3 class="fw-bold mt-1 text-warning" id="kpi-ganancia">G. -200.000</h3>
+                    <div class="small opacity-75">Ganancia Líquida (Margen)</div>
+                    <h3 class="fw-bold mt-2 text-warning" id="kpi-ganancia">G. -200.000</h3>
                 </div>
             </div>
         </div>
 
         <!-- TABLA FINANCIERA -->
         <div class="card border-0 shadow-sm">
-            <div class="card-body p-3">
-                <h5 class="fw-bold mb-3 fs-6">Estado Financiero por Lote</h5>
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Estado Financiero por Lote</h5>
                 <div class="table-responsive">
-                    <table class="table align-middle text-nowrap mb-0" style="font-size: 0.9rem;">
+                    <table class="table align-middle">
                         <thead class="text-muted small text-uppercase">
                             <tr>
-                                <th>Terreno</th>
-                                <th>Sup.</th>
-                                <th>Egresos</th>
-                                <th>Ingresos</th>
+                                <th>Identificador de Terreno</th>
+                                <th>Superficie Total</th>
+                                <th>Egresos (Gastos)</th>
+                                <th>Ingresos (Ventas)</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -126,14 +121,14 @@
                                 <td>40 ha</td>
                                 <td class="text-danger">G. 0</td>
                                 <td class="text-success">G. 0</td>
-                                <td><button class="btn btn-sm btn-outline-dark rounded-pill px-2 py-0"><i class="bi bi-eye"></i> Ver</button></td>
+                                <td><button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-eye"></i> Ver Lote</button></td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Rolon Kue</td>
                                 <td>20 ha</td>
                                 <td class="text-danger">G. 200.000</td>
                                 <td class="text-success">G. 0</td>
-                                <td><button class="btn btn-sm btn-outline-dark rounded-pill px-2 py-0"><i class="bi bi-eye"></i> Ver</button></td>
+                                <td><button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-eye"></i> Ver Lote</button></td>
                             </tr>
                         </tbody>
                     </table>

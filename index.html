@@ -267,8 +267,14 @@
         } else if (seccion === 'lotes') {
             titulo.innerText = "Gestión de Lotes de Tierra";
             let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Terrenos Activos</h5><button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Lote</button></div><ul class="list-group">`;
-            lotesData.forEach(l => {
-                html += `<li class="list-group-item d-flex justify-content-between align-items-center py-3">${l.nombre} (${l.superficie} ha) <span class="badge bg-success">Activo</span></li>`;
+            lotesData.forEach((l, index) => {
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div><b>${l.nombre}</b> (${l.superficie} ha)</div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-primary me-2 px-3 rounded-pill" onclick="editarLote(${index})"><i class="bi bi-pencil me-1"></i> Editar</button>
+                        <span class="badge bg-success">Activo</span>
+                    </div>
+                </li>`;
             });
             html += `</ul></div>`;
             contenedor.innerHTML = html;
@@ -312,6 +318,31 @@
         document.getElementById('inputNombreLote').value = '';
         document.getElementById('inputSuperficieLote').value = '';
         modalLoteObj.show();
+    }
+
+    function editarLote(index) {
+        let loteViejo = lotesData[index].nombre;
+        let nuevoNombre = prompt("Corregir o editar nombre del lote:", loteViejo);
+        if(!nuevoNombre) return;
+        nuevoNombre = nuevoNombre.trim();
+        
+        if(lotesData.some((l, i) => i !== index && l.nombre === nuevoNombre)) {
+            alert("Ya existe otro lote con ese nombre.");
+            return;
+        }
+
+        // Actualizar el nombre en las transacciones para no perder el historial vinculado
+        transaccionesData.forEach(t => {
+            if(t.lote === loteViejo) t.lote = nuevoNombre;
+        });
+
+        lotesData[index].nombre = nuevoNombre;
+
+        localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
+        localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
+        
+        // Refrescar la sección de lotes actual
+        cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
     }
 
     function guardarLote() {

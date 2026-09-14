@@ -276,6 +276,7 @@
                     <div><b>${l.nombre}</b> (${l.superficie} ha)</div>
                     <div>
                         <button class="btn btn-sm btn-outline-primary me-2 px-3 rounded-pill" onclick="editarLote(${index})"><i class="bi bi-pencil me-1"></i> Editar</button>
+                        <button class="btn btn-sm btn-outline-danger me-2 px-3 rounded-pill" onclick="eliminarLote(${index})"><i class="bi bi-trash me-1"></i> Eliminar</button>
                         <span class="badge bg-success">Activo</span>
                     </div>
                 </li>`;
@@ -347,6 +348,25 @@
         cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
     }
 
+    function eliminarLote(index) {
+        let loteNombre = lotesData[index].nombre;
+        if(!confirm(`¿Estás seguro de eliminar el lote "${loteNombre}"? También se borrarán todas sus transacciones asociadas.`)) {
+            return;
+        }
+
+        // Eliminar transacciones del lote
+        transaccionesData = transaccionesData.filter(t => t.lote !== loteNombre);
+        // Eliminar el lote
+        lotesData.splice(index, 1);
+
+        // Guardar cambios en localStorage
+        localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
+        localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
+
+        // Refrescar vista actual
+        cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
+    }
+
     function guardarLote() {
         const nombre = document.getElementById('inputNombreLote').value.trim();
         const sup = document.getElementById('inputSuperficieLote').value;
@@ -411,7 +431,6 @@
         const titulo = document.getElementById('titulo-seccion');
         titulo.innerText = "Detalle del Lote: " + nombreLote;
 
-        // Filtrar transacciones de este lote
         let transLote = transaccionesData.filter(t => t.lote === nombreLote);
         
         let listadoHtml = '';

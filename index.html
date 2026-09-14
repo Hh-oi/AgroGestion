@@ -72,7 +72,7 @@
 
         <!-- CONTENEDOR DINÁMICO DE VISTAS -->
         <div id="contenido-dinamico">
-            <!-- TARJETAS KPI (PRIMERO INGRESOS, DESPUÉS EGRESOS) -->
+            <!-- TARJETAS KPI -->
             <div class="row g-3 mb-4 kpi-grid">
                 <div class="col-md-3 col-6">
                     <div class="kpi-card">
@@ -176,7 +176,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-uppercase">Monto en Guaraníes (G.)</label>
-                    <input type="number" id="inputMonto" class="form-control" placeholder="Ej: 1500000">
+                    <input type="text" id="inputMonto" class="form-control" placeholder="Ej: 1.500.000" oninput="formatearMontoInput(this)">
                 </div>
             </div>
             <div class="modal-footer border-0 px-4 pb-4">
@@ -243,6 +243,16 @@
         const kpiGanancia = document.getElementById('kpi-ganancia');
         kpiGanancia.innerText = "G. " + gananciaNeta.toLocaleString();
         kpiGanancia.className = "fw-bold mt-2 " + (gananciaNeta >= 0 ? "text-warning" : "text-danger");
+    }
+
+    function formatearMontoInput(input) {
+        let valorLimpio = input.value.replace(/\D/g, '');
+        if (valorLimpio === '') {
+            input.value = '';
+            return;
+        }
+        let numero = parseInt(valorLimpio, 10);
+        input.value = numero.toLocaleString('es-PY');
     }
 
     function cambiarSeccion(seccion, elemento) {
@@ -336,10 +346,12 @@
         const tipo = document.getElementById('tipoTransaccion').value;
         const loteNombre = document.getElementById('selectLoteTrans').value;
         const concepto = document.getElementById('inputConcepto').value.trim();
-        const monto = Number(document.getElementById('inputMonto').value);
+        
+        let montoTexto = document.getElementById('inputMonto').value.replace(/\./g, '');
+        const monto = Number(montoTexto);
 
-        if(!concepto || !monto) {
-            alert("Complete el concepto y el monto.");
+        if(!concepto || !monto || isNaN(monto)) {
+            alert("Complete el concepto y un monto válido.");
             return;
         }
 

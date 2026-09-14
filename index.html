@@ -172,7 +172,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-uppercase">Concepto / Descripción</label>
-                    <input type="text" id="inputConcepto" class="form-control" placeholder="Ej: Venta de cosecha / Compra de semillas">
+                    <input type="text" id="inputConcepto" class="form-control" placeholder="Ej: Venta de cosecha / Compra de semillas / Gasoil">
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-uppercase">Monto en Guaraníes (G.)</label>
@@ -197,7 +197,11 @@
         { nombre: 'Lote Caro', superficie: 20, egresos: 0, ingresos: 0 }
     ];
 
-    let transaccionesData = JSON.parse(localStorage.getItem('agro_trans')) || [];
+    let transaccionesData = JSON.parse(localStorage.getItem('agro_trans')) || [
+        { tipo: 'ingreso', lote: 'salame kue', concepto: 'Venta de Cosecha', monto: 450000 },
+        { tipo: 'gasto', lote: 'salame kue', concepto: 'Compra de semillas', monto: 150000 },
+        { tipo: 'gasto', lote: 'Rolon Kue', concepto: 'Combustible (Gasoil)', monto: 200000 }
+    ];
 
     document.addEventListener("DOMContentLoaded", () => {
         modalLoteObj = new bootstrap.Modal(document.getElementById('modalLote'));
@@ -331,7 +335,6 @@
             return;
         }
 
-        // Actualizar el nombre en las transacciones para no perder el historial vinculado
         transaccionesData.forEach(t => {
             if(t.lote === loteViejo) t.lote = nuevoNombre;
         });
@@ -341,7 +344,6 @@
         localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
         
-        // Refrescar la sección de lotes actual
         cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
     }
 
@@ -408,16 +410,48 @@
         let rentabilidad = lote.ingresos - lote.egresos;
         const titulo = document.getElementById('titulo-seccion');
         titulo.innerText = "Detalle del Lote: " + nombreLote;
+
+        // Filtrar transacciones de este lote
+        let transLote = transaccionesData.filter(t => t.lote === nombreLote);
+        
+        let listadoHtml = '';
+        if(transLote.length === 0) {
+            listadoHtml = `<p class="text-muted small">No hay movimientos registrados para este lote todavía.</p>`;
+        } else {
+            listadoHtml = `<div class="table-responsive"><table class="table table-sm align-middle">
+                <thead class="text-muted small text-uppercase">
+                    <tr><th>Tipo</th><th>Concepto (Insumo / Gasto / Venta)</th><th class="text-end">Monto</th></tr>
+                </thead>
+                <tbody>`;
+            transLote.forEach(t => {
+                let badge = t.tipo === 'ingreso' ? '<span class="badge bg-success">Ingreso</span>' : '<span class="badge bg-danger">Gasto</span>';
+                let colorMonto = t.tipo === 'ingreso' ? 'text-success' : 'text-danger';
+                let signo = t.tipo === 'ingreso' ? '+' : '-';
+                listadoHtml += `<tr>
+                    <td>${badge}</td>
+                    <td class="fw-bold">${t.concepto}</td>
+                    <td class="text-end ${colorMonto} fw-bold">${signo} G. ${Number(t.monto).toLocaleString()}</td>
+                </tr>`;
+            });
+            listadoHtml += `</tbody></table></div>`;
+        }
         
         document.getElementById('contenido-dinamico').innerHTML = `
-            <div class="card border-0 shadow-sm p-4">
-                <h5 class="fw-bold text-success mb-3">Balance del Terreno: ${nombreLote}</h5>
-                <p><b>Superficie:</b> ${lote.superficie} hectáreas</p>
-                <p class="text-success"><b>Total Ingresos:</b> G. ${lote.ingresos.toLocaleString()}</p>
-                <p class="text-danger"><b>Total Egresos:</b> G. ${lote.egresos.toLocaleString()}</p>
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h5 class="fw-bold mb-3" style="color: var(--primary-dark);">Balance General del Terreno: ${nombreLote}</h5>
+                <div class="row mb-3">
+                    <div class="col-md-4"><b>Superficie:</b> ${lote.superficie} hectáreas</div>
+                    <div class="col-md-4 text-success"><b>Total Ingresos:</b> G. ${lote.ingresos.toLocaleString()}</div>
+                    <div class="col-md-4 text-danger"><b>Total Egresos:</b> G. ${lote.egresos.toLocaleString()}</div>
+                </div>
                 <hr>
-                <h4 class="fw-bold ${rentabilidad >= 0 ? 'text-success' : 'text-danger'}">Rentabilidad Neta: G. ${rentabilidad.toLocaleString()}</h4>
-                <button class="btn btn-outline-dark btn-sm mt-3" onclick="location.reload()"><i class="bi bi-arrow-left"></i> Volver al Dashboard</button>
+                <h5 class="fw-bold mb-3">Desglose de Movimientos (Combustible, Semillas, etc.)</h5>
+                ${listadoHtml}
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <h4 class="fw-bold mb-0 ${rentabilidad >= 0 ? 'text-success' : 'text-danger'}">Rentabilidad Neta: G. ${rentabilidad.toLocaleString()}</h4>
+                    <button class="btn btn-outline-dark" onclick="location.reload()"><i class="bi bi-arrow-left"></i> Volver al Dashboard</button>
+                </div>
             </div>`;
     }
 

@@ -111,7 +111,7 @@
                         <table class="table align-middle">
                             <thead class="text-muted small text-uppercase">
                                 <tr>
-                                    <th>Terreno</th>
+                                    <th>Terreno y Cultivos</th>
                                     <th>Superficie</th>
                                     <th>Ingresos</th>
                                     <th>Egresos</th>
@@ -144,13 +144,46 @@
                     <input type="text" id="inputNombreLote" class="form-control" placeholder="Ej: Lote Norte">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase">Superficie (Hectáreas)</label>
-                    <input type="number" id="inputSuperficieLote" class="form-control" placeholder="Ej: 50">
+                    <label class="form-label fw-bold small text-uppercase">Superficie Total (Hectáreas)</label>
+                    <input type="number" id="inputSuperficieLote" class="form-control" placeholder="Ej: 40">
                 </div>
             </div>
             <div class="modal-footer border-0 px-4 pb-4">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn text-white px-4" style="background-color: var(--primary-dark);" onclick="guardarLote()">Guardar Lote</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GESTIONAR CULTIVOS -->
+<div class="modal fade" id="modalCultivos" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color: var(--primary-dark);">
+                <h5 class="modal-title fw-bold" id="tituloModalCultivos">Asignar Cultivos al Lote</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="cultivoIndexLote">
+                <div class="alert alert-secondary py-2 small mb-3" id="infoSuperficieRestante">Superficie disponible: 0 ha</div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-uppercase">Cultivo / Uso (Ej: Maíz, Soja, Pastura)</label>
+                    <input type="text" id="inputNombreCultivo" class="form-control" placeholder="Ej: Maíz">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-uppercase">Hectáreas Destinadas</label>
+                    <input type="number" id="inputHectareasCultivo" class="form-control" placeholder="Ej: 13">
+                </div>
+                <button type="button" class="btn btn-sm btn-success w-100 mb-3" onclick="agregarCultivoALote()">+ Añadir este cultivo</button>
+                
+                <h6 class="fw-bold small text-uppercase text-muted mt-3">Distribución Actual:</h6>
+                <ul class="list-group" id="listaCultivosModal">
+                    <!-- Dinámico -->
+                </ul>
+            </div>
+            <div class="modal-footer border-0 px-4 pb-4">
+                <button type="button" class="btn btn-dark w-100" style="background-color: var(--primary-dark);" data-bs-dismiss="modal">Terminar y Guardar</button>
             </div>
         </div>
     </div>
@@ -189,12 +222,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    let modalLoteObj, modalTransObj;
+    let modalLoteObj, modalTransObj, modalCultivosObj;
     
     let lotesData = JSON.parse(localStorage.getItem('agro_lotes')) || [
-        { nombre: 'salame kue', superficie: 40, egresos: 150000, ingresos: 450000 },
-        { nombre: 'Rolon Kue', superficie: 20, egresos: 200000, ingresos: 0 },
-        { nombre: 'Lote Caro', superficie: 20, egresos: 0, ingresos: 0 }
+        { nombre: 'salame kue', superficie: 40, egresos: 150000, ingresos: 450000, cultivos: [{nombre: 'Maíz', ha: 13}, {nombre: 'Soja', ha: 5}] },
+        { nombre: 'Rolon Kue', superficie: 20, egresos: 200000, ingresos: 0, cultivos: [] },
+        { nombre: 'Lote Caro', superficie: 20, egresos: 0, ingresos: 0, cultivos: [] }
     ];
 
     let transaccionesData = JSON.parse(localStorage.getItem('agro_trans')) || [
@@ -206,8 +239,30 @@
     document.addEventListener("DOMContentLoaded", () => {
         modalLoteObj = new bootstrap.Modal(document.getElementById('modalLote'));
         modalTransObj = new bootstrap.Modal(document.getElementById('modalTransaccion'));
+        modalCultivosObj = new bootstrap.Modal(document.getElementById('modalCultivos'));
         renderizarDashboard();
     });
+
+    function obtenerResumenCultivos(lote) {
+        if (!lote.cultivos || lote.cultivos.length === 0) {
+            return `<span class="badge bg-secondary">Sin sembrar (${lote.superficie} ha libres)</span>`;
+        }
+        
+        let sumaHa = lote.cultivos.reduce((acc, c) => acc + Number(c.ha), 0);
+        let libres = lote.superficie - sumaHa;
+        
+        let html = '';
+        lote.cultivos.forEach(c => {
+            html += `<span class="badge bg-success me-1 mb-1">${c.nombre}: ${c.ha} ha</span>`;
+        });
+        
+        if (libres > 0) {
+            html += `<span class="badge bg-light text-dark border me-1 mb-1">Sin sembrar: ${libres} ha</span>`;
+        } else if (libres < 0) {
+            html += `<span class="badge bg-danger me-1 mb-1">Exceso asignado</span>`;
+        }
+        return html;
+    }
 
     function renderizarDashboard() {
         const tbody = document.getElementById('dash-tabla-body');
@@ -227,7 +282,10 @@
 
             tbody.innerHTML += `
                 <tr>
-                    <td class="fw-bold">${lote.nombre}</td>
+                    <td>
+                        <div class="fw-bold">${lote.nombre}</div>
+                        <div class="mt-1">${obtenerResumenCultivos(lote)}</div>
+                    </td>
                     <td>${lote.superficie} ha</td>
                     <td class="text-success">G. ${lote.ingresos.toLocaleString()}</td>
                     <td class="text-danger">G. ${lote.egresos.toLocaleString()}</td>
@@ -270,14 +328,17 @@
             location.reload();
         } else if (seccion === 'lotes') {
             titulo.innerText = "Gestión de Lotes de Tierra";
-            let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Terrenos Activos</h5><button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Lote</button></div><ul class="list-group">`;
+            let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Terrenos Activos y Distribución de Cultivos</h5><button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Lote</button></div><ul class="list-group">`;
             lotesData.forEach((l, index) => {
-                html += `<li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                    <div><b>${l.nombre}</b> (${l.superficie} ha)</div>
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center py-3 flex-wrap gap-2">
                     <div>
-                        <button class="btn btn-sm btn-outline-primary me-2 px-3 rounded-pill" onclick="editarLote(${index})"><i class="bi bi-pencil me-1"></i> Editar</button>
-                        <button class="btn btn-sm btn-outline-danger me-2 px-3 rounded-pill" onclick="eliminarLote(${index})"><i class="bi bi-trash me-1"></i> Eliminar</button>
-                        <span class="badge bg-success">Activo</span>
+                        <b class="fs-6">${l.nombre}</b> (${l.superficie} ha)
+                        <div class="mt-1">${obtenerResumenCultivos(l)}</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-success me-1 px-3 rounded-pill" onclick="abrirModalCultivos(${index})"><i class="bi bi-flower1 me-1"></i> Cultivos</button>
+                        <button class="btn btn-sm btn-outline-primary me-1 px-3 rounded-pill" onclick="editarLote(${index})"><i class="bi bi-pencil me-1"></i> Editar</button>
+                        <button class="btn btn-sm btn-outline-danger me-1 px-3 rounded-pill" onclick="eliminarLote(${index})"><i class="bi bi-trash me-1"></i> Eliminar</button>
                     </div>
                 </li>`;
             });
@@ -325,6 +386,72 @@
         modalLoteObj.show();
     }
 
+    function abrirModalCultivos(index) {
+        let lote = lotesData[index];
+        document.getElementById('cultivoIndexLote').value = index;
+        document.getElementById('tituloModalCultivos').innerText = `Cultivos en: ${lote.nombre} (${lote.superficie} ha)`;
+        document.getElementById('inputNombreCultivo').value = '';
+        document.getElementById('inputHectareasCultivo').value = '';
+        
+        actualizarListaModalCultivos(lote);
+        modalCultivosObj.show();
+    }
+
+    function actualizarListaModalCultivos(lote) {
+        if(!lote.cultivos) lote.cultivos = [];
+        let sumaHa = lote.cultivos.reduce((acc, c) => acc + Number(c.ha), 0);
+        let libres = lote.superficie - sumaHa;
+        
+        document.getElementById('infoSuperficieRestante').innerText = `Superficie total: ${lote.superficie} ha | Disponible sin sembrar: ${libres} ha`;
+        
+        let ul = document.getElementById('listaCultivosModal');
+        ul.innerHTML = '';
+        if(lote.cultivos.length === 0) {
+            ul.innerHTML = `<li class="list-group-item text-muted small">No hay cultivos asignados todavía.</li>`;
+            return;
+        }
+        lote.cultivos.forEach((c, cIndex) => {
+            ul.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                <span><b>${c.nombre}</b>: ${c.ha} ha</span>
+                <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="eliminarCultivoDeLote(${document.getElementById('cultivoIndexLote').value}, ${cIndex})"><i class="bi bi-x"></i></button>
+            </li>`;
+        });
+    }
+
+    function agregarCultivoALote() {
+        let index = document.getElementById('cultivoIndexLote').value;
+        let nombreC = document.getElementById('inputNombreCultivo').value.trim();
+        let haC = Number(document.getElementById('inputHectareasCultivo').value);
+        
+        if(!nombreC || !haC || haC <= 0) {
+            alert("Ingrese un nombre de cultivo y un valor válido de hectáreas.");
+            return;
+        }
+
+        let lote = lotesData[index];
+        if(!lote.cultivos) lote.cultivos = [];
+
+        let sumaActual = lote.cultivos.reduce((acc, c) => acc + Number(c.ha), 0);
+        if(sumaActual + haC > lote.superficie) {
+            alert("Las hectáreas ingresadas superan la superficie total disponible del lote.");
+            return;
+        }
+
+        lote.cultivos.push({ nombre: nombreC, ha: haC });
+        localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
+        
+        document.getElementById('inputNombreCultivo').value = '';
+        document.getElementById('inputHectareasCultivo').value = '';
+        actualizarListaModalCultivos(lote);
+    }
+
+    function eliminarCultivoDeLote(loteIndex, cultivoIndex) {
+        let lote = lotesData[loteIndex];
+        lote.cultivos.splice(cultivoIndex, 1);
+        localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
+        actualizarListaModalCultivos(lote);
+    }
+
     function editarLote(index) {
         let loteViejo = lotesData[index].nombre;
         let nuevoNombre = prompt("Corregir o editar nombre del lote:", loteViejo);
@@ -350,20 +477,16 @@
 
     function eliminarLote(index) {
         let loteNombre = lotesData[index].nombre;
-        if(!confirm(`¿Estás seguro de eliminar el lote "${loteNombre}"? También se borrarán todas sus transacciones asociadas.`)) {
+        if(!confirm(`¿Estás seguro de eliminar el lote "${loteNombre}"? También se borrarán sus transacciones asociadas.`)) {
             return;
         }
 
-        // Eliminar transacciones del lote
         transaccionesData = transaccionesData.filter(t => t.lote !== loteNombre);
-        // Eliminar el lote
         lotesData.splice(index, 1);
 
-        // Guardar cambios en localStorage
         localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
 
-        // Refrescar vista actual
         cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
     }
 
@@ -374,7 +497,7 @@
             alert("Complete todos los campos.");
             return;
         }
-        lotesData.push({ nombre: nombre, superficie: Number(sup), egresos: 0, ingresos: 0 });
+        lotesData.push({ nombre: nombre, superficie: Number(sup), egresos: 0, ingresos: 0, cultivos: [] });
         localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         modalLoteObj.hide();
         renderizarDashboard();
@@ -459,12 +582,13 @@
             <div class="card border-0 shadow-sm p-4 mb-4">
                 <h5 class="fw-bold mb-3" style="color: var(--primary-dark);">Balance General del Terreno: ${nombreLote}</h5>
                 <div class="row mb-3">
-                    <div class="col-md-4"><b>Superficie:</b> ${lote.superficie} hectáreas</div>
-                    <div class="col-md-4 text-success"><b>Total Ingresos:</b> G. ${lote.ingresos.toLocaleString()}</div>
-                    <div class="col-md-4 text-danger"><b>Total Egresos:</b> G. ${lote.egresos.toLocaleString()}</div>
+                    <div class="col-md-3"><b>Superficie Total:</b> ${lote.superficie} ha</div>
+                    <div class="col-md-5"><b>Distribución:</b> ${obtenerResumenCultivos(lote)}</div>
+                    <div class="col-md-2 text-success"><b>Ingresos:</b> G. ${lote.ingresos.toLocaleString()}</div>
+                    <div class="col-md-2 text-danger"><b>Egresos:</b> G. ${lote.egresos.toLocaleString()}</div>
                 </div>
                 <hr>
-                <h5 class="fw-bold mb-3">Desglose de Movimientos (Combustible, Semillas, etc.)</h5>
+                <h5 class="fw-bold mb-3">Desglose de Movimientos Financieros</h5>
                 ${listadoHtml}
                 <hr>
                 <div class="d-flex justify-content-between align-items-center mt-3">

@@ -17,26 +17,20 @@
         :root { --primary-dark: #0b3022; --bg-light: #f8fafc; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; }
 
-        /* Estructura adaptable moderna */
         .app-container { display: flex; min-height: 100vh; width: 100%; }
         .sidebar-cell { width: 260px; background: #fff; border-right: 1px solid #dee2e6; padding: 20px; flex-shrink: 0; }
         .main-cell { flex-grow: 1; padding: 30px; overflow-x: hidden; width: calc(100% - 260px); }
 
-        /* Estilos originales de menú y tarjetas */
         .nav-item { padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; color: #333; font-weight: 500; display: flex; align-items: center; }
         .nav-item.active { background-color: #0b3022; color: #fff; }
         .kpi-card { background: #fff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; height: 100%; }
 
-        /* ADAPTACIÓN MÓVIL EXACTA Y LIMPIA */
         @media (max-width: 768px) {
             .app-container { flex-direction: column; }
             .sidebar-cell { width: 100%; border-right: none; border-bottom: 1px solid #dee2e6; padding: 15px; }
             .main-cell { width: 100%; padding: 15px; }
-            
-            /* Fuerza las tarjetas KPI a un bloque 2x2 idéntico a la pc pero adaptado al ancho del celular */
             .kpi-grid { display: flex !important; flex-wrap: wrap; margin-right: -6px; margin-left: -6px; }
             .kpi-grid > div { width: 50% !important; flex: 0 0 50%; max-width: 50%; padding-right: 6px; padding-left: 6px; margin-bottom: 12px; }
-            
             .table-responsive { width: 100%; overflow-x: auto; display: block; -webkit-overflow-scrolling: touch; }
         }
     </style>
@@ -44,7 +38,6 @@
 <body>
 
 <div class="app-container">
-    <!-- SIDEBAR -->
     <div class="sidebar-cell">
         <div class="d-flex align-items-center mb-4">
             <img src="logo.png" alt="Logo" width="35" height="35" class="me-2 rounded-circle" onerror="this.style.display='none'">
@@ -62,7 +55,6 @@
         <div class="nav-item"><i class="bi bi-cloud-arrow-up me-2"></i> Ajustes Nube</div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="main-cell">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div>
@@ -72,7 +64,6 @@
             <button class="btn btn-dark" style="background-color: var(--primary-dark);">Administrar Campo</button>
         </div>
 
-        <!-- TARJETAS KPI -->
         <div class="row g-3 mb-4 kpi-grid">
             <div class="col-md-3 col-6">
                 <div class="kpi-card">
@@ -100,7 +91,6 @@
             </div>
         </div>
 
-        <!-- TABLA FINANCIERA -->
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <h5 class="fw-bold mb-3">Estado Financiero por Lote</h5>
@@ -139,5 +129,15 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Limpieza automática del Service Worker retenido en el móvil
+    if ('serviceWorker' in navigator) {
+        navigator.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+                registration.unregister();
+            }
+        });
+    }
+</script>
 </body>
 </html>

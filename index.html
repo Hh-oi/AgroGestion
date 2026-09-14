@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AGROGESTION</title>
+    <title>AGROGESTION - Administración Agrícola</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo.png">
@@ -64,7 +64,7 @@
                 <h2 class="fw-bold mb-0" id="titulo-seccion">Resumen Gerencial del Campo</h2>
                 <p class="text-muted small mb-0">Monitoreo en Tiempo Real</p>
             </div>
-            <button class="btn btn-dark" style="background-color: var(--primary-dark);" onclick="verAdministracion()">Administrar Campo</button>
+            <button class="btn btn-dark" style="background-color: var(--primary-dark);" onclick="exportarExcel()"><i class="bi bi-file-earmark-excel me-2"></i> Exportar Reporte</button>
         </div>
 
         <!-- CONTENEDOR DINÁMICO DE VISTAS -->
@@ -100,7 +100,10 @@
             <!-- TABLA FINANCIERA -->
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <h5 class="fw-bold mb-3">Estado Financiero por Lote</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Estado Financiero por Lote</h5>
+                        <button class="btn btn-sm btn-success" onclick="agregarNuevoLote()">+ Agregar Lote</button>
+                    </div>
                     <div class="table-responsive">
                         <table class="table align-middle">
                             <thead class="text-muted small text-uppercase">
@@ -149,19 +152,28 @@
             location.reload();
         } else if (seccion === 'lotes') {
             titulo.innerText = "Gestión de Lotes de Tierra";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Lotes Activos</h5><p class="text-muted">Administración de terrenos registrados (salame kue, Rolon Kue).</p><button class="btn btn-success" style="background-color: var(--primary-dark); border:none;" onclick="alert('Formulario de nuevo lote')">+ Registrar Nuevo Lote</button></div>`;
+            contenedor.innerHTML = `
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3">Terrenos Registrados</h5>
+                    <p class="text-muted">Administración central de polígonos y hectáreas.</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">salame kue (40 ha) <span class="badge bg-success">Activo</span></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">Rolon Kue (20 ha) <span class="badge bg-success">Activo</span></li>
+                    </ul>
+                    <button class="btn btn-dark w-100" style="background-color: var(--primary-dark);" onclick="agregarNuevoLote()">+ Registrar Nuevo Lote</button>
+                </div>`;
         } else if (seccion === 'cosecha') {
             titulo.innerText = "Producción y Cosecha";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Control de Cosechas</h5><p class="text-muted">Seguimiento de rendimiento agrícola.</p></div>`;
+            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Rendimiento Agrícola</h5><p class="text-muted">Control de toneladas cosechadas por hectárea y zafra actual.</p></div>`;
         } else if (seccion === 'gastos') {
             titulo.innerText = "Auditoría de Gastos";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Registro de Egresos</h5><p class="text-muted">Control de insumos, personal y gastos operativos.</p></div>`;
+            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Egresos Operativos</h5><p class="text-muted">Control de insumos, combustibles, reparaciones y personal.</p></div>`;
         } else if (seccion === 'ingresos') {
             titulo.innerText = "Control de Ingresos";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Registro de Ventas</h5><p class="text-muted">Ingresos monetarios obtenidos por cosecha.</p></div>`;
+            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Ventas de Cosecha</h5><p class="text-muted">Registro de comercialización de granos o producción.</p></div>`;
         } else if (seccion === 'nube') {
-            titulo.innerText = "Ajustes de Sincronización";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Conexión con Firebase</h5><p class="text-muted">Tus registros están sincronizados con la nube.</p></div>`;
+            titulo.innerText = "Ajustes de Sincronización Nube";
+            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Estado de Conexión</h5><p class="text-muted">Sincronización activa con bases de datos en tiempo real.</p></div>`;
         }
     }
 
@@ -170,14 +182,21 @@
         titulo.innerText = "Detalle del Lote: " + nombreLote;
         document.getElementById('contenido-dinamico').innerHTML = `
             <div class="card border-0 shadow-sm p-4">
-                <h5 class="fw-bold text-success mb-3">Información del Terreno: ${nombreLote}</h5>
-                <p class="text-muted">Aquí visualizarás los movimientos, gastos específicos e historial de este lote.</p>
+                <h5 class="fw-bold text-success mb-3">Monitoreo del Terreno: ${nombreLote}</h5>
+                <p class="text-muted">Historial financiero, insumos aplicados y rendimiento específico de este lote.</p>
                 <button class="btn btn-outline-dark btn-sm mt-3" onclick="location.reload()"><i class="bi bi-arrow-left"></i> Volver al Dashboard</button>
             </div>`;
     }
 
-    function verAdministracion() {
-        alert("Panel de administración general abierto correctamente.");
+    function agregarNuevoLote() {
+        const nombre = prompt("Ingrese el nombre del nuevo terreno (Ej: Lote Norte):");
+        if(nombre) {
+            alert("Lote '" + nombre + "' registrado con éxito.");
+        }
+    }
+
+    function exportarExcel() {
+        alert("Generando planilla Excel de auditoría financiera...");
     }
 </script>
 </body>

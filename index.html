@@ -156,6 +156,49 @@
     </div>
 </div>
 
+<!-- MODAL EDITAR LOTE -->
+<div class="modal fade" id="modalEditarLote" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white" style="background-color: var(--primary-dark);">
+                <h5 class="modal-title fw-bold">Editar Nombre del Lote</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="editLoteIndex">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-uppercase">Nuevo Nombre del Lote</label>
+                    <input type="text" id="inputEditarNombreLote" class="form-control" placeholder="Ej: Lote Norte">
+                </div>
+            </div>
+            <div class="modal-footer border-0 px-4 pb-4">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn text-white px-4" style="background-color: var(--primary-dark);" onclick="guardarEdicionLote()">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CONFIRMAR ELIMINACIÓN -->
+<div class="modal fade" id="modalConfirmarEliminar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="deleteLoteIndex">
+                <p class="mb-0" id="textoConfirmarEliminar">¿Estás seguro de eliminar este lote? También se borrarán sus transacciones asociadas.</p>
+            </div>
+            <div class="modal-footer border-0 px-4 pb-4">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger px-4" onclick="ejecutarEliminarLote()">Sí, Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- MODAL GESTIONAR CULTIVOS -->
 <div class="modal fade" id="modalCultivos" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -222,10 +265,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    let modalLoteObj, modalTransObj, modalCultivosObj;
+    let modalLoteObj, modalTransObj, modalCultivosObj, modalEditarLoteObj, modalConfirmarEliminarObj;
     
     let lotesData = JSON.parse(localStorage.getItem('agro_lotes')) || [
-        { nombre: 'salame kue', superficie: 40, egresos: 150000, ingresos: 450000, cultivos: [{nombre: 'Maíz', ha: 13}, {nombre: 'Soja', ha: 5}] },
+        { nombre: 'salame kue', superficie: 40, egresos: 150000, ingresos: 450000, cultivos: [{nombre: 'Soja', ha: 5}, {nombre: 'Maiz', ha: 8}] },
         { nombre: 'Rolon Kue', superficie: 20, egresos: 200000, ingresos: 0, cultivos: [] },
         { nombre: 'Lote Caro', superficie: 20, egresos: 0, ingresos: 0, cultivos: [] }
     ];
@@ -240,6 +283,8 @@
         modalLoteObj = new bootstrap.Modal(document.getElementById('modalLote'));
         modalTransObj = new bootstrap.Modal(document.getElementById('modalTransaccion'));
         modalCultivosObj = new bootstrap.Modal(document.getElementById('modalCultivos'));
+        modalEditarLoteObj = new bootstrap.Modal(document.getElementById('modalEditarLote'));
+        modalConfirmarEliminarObj = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
         renderizarDashboard();
     });
 
@@ -253,11 +298,11 @@
         
         let html = '';
         lote.cultivos.forEach(c => {
-            html += `<span class="badge bg-success me-1 mb-1">${c.nombre}: ${c.ha} ha</span>`;
+            html += `<span class="badge bg-success me-1 mb-1">${c.nombre.toUpperCase()}: ${c.ha} ha</span>`;
         });
         
         if (libres > 0) {
-            html += `<span class="badge bg-light text-dark border me-1 mb-1">Sin sembrar: ${libres} ha</span>`;
+            html += `<span class="badge bg-light text-dark border me-1 mb-1">Sin sembrar: ${libres} ha libres</span>`;
         } else if (libres < 0) {
             html += `<span class="badge bg-danger me-1 mb-1">Exceso asignado</span>`;
         }
@@ -338,7 +383,7 @@
                     <div>
                         <button class="btn btn-sm btn-outline-success me-1 px-3 rounded-pill" onclick="abrirModalCultivos(${index})"><i class="bi bi-flower1 me-1"></i> Cultivos</button>
                         <button class="btn btn-sm btn-outline-primary me-1 px-3 rounded-pill" onclick="editarLote(${index})"><i class="bi bi-pencil me-1"></i> Editar</button>
-                        <button class="btn btn-sm btn-outline-danger me-1 px-3 rounded-pill" onclick="eliminarLote(${index})"><i class="bi bi-trash me-1"></i> Eliminar</button>
+                        <button class="btn btn-sm btn-outline-danger me-1 px-3 rounded-pill" onclick="confirmarEliminarLote(${index})"><i class="bi bi-trash me-1"></i> Eliminar</button>
                     </div>
                 </li>`;
             });
@@ -453,16 +498,25 @@
     }
 
     function editarLote(index) {
-        let loteViejo = lotesData[index].nombre;
-        let nuevoNombre = prompt("Corregir o editar nombre del lote:", loteViejo);
-        if(!nuevoNombre) return;
-        nuevoNombre = nuevoNombre.trim();
-        
-        if(lotesData.some((l, i) => i !== index && l.nombre === nuevoNombre)) {
+        document.getElementById('editLoteIndex').value = index;
+        document.getElementById('inputEditarNombreLote').value = lotesData[index].nombre;
+        modalEditarLoteObj.show();
+    }
+
+    function guardarEdicionLote() {
+        let index = document.getElementById('editLoteIndex').value;
+        let nuevoNombre = document.getElementById('inputEditarNombreLote').value.trim();
+        if(!nuevoNombre) {
+            alert("El nombre no puede estar vacío.");
+            return;
+        }
+
+        if(lotesData.some((l, i) => i !== Number(index) && l.nombre === nuevoNombre)) {
             alert("Ya existe otro lote con ese nombre.");
             return;
         }
 
+        let loteViejo = lotesData[index].nombre;
         transaccionesData.forEach(t => {
             if(t.lote === loteViejo) t.lote = nuevoNombre;
         });
@@ -472,14 +526,20 @@
         localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
         
+        modalEditarLoteObj.hide();
         cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
     }
 
-    function eliminarLote(index) {
+    function confirmarEliminarLote(index) {
+        document.getElementById('deleteLoteIndex').value = index;
         let loteNombre = lotesData[index].nombre;
-        if(!confirm(`¿Estás seguro de eliminar el lote "${loteNombre}"? También se borrarán sus transacciones asociadas.`)) {
-            return;
-        }
+        document.getElementById('textoConfirmarEliminar').innerText = `¿Estás seguro de eliminar el lote "${loteNombre}"? También se borrarán sus transacciones asociadas.`;
+        modalConfirmarEliminarObj.show();
+    }
+
+    function ejecutarEliminarLote() {
+        let index = document.getElementById('deleteLoteIndex').value;
+        let loteNombre = lotesData[index].nombre;
 
         transaccionesData = transaccionesData.filter(t => t.lote !== loteNombre);
         lotesData.splice(index, 1);
@@ -487,6 +547,7 @@
         localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
 
+        modalConfirmarEliminarObj.hide();
         cambiarSeccion('lotes', document.querySelectorAll('.nav-item')[1]);
     }
 

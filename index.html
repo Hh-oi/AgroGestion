@@ -74,7 +74,7 @@
                 <div class="col-md-3 col-6">
                     <div class="kpi-card">
                         <div class="text-muted small">Superficie Total</div>
-                        <h3 class="fw-bold mt-2" id="kpi-superficie">60 ha</h3>
+                        <h3 class="fw-bold mt-2" id="kpi-superficie">0 ha</h3>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
@@ -116,20 +116,7 @@
                                 </tr>
                             </thead>
                             <tbody id="dash-tabla-body">
-                                <tr>
-                                    <td class="fw-bold">salame kue</td>
-                                    <td>40 ha</td>
-                                    <td class="text-danger">G. 0</td>
-                                    <td class="text-success">G. 0</td>
-                                    <td><button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="verDetalleLote('salame kue')"><i class="bi bi-eye"></i> Ver Lote</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Rolon Kue</td>
-                                    <td>20 ha</td>
-                                    <td class="text-danger">G. 200.000</td>
-                                    <td class="text-success">G. 0</td>
-                                    <td><button class="btn btn-sm btn-outline-dark rounded-pill px-3" onclick="verDetalleLote('Rolon Kue')"><i class="bi bi-eye"></i> Ver Lote</button></td>
-                                </tr>
+                                <!-- Se llena dinámicamente con JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -143,7 +130,7 @@
 <div class="modal fade" id="modalLote" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-dark text-white" style="background-color: var(--primary-dark) !important;">
+            <div class="modal-header text-white" style="background-color: var(--primary-dark);">
                 <h5 class="modal-title fw-bold">Registrar Nuevo Terreno</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -159,7 +146,7 @@
             </div>
             <div class="modal-footer border-0 px-4 pb-4">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-dark px-4" style="background-color: var(--primary-dark);" onclick="guardarLote()">Guardar Lote</button>
+                <button type="button" class="btn text-white px-4" style="background-color: var(--primary-dark);" onclick="guardarLote()">Guardar Lote</button>
             </div>
         </div>
     </div>
@@ -168,9 +155,38 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     let miModal;
+    let lotesData = JSON.parse(localStorage.getItem('agro_lotes')) || [
+        { nombre: 'salame kue', superficie: 40, egresos: 0, ingresos: 0 },
+        { nombre: 'Rolon Kue', superficie: 20, egresos: 200000, ingresos: 0 }
+    ];
+
     document.addEventListener("DOMContentLoaded", () => {
         miModal = new bootstrap.Modal(document.getElementById('modalLote'));
+        renderizarDashboard();
     });
+
+    function renderizarDashboard() {
+        const tbody = document.getElementById('dash-tabla-body');
+        tbody.innerHTML = '';
+        let totalSup = 0;
+
+        lotesData.forEach((lote, index) => {
+            totalSup += Number(lote.superficie);
+            tbody.innerHTML += `
+                <tr>
+                    <td class="fw-bold">${lote.nombre}</td>
+                    <td>${lote.superficie} ha</td>
+                    <td class="text-danger">G. ${lote.egresos.toLocaleString()}</td>
+                    <td class="text-success">G. ${lote.ingresos.toLocaleString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-dark rounded-pill px-3 me-1" onclick="verDetalleLote('${lote.nombre}')"><i class="bi bi-eye"></i> Ver</button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="eliminarLote(${index})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+
+        document.getElementById('kpi-superficie').innerText = totalSup + " ha";
+    }
 
     function cambiarSeccion(seccion, elemento) {
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -183,17 +199,12 @@
             location.reload();
         } else if (seccion === 'lotes') {
             titulo.innerText = "Gestión de Lotes de Tierra";
-            contenedor.innerHTML = `
-                <div class="card border-0 shadow-sm p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold mb-0">Terrenos Registrados</h5>
-                        <button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Nuevo Lote</button>
-                    </div>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">salame kue (40 ha) <span class="badge bg-success">Activo</span></li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">Rolon Kue (20 ha) <span class="badge bg-success">Activo</span></li>
-                    </ul>
-                </div>`;
+            let htmlLotes = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Terrenos Activos</h5><button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Nuevo Lote</button></div><ul class="list-group">`;
+            lotesData.forEach(l => {
+                htmlLotes += `<li class="list-group-item d-flex justify-content-between align-items-center py-3">${l.nombre} (${l.superficie} ha) <span class="badge bg-success">Activo</span></li>`;
+            });
+            htmlLotes += `</ul></div>`;
+            contenedor.innerHTML = htmlLotes;
         } else if (seccion === 'cosecha') {
             titulo.innerText = "Producción y Cosecha";
             contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Rendimiento Agrícola</h5><p class="text-muted">Control de toneladas cosechadas por hectárea y zafra actual.</p></div>`;
@@ -205,7 +216,7 @@
             contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Ventas de Cosecha</h5><p class="text-muted">Registro de comercialización de granos o producción.</p></div>`;
         } else if (seccion === 'nube') {
             titulo.innerText = "Ajustes de Sincronización Nube";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Estado de Conexión</h5><p class="text-muted">Sincronización activa con bases de datos en tiempo real.</p></div>`;
+            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Estado de Conexión</h5><p class="text-muted">Sincronización activa con almacenamiento local y bases de datos.</p></div>`;
         }
     }
 
@@ -216,14 +227,24 @@
     }
 
     function guardarLote() {
-        const nombre = document.getElementById('inputNombreLote').value;
+        const nombre = document.getElementById('inputNombreLote').value.trim();
         const sup = document.getElementById('inputSuperficieLote').value;
         if(!nombre || !sup) {
-            alert("Por favor complete todos los campos.");
+            alert("Por favor complete los campos obligatorios.");
             return;
         }
+        lotesData.push({ nombre: nombre, superficie: Number(sup), egresos: 0, ingresos: 0 });
+        localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         miModal.hide();
-        location.reload();
+        renderizarDashboard();
+    }
+
+    function eliminarLote(index) {
+        if(confirm("¿Deseas eliminar este lote del registro?")) {
+            lotesData.splice(index, 1);
+            localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
+            renderizarDashboard();
+        }
     }
 
     function verDetalleLote(nombreLote) {
@@ -239,12 +260,8 @@
 
     function exportarExcel() {
         let wb = XLSX.utils.book_new();
-        let datos = [
-            ["AGROGESTION - Reporte Financiero"],
-            ["Terreno", "Superficie", "Egresos", "Ingresos"],
-            ["salame kue", "40 ha", 0, 0],
-            ["Rolon Kue", "20 ha", 200000, 0]
-        ];
+        let datos = [["AGROGESTION - Reporte Financiero"], ["Terreno", "Superficie", "Egresos", "Ingresos"]];
+        lotesData.forEach(l => datos.push([l.nombre, l.superficie + " ha", l.egresos, l.ingresos]));
         let ws = XLSX.utils.aoa_to_sheet(datos);
         XLSX.utils.book_append_sheet(wb, ws, "Finanzas");
         XLSX.writeFile(wb, "Reporte_Agrogestion.xlsx");

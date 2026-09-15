@@ -72,60 +72,7 @@
 
         <!-- CONTENEDOR DINÁMICO DE VISTAS -->
         <div id="contenido-dinamico">
-            <!-- TARJETAS KPI -->
-            <div class="row g-3 mb-4 kpi-grid">
-                <div class="col-md-3 col-6">
-                    <div class="kpi-card">
-                        <div class="text-muted small">Superficie Total</div>
-                        <h3 class="fw-bold mt-2" id="kpi-superficie">0 ha</h3>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="kpi-card">
-                        <div class="text-muted small">Ingresos por Ventas</div>
-                        <h3 class="fw-bold mt-2 text-success" id="kpi-ingresos">G. 0</h3>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="kpi-card">
-                        <div class="text-muted small">Egresos / Gastos Totales</div>
-                        <h3 class="fw-bold mt-2 text-danger" id="kpi-egresos">G. 0</h3>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="kpi-card text-white" style="background-color: var(--primary-dark);">
-                        <div class="small opacity-75">Ganancia Líquida (Margen)</div>
-                        <h3 class="fw-bold mt-2 text-warning" id="kpi-ganancia">G. 0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TABLA FINANCIERA -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold mb-0">Estado Financiero y Rentabilidad por Lote</h5>
-                        <button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Lote</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead class="text-muted small text-uppercase">
-                                <tr>
-                                    <th>Terreno y Cultivos</th>
-                                    <th>Superficie</th>
-                                    <th>Ingresos</th>
-                                    <th>Egresos</th>
-                                    <th>Rentabilidad Neta</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dash-tabla-body">
-                                <!-- Dinámico -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <!-- SE CARGA DINÁMICAMENTE -->
         </div>
     </div>
 </div>
@@ -285,7 +232,7 @@
         modalCultivosObj = new bootstrap.Modal(document.getElementById('modalCultivos'));
         modalEditarLoteObj = new bootstrap.Modal(document.getElementById('modalEditarLote'));
         modalConfirmarEliminarObj = new bootstrap.Modal(document.getElementById('modalConfirmarEliminar'));
-        renderizarDashboard();
+        cambiarSeccion('dashboard', document.querySelector('.nav-item'));
     });
 
     function obtenerResumenCultivos(lote) {
@@ -309,7 +256,65 @@
         return html;
     }
 
-    function renderizarDashboard() {
+    function renderizarDashboardHTML() {
+        return `
+            <!-- TARJETAS KPI -->
+            <div class="row g-3 mb-4 kpi-grid">
+                <div class="col-md-3 col-6">
+                    <div class="kpi-card">
+                        <div class="text-muted small">Superficie Total</div>
+                        <h3 class="fw-bold mt-2" id="kpi-superficie">0 ha</h3>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="kpi-card">
+                        <div class="text-muted small">Ingresos por Ventas</div>
+                        <h3 class="fw-bold mt-2 text-success" id="kpi-ingresos">G. 0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="kpi-card">
+                        <div class="text-muted small">Egresos / Gastos Totales</div>
+                        <h3 class="fw-bold mt-2 text-danger" id="kpi-egresos">G. 0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="kpi-card text-white" style="background-color: var(--primary-dark);">
+                        <div class="small opacity-75">Ganancia Líquida (Margen)</div>
+                        <h3 class="fw-bold mt-2 text-warning" id="kpi-ganancia">G. 0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA FINANCIERA -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Estado Financiero y Rentabilidad por Lote</h5>
+                        <button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Lote</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="text-muted small text-uppercase">
+                                <tr>
+                                    <th>Terreno y Cultivos</th>
+                                    <th>Superficie</th>
+                                    <th>Ingresos</th>
+                                    <th>Egresos</th>
+                                    <th>Rentabilidad Neta</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-tabla-body">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function actualizarDatosDashboard() {
         const tbody = document.getElementById('dash-tabla-body');
         if(!tbody) return;
         tbody.innerHTML = '';
@@ -348,8 +353,10 @@
         document.getElementById('kpi-egresos').innerText = "G. " + totalEgresos.toLocaleString();
         
         const kpiGanancia = document.getElementById('kpi-ganancia');
-        kpiGanancia.innerText = "G. " + gananciaNeta.toLocaleString();
-        kpiGanancia.className = "fw-bold mt-2 " + (gananciaNeta >= 0 ? "text-warning" : "text-danger");
+        if(kpiGanancia) {
+            kpiGanancia.innerText = "G. " + gananciaNeta.toLocaleString();
+            kpiGanancia.className = "fw-bold mt-2 " + (gananciaNeta >= 0 ? "text-warning" : "text-danger");
+        }
     }
 
     function formatearMontoInput(input) {
@@ -370,7 +377,9 @@
         const contenedor = document.getElementById('contenido-dinamico');
 
         if (seccion === 'dashboard') {
-            location.reload();
+            titulo.innerText = "Resumen Gerencial del Campo";
+            contenedor.innerHTML = renderizarDashboardHTML();
+            actualizarDatosDashboard();
         } else if (seccion === 'lotes') {
             titulo.innerText = "Gestión de Lotes de Tierra";
             let html = `<div class="card border-0 shadow-sm p-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold mb-0">Terrenos Activos y Distribución de Cultivos</h5><button class="btn btn-sm btn-success" onclick="abrirModalLote()">+ Registrar Lote</button></div><ul class="list-group">`;
@@ -561,7 +570,7 @@
         lotesData.push({ nombre: nombre, superficie: Number(sup), egresos: 0, ingresos: 0, cultivos: [] });
         localStorage.setItem('agro_lotes', JSON.stringify(lotesData));
         modalLoteObj.hide();
-        renderizarDashboard();
+        cambiarSeccion('dashboard', document.querySelector('.nav-item'));
     }
 
     function abrirModalTransaccion(tipo) {
@@ -606,7 +615,7 @@
         localStorage.setItem('agro_trans', JSON.stringify(transaccionesData));
 
         modalTransObj.hide();
-        renderizarDashboard();
+        cambiarSeccion('dashboard', document.querySelector('.nav-item'));
     }
 
     function verDetalleLote(nombreLote) {
@@ -654,7 +663,7 @@
                 <hr>
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <h4 class="fw-bold mb-0 ${rentabilidad >= 0 ? 'text-success' : 'text-danger'}">Rentabilidad Neta: G. ${rentabilidad.toLocaleString()}</h4>
-                    <button class="btn btn-outline-dark" onclick="location.reload()"><i class="bi bi-arrow-left"></i> Volver al Dashboard</button>
+                    <button class="btn btn-outline-dark" onclick="cambiarSeccion('dashboard', document.querySelector('.nav-item'))"><i class="bi bi-arrow-left"></i> Volver al Dashboard</button>
                 </div>
             </div>`;
     }

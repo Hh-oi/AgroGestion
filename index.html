@@ -51,9 +51,6 @@
         <div class="nav-item" onclick="cambiarSeccion('lotes', this)"><i class="bi bi-geo-alt me-2"></i> Lotes de Tierra</div>
         <div class="nav-item" onclick="cambiarSeccion('ingresos', this)"><i class="bi bi-graph-up-arrow me-2"></i> Control de Ingresos</div>
         <div class="nav-item" onclick="cambiarSeccion('gastos', this)"><i class="bi bi-receipt me-2"></i> Auditoría de Gastos</div>
-        
-        <div class="text-muted small text-uppercase fw-bold mt-4 mb-2">Configuración</div>
-        <div class="nav-item" onclick="cambiarSeccion('nube', this)"><i class="bi bi-cloud-arrow-up me-2"></i> Ajustes Nube</div>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -428,9 +425,6 @@
             }
             html += `</div>`;
             contenedor.innerHTML = html;
-        } else if (seccion === 'nube') {
-            titulo.innerText = "Ajustes de Sincronización Nube";
-            contenedor.innerHTML = `<div class="card border-0 shadow-sm p-4"><h5 class="fw-bold">Estado de Conexión</h5><p class="text-muted">Datos resguardados de forma local y listos para Firebase.</p></div>`;
         }
     }
 
